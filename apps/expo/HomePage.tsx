@@ -23,7 +23,7 @@ const mostBookedServices = [
   {
     id: 1,
     name: 'The Spa Wellness',
-    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    image: require('../assets/images/Logo-1.png'), // Replace with your actual image path
     rating: 4.95,
     reviews: 1238,
     description: 'A sanctuary of relaxation offering rejuvenating massages, facials, and holistic therapies to restore your mind and body. Step into a serene oasis where tranquility meets luxury, and let our expert therapists provide you with a truly rejuvenating experience.',
@@ -31,7 +31,7 @@ const mostBookedServices = [
   {
     id: 2,
     name: 'Shape Up Gym',
-    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    image: require('../assets/images/Logo-1.png'), // Replace with your actual image path
     rating: 4.85,
     reviews: 1012,
     description: 'Your go-to fitness destination, offering state-of-the-art equipment, expert trainers, and a motivating environment to help you achieve your health and wellness goals. Join us and take the next step in your fitness journey!',
@@ -39,7 +39,7 @@ const mostBookedServices = [
   {
     id: 3,
     name: 'Urban Smiles',
-    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    image: require('../assets/images/Logo-1.png'), // Replace with your actual image path
     rating: 4.90,
     reviews: 980,
     description: 'Our experienced dentists offer a full range of services, from routine check-ups and teeth whitening to advanced holistic and cosmetic dental treatments. We help you achieve a healthy, vibrant smile. Book your appointment today and let your smile shine!',
@@ -81,7 +81,7 @@ export default function HomePage() {
       <Text style={styles.subHeaderText}>What service are you looking for today?</Text>
     </View>
     <View style={styles.headerButtons}>
-      <TouchableOpacity onPress={() => router.push('/HomePage')} style={styles.headerButton}>
+      <TouchableOpacity onPress={() => router.push('../HomePage')} style={styles.headerButton}>
         <MaterialIcons name="notifications-none" size={24} color="#EDAE49" />
       </TouchableOpacity>
     </View>
@@ -115,11 +115,11 @@ export default function HomePage() {
               <InfoCard
                 title="Pulse Fitness Center"
                 description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
-                onPress={() => router.push('/ServicesPage')} />
+                onPress={() => router.push('../ServicesPage')} />
               <InfoCard
                 title="The Glow Haven Spa"
                 description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
-                onPress={() => router.push('/ServicesPage')} />
+                onPress={() => router.push('../ServicesPage')} />
             </View>
 
             {/* Most Booked Services */}
@@ -136,7 +136,7 @@ export default function HomePage() {
                       <Text style={{ color: '#888', marginLeft: 4 }}>({service.reviews} Reviews)</Text>
                     </View>
                     <Text style={styles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>
-                    <TouchableOpacity style={styles.viewButton} onPress={() => router.push('/ServicesPage')}>
+                    <TouchableOpacity style={styles.viewButton} onPress={() => router.push('../ServicesPage')}>
                       <Text style={styles.viewButtonText}>View</Text>
                     </TouchableOpacity>
                   </View>
