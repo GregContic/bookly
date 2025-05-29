@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import BottomNavBar from './components/BottomNavBar';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from './expo/context/AuthContext';
 
 interface TileProps {
   label: string;
@@ -18,6 +18,33 @@ interface InfoCardProps {
   description: string;
   onPress: () => void;
 }
+
+const mostBookedServices = [
+  {
+    id: 1,
+    name: 'The Spa Wellness',
+    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    rating: 4.95,
+    reviews: 1238,
+    description: 'A sanctuary of relaxation offering rejuvenating massages, facials, and holistic therapies to restore your mind and body. Step into a serene oasis where tranquility meets luxury, and let our expert therapists provide you with a truly rejuvenating experience.',
+  },
+  {
+    id: 2,
+    name: 'Shape Up Gym',
+    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    rating: 4.85,
+    reviews: 1012,
+    description: 'Your go-to fitness destination, offering state-of-the-art equipment, expert trainers, and a motivating environment to help you achieve your health and wellness goals. Join us and take the next step in your fitness journey!',
+  },
+  {
+    id: 3,
+    name: 'Urban Smiles',
+    image: require('../assets/images/bron.png'), // Replace with your actual image path
+    rating: 4.90,
+    reviews: 980,
+    description: 'Our experienced dentists offer a full range of services, from routine check-ups and teeth whitening to advanced holistic and cosmetic dental treatments. We help you achieve a healthy, vibrant smile. Book your appointment today and let your smile shine!',
+  },
+];
 
 export default function HomePage() {
   const router = useRouter();
@@ -93,6 +120,28 @@ export default function HomePage() {
                 title="The Glow Haven Spa"
                 description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
                 onPress={() => router.push('/ServicesPage')} />
+            </View>
+
+            {/* Most Booked Services */}
+            <Text style={styles.sectionTitle}>Most Booked Services</Text>
+            <View style={styles.mostBookedList}>
+              {mostBookedServices.map(service => (
+                <View key={service.id} style={styles.mostBookedCard}>
+                  <Image source={service.image} style={styles.mostBookedImage} resizeMode="contain" />
+                  <View style={styles.mostBookedContent}>
+                    <Text style={styles.mostBookedTitle}>{service.name}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                      <MaterialIcons name="star" size={16} color="#EDAE49" />
+                      <Text style={{ fontWeight: 'bold', marginLeft: 2 }}>{service.rating}</Text>
+                      <Text style={{ color: '#888', marginLeft: 4 }}>({service.reviews} Reviews)</Text>
+                    </View>
+                    <Text style={styles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>
+                    <TouchableOpacity style={styles.viewButton} onPress={() => router.push('/ServicesPage')}>
+                      <Text style={styles.viewButtonText}>View</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
             </View>
           </ScrollView>
         </View>
@@ -298,5 +347,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  mostBookedList: {
+    marginTop: 5,
+  },
+  mostBookedCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 14,
+    alignItems: 'flex-start',
+    borderWidth: 1,
+    borderColor: '#eee',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  mostBookedImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#f5f5f5',
+    marginRight: 10,
+  },
+  mostBookedContent: {
+    flex: 1,
+  },
+  mostBookedTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    color: '#222',
+  },
+  mostBookedDescription: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 8,
   },
 });

@@ -1,27 +1,28 @@
+import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as React from 'react';
-import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-//import CreateAccountScreen from './screens/CreateAccountScreen';
-//Navigations:
-import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useAuth } from './context/AuthContext';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from './expo/context/AuthContext';
 
-export default function RegistrationPage() {
+export default function LogInPage() {
   const router = useRouter();
-  const { signUp } = useAuth();
-  const [username, setUsername] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const { signIn } = useAuth();
+  const [rememberMe, setRememberMe] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [fontsLoaded] = useFonts({
     'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
   });
 
   if (!fontsLoaded) {
-    return null;
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#EDAE49', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#fff" />
+      </SafeAreaView>
+    );
   }
 
   const validateEmail = (email: string) => {
@@ -29,11 +30,13 @@ export default function RegistrationPage() {
     return emailRegex.test(email);
   };
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
+    if (isLoading) return;
+    
     try {
       setIsLoading(true);
 
-      if (!username || !email || !password || !confirmPassword) {
+      if (!email || !password) {
         Alert.alert('Error', 'Please fill in all fields');
         return;
       }
@@ -43,23 +46,15 @@ export default function RegistrationPage() {
         return;
       }
 
-      if (password !== confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match');
-        return;
-      }
-
-      if (password.length < 6) {
-        Alert.alert('Error', 'Password must be at least 6 characters long');
-        return;
-      }
-
-      await signUp(email, username, password);
+      await signIn(email, password);
     } catch (error: any) {
-      console.error('Registration error:', error);
-      if (error.message === 'User already exists') {
-        Alert.alert('Error', 'An account with this email already exists');
+      console.error('Login error:', error);
+      if (error.message === 'User not found') {
+        Alert.alert('Error', 'No account found with this email');
+      } else if (error.message === 'Invalid credentials') {
+        Alert.alert('Error', 'Invalid email or password');
       } else {
-        Alert.alert('Error', 'Failed to create account. Please try again.');
+        Alert.alert('Error', 'Failed to login. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -70,14 +65,10 @@ export default function RegistrationPage() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.topSection}>
-          <Image
-            source={require('../assets/images/Logo-1.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <Image source={require('../assets/images/Logo-1.png')} style={styles.logo} resizeMode="contain" />
         </View>
         <View style={styles.card}>
-          <Text style={styles.formTitle}>Create Your Account</Text>
+          <Text style={styles.formTitle}>Log in to your account</Text>
           <View style={styles.socialRow}>
             <TouchableOpacity style={styles.socialBox}>
               <FontAwesome name="facebook" size={24} color="#1877F2" />
@@ -90,16 +81,6 @@ export default function RegistrationPage() {
             </TouchableOpacity>
           </View>
           <Text style={styles.orText}>Or use your email account</Text>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.floatingLabel}>Username</Text>
-            <TextInput
-              style={styles.input}
-              value={username}
-              onChangeText={setUsername}
-              editable={!isLoading}
-              placeholder=""
-            />
-          </View>
           <View style={styles.inputWrapper}>
             <Text style={styles.floatingLabel}>Email</Text>
             <TextInput
@@ -123,40 +104,44 @@ export default function RegistrationPage() {
               placeholder=""
             />
           </View>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.floatingLabel}>Confirm Password</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              editable={!isLoading}
-              placeholder=""
-            />
+          <View style={styles.rowBetween}>
+            <View style={styles.rememberMeContainer}>
+              <Switch
+                trackColor={{ false: "#E0E0E0", true: "#EDAE49" }}
+                thumbColor={rememberMe ? "#fff" : "#fff"}
+                ios_backgroundColor="#E0E0E0"
+                onValueChange={setRememberMe}
+                value={rememberMe}
+              />
+              <Text style={styles.rememberMeText}>Remember Me</Text>
+            </View>
+            <TouchableOpacity>
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
           <LinearGradient
-            colors={["#fcb045", "#ed8f2b"]}
+            colors={['#fcb045', '#ed8f2b']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.gradientButton}
           >
             <TouchableOpacity
               style={[styles.registerButton, isLoading && styles.disabledButton]}
-              onPress={handleRegister}
+              onPress={handleLogin}
               disabled={isLoading}
               activeOpacity={0.8}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.registerButtonText}>Register</Text>
+                <Text style={styles.registerButtonText}>Log in</Text>
               )}
             </TouchableOpacity>
           </LinearGradient>
           <Text style={styles.footerText}>
-            Already have an account?{' '}
-            <Text style={styles.loginLink} onPress={() => router.push('/LogInPage')}>
-              Login Here
+            Don't have an account?{' '}
+            <Text style={styles.loginLink} onPress={() => router.push('/RegistrationPage')}>
+              Register Here
             </Text>
           </Text>
         </View>
@@ -179,14 +164,6 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     marginBottom: 5,
-  },
-  appTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#222',
-    fontFamily: 'Montserrat-Bold',
-    marginBottom: 10,
-    letterSpacing: 1,
   },
   card: {
     flex: 1,
@@ -259,6 +236,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     shadowColor: 'transparent',
     paddingTop: 14,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 18,
+  },
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rememberMe: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+  },
+  rememberMeText: {
+    marginLeft: 5,
+    fontSize: 13,
+    color: '#222',
+  },
+  forgotText: {
+    color: '#888',
+    fontSize: 13,
+    textDecorationLine: 'underline',
   },
   gradientButton: {
     width: '100%',

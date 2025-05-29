@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from './expo/context/AuthContext';
 
 export default function Profile() {
   const { signOut } = useAuth();
