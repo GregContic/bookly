@@ -14,8 +14,8 @@ export default function Footer() {
           <Image
             src="/assets/logo-footer.png"
             alt="Bookly Footer Logo"
-            width={60}
-            height={60}
+            width={150}
+            height={150}
             className="object-contain"
           />
         </div>

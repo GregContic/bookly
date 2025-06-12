@@ -1,17 +1,19 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../app/auth/AuthContext";
-import { useState, useRef, useEffect } from "react";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Services", href: "/services" },
-  { name: "About Us", href: "/about" },
-  { name: "Contact Us", href: "/contact" },
+  { name: "Services", href: "/pages/services" },
+  { name: "About Page", href: "/pages/about" },
+  { name: "Contact Page", href: "/pages/contact" },
 ];
 
 export default function Header() {
+  const router = useRouter();
   const { signedIn, setSignedIn } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -27,6 +29,12 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
+  const handleLogout = () => {
+    setOpen(false);
+    setSignedIn(false);
+    router.push('/');
+  };
+
   return (
     <header className="w-full px-6 py-4 shadow-md bg-white flex items-center justify-between relative">
       {/* Left: Logo */}
@@ -38,9 +46,11 @@ export default function Header() {
             width={200}
             height={80}
             style={{ objectFit: "contain" }}
+            priority
           />
         </Link>
       </div>
+
       {/* Center: Nav */}
       <nav
         className="space-x-6 hidden md:flex"
@@ -58,7 +68,7 @@ export default function Header() {
             key={item.name}
             href={item.href}
             className={`text-gray-600 font-medium transition-colors ${
-              !signedIn ? "pointer-events-none opacity-50" : "hover:text-blue-600"
+              !signedIn ? "pointer-events-none opacity-50" : "hover:text-[#EDAE49]"
             }`}
             tabIndex={signedIn ? 0 : -1}
             aria-disabled={!signedIn}
@@ -67,40 +77,55 @@ export default function Header() {
           </Link>
         ))}
       </nav>
+
       {/* Right: Icons */}
-      <div className="flex items-center space-x-4 text-2xl text-gray-600 relative" style={{ minWidth: 80, justifyContent: "flex-end" }}>
-        <button
-          className="hover:text-blue-600 transition-colors"
-          aria-label="Notifications"
-        >
-          🔔
-        </button>
+      <div 
+        className="flex items-center space-x-4 text-2xl text-gray-600 relative" 
+        style={{ minWidth: 80, justifyContent: "flex-end" }}
+      >
+        {signedIn && (
+          <button
+            className="hover:text-[#EDAE49] transition-colors"
+            aria-label="Notifications"
+          >
+            🔔
+          </button>
+        )}
         <div ref={dropdownRef} className="relative">
           <button
-            className="hover:text-blue-600 transition-colors"
-            aria-label="Profile"
+            className="hover:text-[#EDAE49] transition-colors"
+            aria-label={signedIn ? "Profile" : "Sign in"}
             onClick={() => setOpen((o) => !o)}
           >
             👤
           </button>
-          {open && signedIn && (
+          {open && (
             <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-10">
-              <Link
-                href="/profile"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                onClick={() => setOpen(false)}
-              >
-                Profile
-              </Link>
-              <button
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                onClick={() => {
-                  setOpen(false);
-                  setSignedIn(false);
-                }}
-              >
-                Log out
-              </button>
+              {signedIn ? (
+                <>
+                  <Link
+                    href="/pages/profile"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={handleLogout}
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/pages/login"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign in
+                </Link>
+              )}
             </div>
           )}
         </div>
