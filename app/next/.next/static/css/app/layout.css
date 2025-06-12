@@ -607,6 +607,9 @@
   .\[margin-left\:-200\%\] {
     margin-left: -200%;
   }
+  .ml-1 {
+    margin-left: calc(var(--spacing) * 1);
+  }
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
   }
@@ -1382,9 +1385,6 @@
   .pt-1 {
     padding-top: calc(var(--spacing) * 1);
   }
-  .pt-20 {
-    padding-top: calc(var(--spacing) * 20);
-  }
   .pr-8 {
     padding-right: calc(var(--spacing) * 8);
   }
@@ -1402,9 +1402,6 @@
   }
   .pl-4 {
     padding-left: calc(var(--spacing) * 4);
-  }
-  .pl-50 {
-    padding-left: calc(var(--spacing) * 50);
   }
   .text-center {
     text-align: center;

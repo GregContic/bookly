@@ -1,30 +1,81 @@
-"use client";
-import Image from "next/image";
-import { useState } from "react";
+'use client';
+
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface SavedService {
   id: number;
-  name: string;
-  logo: string;
+  service_name: string;
+  service_logo: string;
   rating: number;
-  reviews: number;
-  priceRange: string;
+  review_count: number;
+  price_range: {
+    min: number;
+    max: number;
+  };
 }
 
 export default function Saved() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [savedServices, setSavedServices] = useState<SavedService[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const savedServices: SavedService[] = [
-    {
-      id: 1,
-      name: "Kwentong Barbero",
-      logo: "/assets/barber-logo.png",
-      rating: 4.95,
-      reviews: 215,
-      priceRange: "₱250 - ₱500"
+  useEffect(() => {
+    fetchSavedServices();
+  }, []);
+
+  const fetchSavedServices = async () => {
+    try {
+      const response = await fetch('/api/saved-services', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch saved services');
+      
+      const data = await response.json();
+      setSavedServices(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load saved services');
+    } finally {
+      setIsLoading(false);
     }
-    // Add more services as needed
-  ];
+  };
+
+  const handleRemove = async (serviceId: number) => {
+    try {
+      const response = await fetch(`/api/saved-services/${serviceId}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error('Failed to remove service');
+      
+      setSavedServices(prev => prev.filter(service => service.id !== serviceId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove service');
+    }
+  };
+
+  const handleBook = (serviceId: number) => {
+    // Navigate to booking page
+    window.location.href = `/services/${serviceId}/book`;
+  };
+
+  const filteredServices = savedServices.filter(service =>
+    service.service_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (isLoading) return <div>Loading saved services...</div>;
+  if (error) return <div className="text-red-600">Error: {error}</div>;
 
   return (
     <div className="w-full">
@@ -56,41 +107,41 @@ export default function Saved() {
           </tr>
         </thead>
         <tbody>
-          {savedServices.map((service) => (
+          {filteredServices.map((service) => (
             <tr key={service.id} className="border-b last:border-none">
               <td className="py-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <Image
-                    src={service.logo}
-                    alt={service.name}
+                    src={service.service_logo}
+                    alt={service.service_name}
                     width={48}
                     height={48}
                     className="rounded-lg"
                   />
                   <div>
-                    <div className="font-medium">{service.name}</div>
-                    <div className="flex items-center gap-1">
-                      <div className="flex text-yellow-400">
-                        {"★★★★★"}
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        ({service.reviews})
-                      </span>
+                    <div className="font-medium">{service.service_name}</div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      {'⭐'.repeat(Math.floor(service.rating))}
+                      <span className="ml-1">({service.review_count})</span>
                     </div>
                   </div>
                 </div>
               </td>
-              <td className="py-4 text-right">{service.priceRange}</td>
+              <td className="py-4 text-right">
+                ₱{service.price_range.min} - ₱{service.price_range.max}
+              </td>
               <td className="py-4">
-                <div className="flex gap-2 justify-center">
+                <div className="flex justify-center gap-2">
                   <button
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded-full"
-                    title="View"
+                    onClick={() => handleBook(service.id)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
+                    title="Book Now"
                   >
-                    👁️
+                    📅
                   </button>
                   <button
-                    className="p-1 text-red-600 hover:bg-red-50 rounded-full"
+                    onClick={() => handleRemove(service.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-full"
                     title="Remove"
                   >
                     🗑️
