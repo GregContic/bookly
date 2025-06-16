@@ -125,9 +125,8 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    try {
-      await signOut();
-      router.replace('/LogInPage');
+    try {      await signOut();
+      router.replace('/sign in/LogInPage');
     } catch (error) {
       Alert.alert('Error', 'Failed to log out. Please try again.');
     }
@@ -197,11 +196,10 @@ export default function Profile() {
           </Text>
         </View>
       </View>
-      <View style={[styles.buttonList, { marginTop: dynamicSpacing(10) }]}>
-        {[
-          { icon: 'person-outline', text: 'Account Setting', onPress: () => router.push('/AccountSettingPage') },
-          { icon: 'history', text: 'Appointment History', onPress: () => router.push('/AppointmentHistory') },
-          { icon: 'help-outline', text: 'Support & Help Center', onPress: () => router.push('/SupportHelpCenter') },
+      <View style={[styles.buttonList, { marginTop: dynamicSpacing(10) }]}>        {[
+          { icon: 'person-outline', text: 'Account Setting', onPress: () => console.log('Account Setting - Not implemented yet') },
+          { icon: 'history', text: 'Appointment History', onPress: () => console.log('Appointment History - Not implemented yet') },
+          { icon: 'help-outline', text: 'Support & Help Center', onPress: () => console.log('Support & Help Center - Not implemented yet') },
           { icon: 'logout', text: 'Log Out', onPress: handleLogout }
         ].map((button, index) => (
           <TouchableOpacity 
@@ -213,9 +211,8 @@ export default function Profile() {
               borderRadius: dynamicSpacing(18)
             }]}
             onPress={button.onPress}
-          >
-            <MaterialIcons 
-              name={button.icon} 
+          >            <MaterialIcons 
+              name={button.icon as any} 
               size={dynamicFontSize(24)} 
               color="#EDAE49" 
               style={[styles.buttonIcon, { marginRight: dynamicSpacing(14) }]} 

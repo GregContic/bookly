@@ -15,17 +15,20 @@ import {
 
 // Components
 import BottomNavBar from '../../components/BottomNavBar';
-import { InfoCard } from '../../components/InfoCard';
-import { Tile } from '../../components/Tile';
+import { InfoCard } from '../../components/_InfoCard';
+import { Tile } from '../../components/_Tile';
+
+// Animation Components
+import { BentoGrid, BlurFade, BoxReveal, FloatingAnimation, SparklesText } from '../../components/animations';
 
 // Constants & Styles
-import { homeStyles } from '../../styles/homeStyles';
+import { homeStyles } from '../../../lib/homeStyles';
 
 // Services & Utils
-import { serviceAPI } from '../../services/serviceAPI';
+import { serviceAPI } from '../../../lib/serviceAPI';
 
 // Types
-import { ServiceData } from '../../types/interfaces';
+import { ServiceData } from '../../../lib/interfaces';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
@@ -35,7 +38,7 @@ const mostBookedServices = [
   {
     id: 1,
     name: 'The Spa Wellness',
-    image: require('../assets/images/spa-wellness.png'), // Replace with your actual image path
+    image: require('../../../assets/images/spa-wellness.png'),
     rating: 4.95,
     reviews: 1238,
     description: 'A sanctuary of relaxation offering rejuvenating massages, facials, and holistic therapies to restore your mind and body. Step into a serene oasis where tranquility meets luxury, and let our expert therapists provide you with a truly rejuvenating experience.',
@@ -43,7 +46,7 @@ const mostBookedServices = [
   {
     id: 2,
     name: 'Shape Up Gym',
-    image: require('../assets/images/shapeup_gym.png'), // Replace with your actual image path
+    image: require('../../../assets/images/shapeup_gym.png'),
     rating: 4.85,
     reviews: 1012,
     description: 'Your go-to fitness destination, offering state-of-the-art equipment, expert trainers, and a motivating environment to help you achieve your health and wellness goals. Join us and take the next step in your fitness journey!',
@@ -51,7 +54,7 @@ const mostBookedServices = [
   {
     id: 3,
     name: 'Urban Smiles',
-    image: require('../assets/images/urban_smiles.png'), // Replace with your actual image path
+    image: require('../../../assets/images/urban_smiles.png'),
     rating: 4.90,
     reviews: 980,
     description: 'Our experienced dentists offer a full range of services, from routine check-ups and teeth whitening to advanced holistic and cosmetic dental treatments. We help you achieve a healthy, vibrant smile. Book your appointment today and let your smile shine!',
@@ -64,34 +67,10 @@ export default function HomePage() {
   const { signOut } = useAuth();
   const [services, setServices] = useState<ServiceData[]>(mostBookedServices);
 
-  // Animation values
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const slideAnim = React.useRef(new Animated.Value(50)).current;
-  const scaleAnim = React.useRef(new Animated.Value(0.9)).current;
-
   // Effects
   useEffect(() => {
     // Load data
     loadMostBookedServices();
-
-    // Start animations
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-    ]).start();
   }, []);
 
   // Data fetching
@@ -132,153 +111,109 @@ export default function HomePage() {
         end={{ x: 1, y: 1 }}
         locations={[0, 0.5, 1]}
       />
-      <Animated.View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={homeStyles.scrollContent} showsVerticalScrollIndicator={false}>
+      <Animated.View style={{ flex: 1 }}>        <ScrollView contentContainerStyle={homeStyles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Header */}
-          
-            <Animated.View 
-              style={[
-                homeStyles.headerContent,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }]
-                }
-              ]}
-            >
-              <View>
-                <Text style={homeStyles.welcomeText}>Welcome, User!</Text>
-                <Text style={homeStyles.subHeaderText}>What service are you looking for today?</Text>
-              </View>
-              <View style={homeStyles.headerButtons}>
-                <TouchableOpacity onPress={() => router.push('../HomePage')} style={homeStyles.headerButton}>
-                  <MaterialIcons name="notifications-none" size={24} color="#EDAE49" />
-                </TouchableOpacity>
-              </View>
-            </Animated.View>
+          <BlurFade delay={250} style={homeStyles.headerContent}>
+            <BoxReveal>
+              <SparklesText style={homeStyles.welcomeText}>
+                Welcome, User!
+              </SparklesText>
+            </BoxReveal>
+            <BlurFade delay={500} direction="up">
+              <Text style={homeStyles.subHeaderText}>What service are you looking for today?</Text>
+            </BlurFade>
+            <View style={homeStyles.headerButtons}>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/home')} style={homeStyles.headerButton}>
+                <MaterialIcons name="notifications-none" size={24} color="#EDAE49" />
+              </TouchableOpacity>
+            </View>
+          </BlurFade>
 
           {/* Search Bar */}
-          <Animated.View 
-            style={[
-              homeStyles.searchContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            <TextInput
-              style={homeStyles.searchInput}
-              placeholder="Search.."
-              placeholderTextColor="#888"
-              onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
-            />
-            <Feather name="search" size={20} color="#888" style={{ position: 'absolute', right: 15 }} />
-          </Animated.View>
+          <BlurFade delay={750} style={homeStyles.searchContainer}>
+            <BoxReveal delay={100}>
+              <TextInput
+                style={homeStyles.searchInput}
+                placeholder="Search.."
+                placeholderTextColor="#888"
+                onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
+              />
+              <Feather name="search" size={20} color="#888" style={{ position: 'absolute', right: 15 }} />
+            </BoxReveal>
+          </BlurFade>
 
           {/* Business Categories */}
-          <Animated.Text 
-            style={[
-              homeStyles.sectionTitle,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            Business Categories
-          </Animated.Text>
-
-          <Animated.View 
-            style={[
-              homeStyles.tilesContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            <Tile label="Health & Wellness" imageSource={require('../assets/images/placeholder_lotus.png')} onPress={() => router.push('/ServicesPage')} />
-            <Tile label="Beauty & Personal Care" imageSource={require('../assets/images/placeholder_scissors.png')} onPress={() => router.push('/ServicesPage')} />
-            <Tile label="Automotive Services" imageSource={require('../assets/images/placeholder_hammer.png')} onPress={() => router.push('/ServicesPage')} />
-            <Tile label="Tech & IT Services" imageSource={require('../assets/images/placeholder_monitor.png')} onPress={() => router.push('/ServicesPage')} />
-            <Tile label="Fitness & Sports" imageSource={require('../assets/images/placeholder_muscle.png')} onPress={() => router.push('/ServicesPage')} />
-            <Tile label="Home Services" imageSource={require('../assets/images/placeholder_house.png')} onPress={() => router.push('/ServicesPage')} />
-          </Animated.View>
+          <BlurFade delay={1000}>
+            <Text style={homeStyles.sectionTitle}>Business Categories</Text>
+          </BlurFade>          <BentoGrid numColumns={3} animationDelay={150} style={{ marginVertical: 20 }}>
+            <FloatingAnimation animationType="float" delay={200}>
+              <Tile label="Health & Wellness" imageSource={require('../../../assets/images/placeholder_lotus.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+            <FloatingAnimation animationType="floatReverse" delay={400}>
+              <Tile label="Beauty & Personal Care" imageSource={require('../../../assets/images/placeholder_scissors.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+            <FloatingAnimation animationType="floatSlow" delay={600}>
+              <Tile label="Automotive Services" imageSource={require('../../../assets/images/placeholder_hammer.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+            <FloatingAnimation animationType="floatTilt" delay={800}>
+              <Tile label="Tech & IT Services" imageSource={require('../../../assets/images/placeholder_monitor.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+            <FloatingAnimation animationType="float" delay={1000}>
+              <Tile label="Fitness & Sports" imageSource={require('../../../assets/images/placeholder_muscle.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+            <FloatingAnimation animationType="floatReverse" delay={1200}>
+              <Tile label="Home Services" imageSource={require('../../../assets/images/placeholder_house.png')} onPress={() => router.push('../services')} />
+            </FloatingAnimation>
+          </BentoGrid>
 
           {/* For You */}
-          <Animated.Text 
-            style={[
-              homeStyles.sectionTitle,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            For you
-          </Animated.Text>
-
-          <Animated.View 
-            style={[
-              homeStyles.cardList,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            <InfoCard
-              title="Pulse Fitness Center"
-              description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
-              onPress={() => router.push('../ServicesPage')}
-              imageSource={require('../assets/images/pulse.png')} />
-            <InfoCard
-              title="The Glow Haven Spa"
-              description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
-              onPress={() => router.push('../ServicesPage')}
-              imageSource={require('../assets/images/glow-haven-2.png')} />
-          </Animated.View>
+          <BlurFade delay={1400}>
+            <Text style={homeStyles.sectionTitle}>For you</Text>
+          </BlurFade>          <BlurFade delay={1600} style={homeStyles.cardList}>
+            <BoxReveal delay={200}>
+              <InfoCard                title="Pulse Fitness Center"
+                description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
+                onPress={() => router.push('../services')}
+                imageSource={require('../../../assets/images/pulse.png')} />
+            </BoxReveal>
+            <BoxReveal delay={400}>
+              <InfoCard
+                title="The Glow Haven Spa"
+                description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
+                onPress={() => router.push('../services')}
+                imageSource={require('../../../assets/images/glow-haven-2.png')} />
+            </BoxReveal>
+          </BlurFade>
 
           {/* Most Booked Services */}
-          <Animated.Text 
-            style={[
-              homeStyles.sectionTitle,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            Most Booked Services
-          </Animated.Text>
+          <BlurFade delay={1800}>
+            <Text style={homeStyles.sectionTitle}>Most Booked Services</Text>
+          </BlurFade>
 
-          <Animated.View 
-            style={[
-              homeStyles.mostBookedList,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
-            ]}
-          >
-            {mostBookedServices.map(service => (
-              <View key={service.id} style={homeStyles.mostBookedCard}>
-                <Image source={service.image} style={homeStyles.mostBookedImage} resizeMode="contain" />
-                <View style={homeStyles.mostBookedContent}>
-                  <Text style={homeStyles.mostBookedTitle}>{service.name}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
-                    <MaterialIcons name="star" size={16} color="#EDAE49" />
-                    <Text style={{ fontWeight: 'bold', marginLeft: 2 }}>{service.rating}</Text>
-                    <Text style={{ color: '#888', marginLeft: 4 }}>({service.reviews} Reviews)</Text>
-                  </View>
-                  <Text style={homeStyles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>
-                  <TouchableOpacity style={homeStyles.viewButton} onPress={() => router.push('../ServicesPage')}>
-                    <Text style={homeStyles.viewButtonText}>View</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+          <View style={homeStyles.mostBookedList}>
+            {mostBookedServices.map((service, index) => (
+              <BlurFade key={service.id} delay={2000 + (index * 200)} direction="up">
+                <BoxReveal delay={100}>
+                  <FloatingAnimation animationType={index % 2 === 0 ? 'float' : 'floatReverse'} delay={500}>
+                    <View style={homeStyles.mostBookedCard}>
+                      <Image source={service.image} style={homeStyles.mostBookedImage} resizeMode="contain" />
+                      <View style={homeStyles.mostBookedContent}>
+                        <Text style={homeStyles.mostBookedTitle}>{service.name}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                          <MaterialIcons name="star" size={16} color="#EDAE49" />
+                          <Text style={{ fontWeight: 'bold', marginLeft: 2 }}>{service.rating}</Text>
+                          <Text style={{ color: '#888', marginLeft: 4 }}>({service.reviews} Reviews)</Text>
+                        </View>
+                        <Text style={homeStyles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>                        <TouchableOpacity style={homeStyles.viewButton} onPress={() => router.push('../services')}>
+                          <Text style={homeStyles.viewButtonText}>View</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </FloatingAnimation>
+                </BoxReveal>
+              </BlurFade>
             ))}
-          </Animated.View>
+          </View>
         </ScrollView>
       </Animated.View>
       <BottomNavBar activePage='HomePage' />

@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function LogInPage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function LogInPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fontsLoaded] = useFonts({
-    'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
+    'Montserrat-Bold': require('../../assets/fonts/Montserrat-Bold.ttf'),
   });
   const { width } = useWindowDimensions();
 
@@ -66,7 +66,7 @@ export default function LogInPage() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.topSection}>
-          <Image source={require('../assets/images/Logo-1.png')} style={{ ...styles.logo, width: width * 0.35 }} resizeMode="contain" />
+          <Image source={require('../../assets/images/Logo-1.png')} style={{ ...styles.logo, width: width * 0.35 }} resizeMode="contain" />
         </View>
         <View style={styles.titleCard}>
         <Text style={styles.formTitle}>Log in to your account</Text>
@@ -143,7 +143,7 @@ export default function LogInPage() {
           </LinearGradient>
           <Text style={styles.footerText}>
             Don't have an account?{' '}
-            <Text style={styles.loginLink} onPress={() => router.push('/RegistrationPage')}>
+            <Text style={styles.loginLink} onPress={() => router.push('/sign up/RegistrationPage')}>
               Register Here
             </Text>
           </Text>

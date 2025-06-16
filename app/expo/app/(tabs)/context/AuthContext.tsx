@@ -66,9 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       console.log('User data stored successfully');
       setUser(newUser);
-      
-      console.log('Redirecting to HomePage...');
-      router.replace('/HomePage');
+        console.log('Redirecting to HomePage...');
+      router.replace('/(tabs)/home');
     } catch (error) {
       console.error('Error in signUp:', error);
       if (error instanceof Error) {
@@ -98,9 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (storedPassword === password) {
         console.log('Password verified, logging in...');
         const userData = JSON.parse(userJson);
-        await AsyncStorage.setItem('user', userJson);
-        setUser(userData);
-        router.replace('/HomePage');
+        await AsyncStorage.setItem('user', userJson);        setUser(userData);
+        router.replace('/(tabs)/home');
       } else {
         console.log('Invalid password for user:', email);
         throw new Error('Invalid credentials');
@@ -119,9 +117,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       console.log('Signing out...');
-      await AsyncStorage.removeItem('user');
-      setUser(null);
-      router.replace('/LogInPage');
+      await AsyncStorage.removeItem('user');      setUser(null);
+      router.replace('/sign in/LogInPage');
     } catch (error) {
       console.error('Error in signOut:', error);
       throw error;

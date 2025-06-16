@@ -6,18 +6,17 @@ import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, 
 //Navigations:
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function RegistrationPage() {
   const router = useRouter();
   const { signUp } = useAuth();
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [password, setPassword] = React.useState('');  const [confirmPassword, setConfirmPassword] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [fontsLoaded] = useFonts({
-    'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
+    'Montserrat-Bold': require('../../assets/fonts/Montserrat-Bold.ttf'),
   });
   const { width } = useWindowDimensions();
 
@@ -70,9 +69,8 @@ export default function RegistrationPage() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.topSection}>
-          <Image
-            source={require('../assets/images/Logo-1.png')}
+        <View style={styles.topSection}>          <Image
+            source={require('../../assets/images/Logo-1.png')}
             style={[styles.logo, { width: width * 0.35 }]}
             resizeMode="contain"
           />
@@ -157,10 +155,9 @@ export default function RegistrationPage() {
                 <Text style={styles.registerButtonText}>Register</Text>
               )}
             </TouchableOpacity>
-          </LinearGradient>
-          <Text style={styles.footerText}>
+          </LinearGradient>          <Text style={styles.footerText}>
             Already have an account?{' '}
-            <Text style={styles.loginLink} onPress={() => router.push('/LogInPage')}>
+            <Text style={styles.loginLink} onPress={() => router.push('/sign in/LogInPage')}>
               Login Here
             </Text>
           </Text>

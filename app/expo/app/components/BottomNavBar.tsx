@@ -11,21 +11,20 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ activePage }) => {
   const router = useRouter();
   const { width } = useWindowDimensions();
 
-  return (
-    <View style={styles.bottomNav}>
-      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/HomePage')}>
+  return (    <View style={styles.bottomNav}>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/home')}>
         <Ionicons name="home-outline" size={24} color={activePage === 'HomePage' ? '#EDAE49' : '#B0B0B0'} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/ServicesPage')}>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/services')}>
         <Ionicons name="apps-outline" size={24} color={activePage === 'ServicesPage' ? '#EDAE49' : '#B0B0B0'} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.centerNavButton} onPress={() => router.push('/BookAppointmentPage')}>
+      <TouchableOpacity style={styles.centerNavButton} onPress={() => router.push('/(tabs)/bookings/BookAppointmentPage')}>
         <Ionicons name="calendar-outline" size={28} color="#fff" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navItem} onPress={() => router.push('/SavedPage')}>
         <Ionicons name="bookmark-outline" size={24} color={activePage === 'SavedPage' ? '#EDAE49' : '#B0B0B0'} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/Profile')}>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/profile')}>
         <Ionicons name="person-outline" size={24} color={activePage === 'Profile' ? '#EDAE49' : '#B0B0B0'} />
       </TouchableOpacity>
     </View>

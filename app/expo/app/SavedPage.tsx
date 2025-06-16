@@ -9,8 +9,7 @@ const savedItems = [
   {
     id: '1',
     category: 'Beauty & Personal Care',
-    items: [
-      {
+    items: [      {
         id: '1-1',
         name: 'Ink Haven Tattoo Studio',
         image: require('../assets/images/ink-haven.png'), // Placeholder image

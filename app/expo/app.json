@@ -17,13 +17,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
-    },
-    "web": {
+    },    "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
+      "favicon": "./assets/images/favicon.png",
+      "lang": "en",
+      "name": "BooklyPH - Service Booking Platform",
+      "description": "Professional service booking platform for salons, spas, gyms and more",
+      "themeColor": "#000000",
+      "backgroundColor": "#ffffff",
+      "startUrl": "/",
+      "display": "standalone",
+      "orientation": "portrait"
+    },    "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
@@ -35,9 +41,16 @@
         }
       ],
       "expo-font"
-    ],
-    "experiments": {
+    ],    "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    },
+    "developmentClient": {
+      "silentLaunch": true
     }
   }
 }

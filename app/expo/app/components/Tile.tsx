@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { TileProps } from '../types/interfaces';
+import { TileProps } from '../../lib/interfaces';
 
 export const Tile: React.FC<TileProps> = ({ label, onPress, iconName, imageSource }) => (
   <TouchableOpacity style={styles.tile} onPress={onPress}>

@@ -1,27 +1,20 @@
 "use client";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Image from "next/image";
-import { useAuth } from "../../auth/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SparklesText } from "../../../components/magicui/sparkles-text";
-import { BentoGrid } from "../../../components/magicui/bento-grid";
-import { BoxReveal } from "../../../components/magicui/box-reveal";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { BlurFade } from "../../../components/magicui/blur-fade";
+import { BoxReveal } from "../../../components/magicui/box-reveal";
+import { SparklesText } from "../../../components/magicui/sparkles-text";
+import { useAuth } from "../../auth/AuthContext";
 
 const CATEGORIES = [
-  "Health & Wellness",
-  "Beauty & Personal Care",
-  "Automotive Services",
-  "Fitness & Sports",
-  "Home Service",
-  "Tech & IT Services",
-  "Pet Care",
-  "Laundry",
-  "Events",
-  "Education",
-  "Legal",
-  "Finance",
+  { name: "Health & Wellness", image: "/assets/placeholder_lotus.png" },
+  { name: "Beauty & Personal Care", image: "/assets/placeholder_scissors.png" },
+  { name: "Automotive Services", image: "/assets/placeholder_hammer.png" },
+  { name: "Fitness & Sports", image: "/assets/placeholder_muscle.png" },
+  { name: "Home Services", image: "/assets/placeholder_house.png" },
+  { name: "Tech & IT Services", image: "/assets/placeholder_monitor.png" },
 ];
 
 const STATS = [
@@ -41,21 +34,14 @@ const STATS = [
   },
 ];
 
-const ITEMS_PER_PAGE = 6;
-
 export default function HeroSection() {
   const { signedIn } = useAuth();
   const router = useRouter();
-
   const [categories] = useState(CATEGORIES);
   const [stats] = useState(STATS);
   const [loading] = useState(false);
-  const [page, setPage] = useState(0);
   const [clickedIdx, setClickedIdx] = useState<number | null>(null);
-  const [pageAnimating, setPageAnimating] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
-
-  const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
 
   useEffect(() => {
     if (signedIn !== undefined) {
@@ -65,23 +51,11 @@ export default function HeroSection() {
       }
     }
   }, [signedIn, router]);
-
   const handleCategoryClick = (idx: number) => {
     setClickedIdx(idx);
     setTimeout(() => setClickedIdx(null), 150);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPageAnimating(true);
-    setTimeout(() => {
-      setPage(newPage);
-      setPageAnimating(false);
-    }, 300);
-  };
-
-  const handleCategoryAction = (e: React.MouseEvent, category: string) => {
-    e.stopPropagation();
-    alert(`Clicked ${category}`);
+    // Handle category navigation here
+    alert(`Clicked ${categories[idx].name}`);
   };
 
   if (!authChecked) {
@@ -93,11 +67,6 @@ export default function HeroSection() {
   }
 
   if (!signedIn) return null;
-
-  const currentCategories = categories.slice(
-    page * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-  );
 
   return (
     <>
@@ -242,62 +211,43 @@ export default function HeroSection() {
             </div>
           </BlurFade>
         </div>
-      </main>
+      </main>      {/* BUSINESS CATEGORIES */}
+      <section className="w-full flex flex-col items-center mt-16 px-4 bg-gray-50 py-16">
+        <div className="w-full max-w-6xl">
+          <h2 className="font-bold text-3xl md:text-4xl mb-12 text-gray-900 text-center">
+            Business Categories
+          </h2>
 
-      {/* BUSINESS CATEGORIES */}
-      <section className="w-full flex flex-col items-center mt-16 px-4">
-        <h2 className="max-w-7xl font-bold text-3xl md:text-6xl mb-8 text-gray-900 w-full">
-          Business Categories
-        </h2>
-
-        <div className="w-full max-w-7xl">
           {loading ? (
             <div className="text-center py-16 text-lg text-gray-500">
               Loading...
             </div>
           ) : (
-            <BentoGrid
-              className={`gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full transition-all duration-300 ${
-                pageAnimating
-                  ? "opacity-0 translate-y-4"
-                  : "opacity-100 translate-y-0"
-              }`}
-            >
-              {currentCategories.map((category, idx) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              {categories.map((category, idx) => (
                 <div
-                  key={category}
-                  className={`flex flex-col items-center justify-center border-2 border-blue-600 bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer ${
-                    clickedIdx === idx ? "scale-95" : ""
+                  key={category.name}
+                  className={`flex flex-col items-center justify-center bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] cursor-pointer border border-gray-200 hover:border-cyan-300 min-h-[200px] ${
+                    clickedIdx === idx ? "scale-[0.98] shadow-lg" : ""
                   }`}
                   onClick={() => handleCategoryClick(idx)}
                 >
-                  <span className="text-lg font-semibold text-blue-600 mb-2">
-                    {category}
+                  <div className="w-20 h-20 mb-6 flex items-center justify-center">
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <span className="text-lg font-medium text-gray-700 text-center leading-snug">
+                    {category.name}
                   </span>
-                  <button
-                    className="px-3 py-2 rounded-lg border border-blue-600 font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
-                    onClick={(e) => handleCategoryAction(e, category)}
-                  >
-                    View Providers
-                  </button>
                 </div>
               ))}
-            </BentoGrid>
+            </div>
           )}
-
-          {/* Pagination */}
-          <div className="flex justify-center gap-3 mt-8">
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <button
-                key={idx}
-                aria-label={`Go to page ${idx + 1}`}
-                onClick={() => handlePageChange(idx)}
-                className={`w-4 h-4 rounded-full border-2 border-yellow-400 transition-all ${
-                  idx === page ? "bg-yellow-400" : "bg-white"
-                }`}
-              />
-            ))}
-          </div>
         </div>
       </section>
 
