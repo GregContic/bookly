@@ -4,8 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BlurFade } from "../../../components/magicui/blur-fade";
-import { BoxReveal } from "../../../components/magicui/box-reveal";
-import { SparklesText } from "../../../components/magicui/sparkles-text";
 import { useAuth } from "../../auth/AuthContext";
 
 const CATEGORIES = [
@@ -42,6 +40,7 @@ export default function HeroSection() {
   const [loading] = useState(false);
   const [clickedIdx, setClickedIdx] = useState<number | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [userName] = useState("User"); // This could be connected to user profile later
 
   useEffect(() => {
     if (signedIn !== undefined) {
@@ -158,61 +157,57 @@ export default function HeroSection() {
           animation: floatReverse 3.8s ease-in-out infinite;
           animation-delay: 0.8s;
         }
-      `}</style>
-
-      {/* HERO SECTION */}
-      <main className="min-h-[80vh] flex items-center justify-between bg-white px-4">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
-          <div className="w-1/2 min-w-80 flex flex-col justify-center">
-            <BlurFade delay={0.25} inView>
-              <BoxReveal>
-                <SparklesText>
-                  <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-                    All your essential
-                    <br />
-                    services, just a<br />
-                    tap away.
-                  </h1>
-                </SparklesText>
-              </BoxReveal>
-            </BlurFade>
-
-            <BlurFade delay={0.5} inView>
-              <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mb-9">
-                Seamless scheduling for beauty, wellness, home, and more. Find
-                trusted providers and manage your appointments with ease
-              </p>
-            </BlurFade>
-
-            <BlurFade delay={0.75} inView>
-              <BoxReveal>
-                <div className="flex items-center gap-3 max-w-2xl">
-                  <input
-                    type="text"
-                    placeholder="What service are you looking for?"
-                    className="flex-1 px-5 py-3 rounded-xl border-2 border-gray-400 focus:border-yellow-500 focus:outline-none shadow transition-colors"
-                  />
-                  <button className="px-7 py-3 rounded-xl font-semibold text-lg bg-yellow-400 text-gray-900 hover:bg-yellow-500 transition-colors shadow-sm">
-                    Search
-                  </button>
-                </div>
-              </BoxReveal>
-            </BlurFade>
+      `}</style>      {/* HERO SECTION */}
+      <main className="min-h-[60vh] flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-yellow-50 px-4 py-16 relative">
+        {/* Notification Bell */}
+        <div className="absolute top-6 right-6">
+          <div className="relative">
+            <svg 
+              className="w-8 h-8 text-orange-400 hover:text-orange-500 cursor-pointer transition-colors" 
+              fill="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            {/* Notification dot */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>
           </div>
+        </div>
 
-          <BlurFade delay={1} inView>
-            <div className="w-[600px] h-[600px] flex items-center justify-center">
-              <DotLottieReact
-                src="https://lottie.host/6c6d90ad-cba3-4e19-bf86-1ed2dc33adcf/spHihscbp6.lottie"
-                loop
-                autoplay
-                className="w-full h-full"
+        <div className="w-full max-w-2xl mx-auto text-center">          <BlurFade delay={0.25} inView>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+              Welcome, {userName}! 👋
+            </h1>
+          </BlurFade>
+
+          <BlurFade delay={0.5} inView>
+            <p className="text-lg md:text-xl text-gray-600 mb-8 font-medium">
+              What service are you looking for today?
+            </p>
+          </BlurFade>
+
+          <BlurFade delay={0.75} inView>
+            <div className="relative max-w-lg mx-auto">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full px-6 py-4 pr-12 rounded-full border border-gray-200 bg-white focus:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-100 shadow-sm text-gray-700 placeholder-gray-400 transition-all"
               />
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <svg 
+                  className="w-5 h-5 text-gray-400" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
             </div>
           </BlurFade>
         </div>
       </main>      {/* BUSINESS CATEGORIES */}
-      <section className="w-full flex flex-col items-center mt-16 px-4 bg-gray-50 py-16">
+      <section className="w-full flex flex-col items-center mt-8 px-4 bg-gray-50 py-16">
         <div className="w-full max-w-6xl">
           <h2 className="font-bold text-3xl md:text-4xl mb-12 text-gray-900 text-center">
             Business Categories
