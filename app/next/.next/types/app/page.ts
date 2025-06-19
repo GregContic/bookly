@@ -1,4 +1,4 @@
-// File: C:\Users\ACER\OneDrive\Desktop\idk\BooklyPH\bookly-ph-native\app\next\app\page.tsx
+// File: D:\Bookly PH\bookly-ph-native\app\next\app\page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

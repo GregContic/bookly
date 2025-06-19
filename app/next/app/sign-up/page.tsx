@@ -1,8 +1,8 @@
 "use client";
-import { useAuth } from "../auth/AuthContext";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 
 export default function SignUp() {
   const { signedIn, setSignedIn } = useAuth();
@@ -43,13 +43,20 @@ if (signedIn) return null;
         alignItems: "flex-start",
         justifyContent: "flex-start",
       }}
-    >
-      <Link
+    >      <Link
         href="/"
         className="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors px-8 py-6"
         style={{ position: "absolute", top: 0, left: 0 }}
       >
-        BOOKLY PH
+        <img
+          src="/assets/logo-header.png"
+          alt="Bookly PH Logo"
+          style={{
+            height: "40px",
+            width: "auto",
+            objectFit: "contain"
+          }}
+        />
       </Link>
       <div
         style={{

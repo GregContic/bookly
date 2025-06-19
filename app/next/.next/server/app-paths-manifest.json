@@ -1,4 +1,11 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/sign-in/page": "app/sign-in/page.js"
+  "/sign-in/page": "app/sign-in/page.js",
+  "/pages/services/page": "app/pages/services/page.js",
+  "/pages/services/shop/[id]/page": "app/pages/services/shop/[id]/page.js",
+  "/pages/about/page": "app/pages/about/page.js",
+  "/pages/services/shop/[id]/book/page": "app/pages/services/shop/[id]/book/page.js",
+  "/pages/contact/page": "app/pages/contact/page.js",
+  "/pages/services/category/[name]/page": "app/pages/services/category/[name]/page.js"
 }
