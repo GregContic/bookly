@@ -1,6 +1,5 @@
 "use client";
-import Image from "next/image";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 
 interface UserProfile {
   username: string;
@@ -8,151 +7,129 @@ interface UserProfile {
   email: string;
   phone: string;
   address: string;
-  avatar: string;
 }
 
 export default function Account() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfile>({
+    username: "Juan",
+    name: "Juan Dela Cruz",
+    email: "name@test.com",
+    phone: "+639123456789",
+    address: "#123 Main St., Baguio City, Philippines, 2600"
+  });
+
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fetch user profile data (making it backend ready)
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch('/api/profile');
-        if (!response.ok) throw new Error('Failed to fetch profile');
-        
-        const data = await response.json();
-        setProfile(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load profile');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsUpdating(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profile),
-      });
-
-      if (!response.ok) throw new Error('Failed to update profile');
-
-      const updatedProfile = await response.json();
-      setProfile(updatedProfile);
-      alert('Profile updated successfully!');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
-    } finally {
-      setIsUpdating(false);
-    }
+    await new Promise(resolve => setTimeout(resolve, 500));
+    alert('Profile updated successfully!');
+    setIsUpdating(false);
   };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    try {
-      const response = await fetch('/api/profile/avatar', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error('Failed to upload image');
-
-      const data = await response.json();
-      setProfile(prev => prev ? { ...prev, avatar: data.avatarUrl } : null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload image');
-    }
-  };
-
-  if (isLoading) return <div>Loading profile...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!profile) return <div>No profile data found</div>;
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-8">Account</h1>
+    <div className="min-h-screen p-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-8">
+          <h1 className="text-2xl font-semibold mb-8">Account</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Picture Section */}
-        <div className="flex justify-center mb-8">
-          <div className="relative">
-            <Image
-              src={profile.avatar}
-              alt="Profile Picture"
-              width={120}
-              height={120}
-              className="rounded-full"
-            />
-            <label 
-              className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg border cursor-pointer"
-              title="Change photo"
-            >
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-              ✏️
-            </label>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Profile Icon */}
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <button
+                  type="button"
+                  className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg border hover:bg-gray-50"
+                  title="Change photo"
+                >
+                  ✏️
+                </button>
+              </div>
+            </div>
+
+            {/* Form Fields */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username:
+                </label>
+                <input
+                  type="text"
+                  value={profile.username}
+                  onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name:
+                </label>
+                <input
+                  type="text"
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone:
+                </label>
+                <input
+                  type="tel"
+                  value={profile.phone}
+                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Address:
+                </label>
+                <input
+                  type="text"
+                  value={profile.address}
+                  onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Update Button */}
+            <div className="flex justify-end pt-4">
+              <button
+                type="submit"
+                disabled={isUpdating}
+                className={`px-6 py-2 bg-[#EDAE49] text-white rounded-lg hover:bg-[#EDAE49]/90 transition-colors
+                  ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isUpdating ? 'Updating...' : 'Update Profile'}
+              </button>
+            </div>
+          </form>
         </div>
-
-        {/* Form Fields */}
-        <div className="space-y-4">
-          {/* ...existing input fields... */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username:
-            </label>
-            <input
-              type="text"
-              value={profile.username}
-              onChange={(e) => setProfile(prev => prev ? { ...prev, username: e.target.value } : null)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EDAE49] focus:border-transparent"
-            />
-          </div>
-
-          {/* Repeat for other fields... */}
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="text-red-600 text-sm">{error}</div>
-        )}
-
-        {/* Update Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isUpdating}
-            className={`px-6 py-2 bg-[#EDAE49] text-white rounded-lg hover:bg-[#EDAE49]/90 transition-colors
-              ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {isUpdating ? 'Updating...' : 'Update Profile'}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

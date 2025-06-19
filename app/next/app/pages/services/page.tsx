@@ -1,68 +1,75 @@
 "use client";
-import React from "react";
+import Link from "next/link";
 
 export default function Services() {
   const footerColor = "#EDAE49";
 
+  // Helper function to generate service ID from name
+  const generateServiceId = (name: string) => {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  };
+
   // Example data for services in categories
   const healthWellness = [
-    { name: "PrimeCare Medical Clinic", logo: "/assets/primecare.png" },
-    { name: "SmileBright Dental", logo: "/assets/smilebright.png" },
-    { name: "Evercare Family Medical Clinic", logo: "/assets/evercare.png" },
-    { name: "Dr.teeth Dental Care", logo: "/assets/drteeth.png" },
-    { name: "Clear Vision Eye Clinic", logo: "/assets/clearvision.png" },
+    { id: generateServiceId("PrimeCare Medical Clinic"), name: "PrimeCare Medical Clinic", logo: "/assets/primecare.png" },
+    { id: generateServiceId("SmileBright Dental"), name: "SmileBright Dental", logo: "/assets/smilebright.png" },
+    { id: generateServiceId("Evercare Family Medical Clinic"), name: "Evercare Family Medical Clinic", logo: "/assets/evercare.png" },
+    { id: generateServiceId("Dr.teeth Dental Care"), name: "Dr.teeth Dental Care", logo: "/assets/drteeth.png" },
+    { id: generateServiceId("Clear Vision Eye Clinic"), name: "Clear Vision Eye Clinic", logo: "/assets/clearvision.png" },
   ];
   const beautyCare = [
-    { name: "Serene Escape Spa", logo: "/assets/sereneescape.png" },
-    { name: "David’s Salon", logo: "/assets/davidsalon.png" },
-    { name: "Ink Haven Tattoo & Peircing Studio", logo: "/assets/inkhaven.png" },
-    { name: "Kwentong Barbero", logo: "/assets/barber-logo.png" },
-    { name: "Tranquil Touch Spa", logo: "/assets/tranquiltouch.png" },
+    { id: generateServiceId("Serene Escape Spa"), name: "Serene Escape Spa", logo: "/assets/sereneescape.png" },
+    { id: generateServiceId("David's Salon"), name: "David's Salon", logo: "/assets/davidsalon.png" },
+    { id: generateServiceId("Ink Haven Tattoo & Peircing Studio"), name: "Ink Haven Tattoo & Peircing Studio", logo: "/assets/inkhaven.png" },
+    { id: generateServiceId("Kwentong Barbero"), name: "Kwentong Barbero", logo: "/assets/barber-logo.png" },
+    { id: generateServiceId("Tranquil Touch Spa"), name: "Tranquil Touch Spa", logo: "/assets/tranquiltouch.png" },
   ];
   const automotive = [
-    { name: "Autocare", logo: "/assets/autocare.png" },
-    { name: "Speedmaster Dhods", logo: "/assets/speedmaster.png" },
-    { name: "TT", logo: "/assets/tt.png" },
-    { name: "ProAuto Detailing", logo: "/assets/proauto.png" },
-    { name: "Shine Car", logo: "/assets/shinecar.png" },
+    { id: generateServiceId("Autocare"), name: "Autocare", logo: "/assets/autocare.png" },
+    { id: generateServiceId("Speedmaster Dhods"), name: "Speedmaster Dhods", logo: "/assets/speedmaster.png" },
+    { id: generateServiceId("TT"), name: "TT", logo: "/assets/tt.png" },
+    { id: generateServiceId("ProAuto Detailing"), name: "ProAuto Detailing", logo: "/assets/proauto.png" },
+    { id: generateServiceId("Shine Car"), name: "Shine Car", logo: "/assets/shinecar.png" },
   ];
   const fitnessSports = [
-    { name: "Zen Yoga Studio", logo: "/assets/zenyoga.png" },
-    { name: "Elevate Dance Academy", logo: "/assets/elevate.png" },
-    { name: "Altitude Gym", logo: "/assets/altitude.png" },
-    { name: "Murphy’s Fitness Gym", logo: "/assets/murphys.png" },
-    { name: "ZenFlow Yoga", logo: "/assets/zenflow.png" },
+    { id: generateServiceId("Zen Yoga Studio"), name: "Zen Yoga Studio", logo: "/assets/zenyoga.png" },
+    { id: generateServiceId("Elevate Dance Academy"), name: "Elevate Dance Academy", logo: "/assets/elevate.png" },
+    { id: generateServiceId("Altitude Gym"), name: "Altitude Gym", logo: "/assets/altitude.png" },
+    { id: generateServiceId("Murphy's Fitness Gym"), name: "Murphy's Fitness Gym", logo: "/assets/murphys.png" },
+    { id: generateServiceId("ZenFlow Yoga"), name: "ZenFlow Yoga", logo: "/assets/zenflow.png" },
   ];
   const homeServices = [
-    { name: "Fresh Nest Cleaning", logo: "/assets/freshnest.png" },
-    { name: "SwiftFix Plumbing Services", logo: "/assets/swiftfix.png" },
-    { name: "Power Pro Repair", logo: "/assets/powerpro.png" },
-    { name: "Baguio Home Cleaners", logo: "/assets/baguiocleaners.png" },
-    { name: "QuickFix Solutions", logo: "/assets/quickfix.png" },
+    { id: generateServiceId("Fresh Nest Cleaning"), name: "Fresh Nest Cleaning", logo: "/assets/freshnest.png" },
+    { id: generateServiceId("SwiftFix Plumbing Services"), name: "SwiftFix Plumbing Services", logo: "/assets/swiftfix.png" },
+    { id: generateServiceId("Power Pro Repair"), name: "Power Pro Repair", logo: "/assets/powerpro.png" },
+    { id: generateServiceId("Baguio Home Cleaners"), name: "Baguio Home Cleaners", logo: "/assets/baguiocleaners.png" },
+    { id: generateServiceId("QuickFix Solutions"), name: "QuickFix Solutions", logo: "/assets/quickfix.png" },
   ];
   const techItServices = [
-    { name: "Byte Fix", logo: "/assets/bytefix.png" },
-    { name: "PC Masters Hub", logo: "/assets/pcmasters.png" },
-    { name: "Mobile Tech Repair Center", logo: "/assets/mobiletech.png" },
-    { name: "CloudSync IT Consulting", logo: "/assets/cloudsync.png" },
-    { name: "TecnoPro", logo: "/assets/tecnopro.png" },
+    { id: generateServiceId("Byte Fix"), name: "Byte Fix", logo: "/assets/bytefix.png" },
+    { id: generateServiceId("PC Masters Hub"), name: "PC Masters Hub", logo: "/assets/pcmasters.png" },
+    { id: generateServiceId("Mobile Tech Repair Center"), name: "Mobile Tech Repair Center", logo: "/assets/mobiletech.png" },
+    { id: generateServiceId("CloudSync IT Consulting"), name: "CloudSync IT Consulting", logo: "/assets/cloudsync.png" },
+    { id: generateServiceId("TecnoPro"), name: "TecnoPro", logo: "/assets/tecnopro.png" },
   ];
 
   // Helper to render a category section
-  function CategorySection({ title, services }: { title: string; services: { name: string; logo: string }[] }) {
+  function CategorySection({ title, services }: { title: string; services: { id: string; name: string; logo: string }[] }) {
     return (
       <>
         <div className="flex flex-row items-center justify-between mb-2 mt-10">
           <div className="text-2xl md:text-3xl font-bold text-black">{title}</div>
-          <button className="text-black text-base underline hover:text-yellow-600 transition">
+          <Link 
+            href={`/pages/services/category/${encodeURIComponent(title)}`}
+            className="text-black text-base underline hover:text-yellow-600 transition"
+          >
             View more
-          </button>
-        </div>
-        <div className="w-full flex flex-row gap-6 overflow-x-auto pb-4">
-          {services.map((svc) => (
-            <div
+          </Link>
+        </div>        <div className="w-full flex flex-row gap-6 overflow-x-auto pb-4">
+          {services.map((svc) => (            <Link
               key={svc.name}
-              className="flex flex-col items-center bg-white border border-gray-300 rounded-xl min-w-[220px] max-w-[240px] px-4 py-6 shadow-sm hover:shadow-lg transition"
+              href={`/pages/services/shop/${svc.id}`}
+              className="flex flex-col items-center bg-white border border-gray-300 rounded-xl min-w-[220px] max-w-[240px] px-4 py-6 shadow-sm hover:shadow-lg transition cursor-pointer relative group"
               style={{ flex: "0 0 220px" }}
             >
               <img
@@ -80,7 +87,7 @@ export default function Services() {
               <div className="text-base font-semibold text-center mt-2">
                 {svc.name}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </>

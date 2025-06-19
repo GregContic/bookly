@@ -55,53 +55,129 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+        </div>        {/* What We Offer Section - Clipboard Style */}
+        <div className="flex justify-center mb-20">
+          <div className="relative">
+            {/* Clipboard Background */}
+            <div className="bg-[#007ACC] p-8 rounded-lg shadow-lg relative">
+              {/* Clipboard Clip */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-gray-300 rounded-t-lg border-2 border-gray-400"></div>
+              
+              {/* Paper Content */}
+              <div className="bg-white p-8 rounded-lg shadow-inner max-w-2xl">
+                <h2 className={`text-3xl font-bold mb-8 text-black text-center ${montserrat.className}`}>
+                  What we offer:
+                </h2>
+                
+                <div className="space-y-6">
+                  {/* All-in-One Booking */}
+                  <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                    <div className="flex-shrink-0 w-6 h-6 border-2 border-green-600 bg-green-100 rounded flex items-center justify-center mt-1">
+                      <span className="text-green-700 text-sm font-bold">✓</span>
+                    </div>
+                    <p className="text-black text-lg leading-relaxed">
+                      <span className="font-semibold">All-in-One Booking</span> – Find and book clinics, salons, and more in just a few clicks.
+                    </p>
+                  </div>
+
+                  {/* Trusted Providers */}
+                  <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                    <div className="flex-shrink-0 w-6 h-6 border-2 border-green-600 bg-green-100 rounded flex items-center justify-center mt-1">
+                      <span className="text-green-700 text-sm font-bold">✓</span>
+                    </div>
+                    <p className="text-black text-lg leading-relaxed">
+                      <span className="font-semibold">Trusted Providers</span> – We partner with verified professionals to ensure quality services.
+                    </p>
+                  </div>
+
+                  {/* Real-Time Scheduling */}
+                  <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                    <div className="flex-shrink-0 w-6 h-6 border-2 border-green-600 bg-green-100 rounded flex items-center justify-center mt-1">
+                      <span className="text-green-700 text-sm font-bold">✓</span>
+                    </div>
+                    <p className="text-black text-lg leading-relaxed">
+                      <span className="font-semibold">Real-Time Scheduling</span> – Pick an available date and time that suits you best.
+                    </p>
+                  </div>
+
+                  {/* Secure Transactions */}
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-6 h-6 border-2 border-green-600 bg-green-100 rounded flex items-center justify-center mt-1">
+                      <span className="text-green-700 text-sm font-bold">✓</span>
+                    </div>
+                    <p className="text-black text-lg leading-relaxed">
+                      <span className="font-semibold">Secure Transactions</span> – Safe and hassle-free online payments and booking confirmations.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* What We Offer Section */}
-        <div className="relative bg-[#007ACC] text-white rounded-lg p-8 overflow-hidden">
-          <div className="absolute top-4 right-4">
-            <Image
-              src="/assets/pencil-icon.svg"
-              alt="Pencil Icon"
-              width={40}
-              height={40}
-              className="transform rotate-45"
-            />
-          </div>
-          <h2 className={`text-3xl font-bold mb-6 ${montserrat.className}`}>
-            What we offer:
+        {/* Why Choose Bookly PH Section */}
+        <div className="mb-20">
+          <h2 className={`text-4xl font-bold mb-12 text-center text-black ${montserrat.className}`}>
+            Why Choose Bookly PH?
           </h2>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded border border-white flex items-center justify-center mt-1">
-                ✓
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Convenience */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-orange-400 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                  <span className="text-green-500 text-xl">✓</span>
+                </div>
               </div>
-              <p className="flex-1">
-                All-in-One Booking – Find and book clinics, salons, and more in just a few clicks.
+              <h3 className={`text-xl font-semibold mb-3 text-black ${montserrat.className}`}>
+                Convenience
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                No more long calls or waiting in line—book anytime, anywhere!
               </p>
             </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded border border-white flex items-center justify-center mt-1">
-                ✓
+
+            {/* Reliability */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-blue-400 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                  <span className="text-blue-500 text-xl">🕐</span>
+                </div>
               </div>
-              <p className="flex-1">
-                Trusted Providers – We partner with verified professionals to ensure quality services.
+              <h3 className={`text-xl font-semibold mb-3 text-black ${montserrat.className}`}>
+                Reliability
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Your appointments are confirmed, and reminders keep you updated.
               </p>
             </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded border border-white flex items-center justify-center mt-1">
-                ✓
+
+            {/* Diverse Services */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-cyan-300 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                  <span className="text-purple-500 text-xl">👥</span>
+                </div>
               </div>
-              <p className="flex-1">
-                Real-Time Scheduling – Pick an available date and time that suits you best.
+              <h3 className={`text-xl font-semibold mb-3 text-black ${montserrat.className}`}>
+                Diverse Services
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                From beauty & wellness to tech & home repairs, we've got it all.
               </p>
             </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded border border-white flex items-center justify-center mt-1">
-                ✓
+
+            {/* Baguio-Focused */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-orange-500 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                  <span className="text-orange-600 text-xl">🎯</span>
+                </div>
               </div>
-              <p className="flex-1">
-                Secure Transactions – Safe and hassle-free online payments and booking confirmations.
+              <h3 className={`text-xl font-semibold mb-3 text-black ${montserrat.className}`}>
+                Baguio-Focused
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Tailored specifically for residents and businesses in Baguio City.
               </p>
             </div>
           </div>
