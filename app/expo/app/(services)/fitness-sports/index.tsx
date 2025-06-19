@@ -2,19 +2,17 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
-    Animated,
-    Image,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Animated,
+  Image,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from '../../_components/BottomNavBar';
 
 /**
  * ===========================================
@@ -176,8 +174,7 @@ export default function FitnessAndSportsPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
+    <SafeAreaView style={styles.safeArea}>      {/* Header */}
       <Animated.View 
         style={[
           styles.headerRow,
@@ -187,13 +184,11 @@ export default function FitnessAndSportsPage() {
           }
         ]}
       >
-        <TouchableOpacity onPress={handleBack}>
-          <Ionicons name="chevron-back" size={24} color="#B0B0B0" />
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Fitness & Sports</Text>
-        <TouchableOpacity>
-          <Ionicons name="heart-outline" size={24} color="#B0B0B0" />
-        </TouchableOpacity>
+        <View style={styles.headerPlaceholder} />
       </Animated.View>
 
       {/* Search Bar */}
@@ -354,9 +349,7 @@ export default function FitnessAndSportsPage() {
           </Animated.View>
         ))}
       </ScrollView>
-      
-      <BottomNavBar activePage='FitnessAndSportsPage' />
-    </SafeAreaView>
+      </SafeAreaView>
   );
 }
 
@@ -374,32 +367,52 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-  },
-  headerRow: {
+  },  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: '5%',
-    paddingTop: Platform.OS === 'ios' ? '15%' : '18%',
-    paddingBottom: '2%',
-    backgroundColor: 'transparent',
+    paddingTop: Platform.OS === 'ios' ? '12%' : '15%',
+    paddingBottom: '3%',
+    backgroundColor: '#FFF8E7',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  backButton: {
+    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 20,
   },
   headerTitle: {
-    fontSize: Platform.OS === 'ios' ? 20 : 22,
-    fontWeight: 'bold',
-    color: '#EDAE49',
+    fontSize: Platform.OS === 'ios' ? 18 : 20,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    flex: 1,
   },
-  searchContainer: {
+  headerPlaceholder: {
+    width: 40,
+    height: 40,
+  },  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderRadius: 25,
     marginHorizontal: '5%',
-    marginBottom: '2%',
-    paddingHorizontal: '3%',
-    height: Platform.OS === 'ios' ? 40 : 45,
+    marginTop: '2%',
+    marginBottom: '4%',
+    paddingHorizontal: '4%',
+    height: Platform.OS === 'ios' ? 45 : 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,

@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import { useAuth } from '../../_context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function LogInPage() {
   const router = useRouter();

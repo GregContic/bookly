@@ -6,7 +6,7 @@ import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, 
 //Navigations:
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../_context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function RegistrationPage() {
   const router = useRouter();

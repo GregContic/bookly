@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from '../_context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 function CustomDrawerContent(props: any) {
   const router = useRouter();

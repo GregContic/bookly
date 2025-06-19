@@ -1,10 +1,10 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import { useAuth } from '../../../_context/AuthContext';
+import { useAuth } from '../../../../context/AuthContext';
 
 const STORAGE_KEY = 'userProfileData';
 const COVER_PHOTO_KEY = 'userCoverPhoto';
@@ -127,7 +127,7 @@ export default function Profile() {
   const handleLogout = async () => {
     try {
       await signOut();
-      router.replace('/LogInPage');
+      router.replace('/(auth)/login');
     } catch (error) {
       Alert.alert('Error', 'Failed to log out. Please try again.');
     }
@@ -197,12 +197,11 @@ export default function Profile() {
           </Text>
         </View>
       </View>
-      <View style={[styles.buttonList, { marginTop: dynamicSpacing(10) }]}>
-        {[
-          { icon: 'person-outline', text: 'Account Setting', onPress: () => router.push('/AccountSettingPage') },
-          { icon: 'history', text: 'Appointment History', onPress: () => router.push('/AppointmentHistory') },
-          { icon: 'help-outline', text: 'Support & Help Center', onPress: () => router.push('/SupportHelpCenter') },
-          { icon: 'logout', text: 'Log Out', onPress: handleLogout }
+      <View style={[styles.buttonList, { marginTop: dynamicSpacing(10) }]}>        {[
+          { icon: 'person-outline', text: 'Account Setting', onPress: () => router.push('/(account)/settings') },
+          { icon: 'time-outline', text: 'Appointment History', onPress: () => router.push('/AppointmentHistory') },
+          { icon: 'help-circle-outline', text: 'Support & Help Center', onPress: () => router.push('/(account)/support') },
+          { icon: 'log-out-outline', text: 'Log Out', onPress: handleLogout }
         ].map((button, index) => (
           <TouchableOpacity 
             key={index}
@@ -213,9 +212,8 @@ export default function Profile() {
               borderRadius: dynamicSpacing(18)
             }]}
             onPress={button.onPress}
-          >
-            <MaterialIcons 
-              name={button.icon} 
+          >            <Ionicons 
+              name={button.icon as any} 
               size={dynamicFontSize(24)} 
               color="#EDAE49" 
               style={[styles.buttonIcon, { marginRight: dynamicSpacing(14) }]} 

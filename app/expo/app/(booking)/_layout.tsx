@@ -77,13 +77,7 @@ export default function BookingLayout() {
               <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <BookingProgress currentStep={1} totalSteps={5} />
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
-                  <Text style={{
-                    color: '#FFFFFF',
-                    fontSize: 18,
-                    fontWeight: '600',
-                  }}>
-                    Select Service & Trainer
-                  </Text>
+                  
                 </View>
               </View>
             ),
@@ -99,13 +93,7 @@ export default function BookingLayout() {
               <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <BookingProgress currentStep={2} totalSteps={5} />
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
-                  <Text style={{
-                    color: '#FFFFFF',
-                    fontSize: 18,
-                    fontWeight: '600',
-                  }}>
-                    Select Date & Time
-                  </Text>
+              
                 </View>
               </View>
             ),
@@ -122,13 +110,7 @@ export default function BookingLayout() {
               <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <BookingProgress currentStep={3} totalSteps={5} />
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
-                  <Text style={{
-                    color: '#FFFFFF',
-                    fontSize: 18,
-                    fontWeight: '600',
-                  }}>
-                    Review Booking
-                  </Text>
+             
                 </View>
               </View>
             ),
@@ -171,13 +153,7 @@ export default function BookingLayout() {
                   </View>
                 </View>
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
-                  <Text style={{
-                    color: '#FFFFFF',
-                    fontSize: 18,
-                    fontWeight: '600',
-                  }}>
-                    🔒 Secure Payment
-                  </Text>
+                 
                 </View>
               </View>
             ),

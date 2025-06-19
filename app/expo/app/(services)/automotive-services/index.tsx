@@ -2,19 +2,17 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
-    Animated,
-    Image,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Animated,
+  Image,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from '../../_components/BottomNavBar';
 
 /**
  * ===========================================
@@ -338,10 +336,7 @@ export default function AutomotiveServicesPage() {
             </Animated.View>
           ))}
         </Animated.View>
-      </ScrollView>
-
-      <BottomNavBar activePage='AutomotiveServicesPage' />
-    </SafeAreaView>
+      </ScrollView>    </SafeAreaView>
   );
 }
 

@@ -1,4 +1,4 @@
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
@@ -11,10 +11,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  useWindowDimensions
+  View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from '../../_components/BottomNavBar';
 
 /**
  * ===========================================
@@ -168,36 +166,10 @@ export default function HealthWellnessPage() {
   const handleServicePress = (service: any) => {
     // Navigate to service details or booking page
     router.push('/BookAppointmentPage');
-  };
-
-  return (
-    <SafeAreaView style={styles.safeArea}>      {/* Header */}
-      <Animated.View 
-        style={[
-          styles.headerRow,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
-      >
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Health & Wellness</Text>
-        <View style={styles.headerSpacer} />
-      </Animated.View>
-
+  };  return (    <SafeAreaView style={styles.safeArea}>
       {/* Search Bar */}
-      <Animated.View 
-        style={[
-          styles.searchContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
-      >        <TextInput 
+      <View style={styles.searchContainer}>
+        <TextInput 
           style={styles.searchInput} 
           placeholder="Search..." 
           placeholderTextColor="#999" 
@@ -207,7 +179,7 @@ export default function HealthWellnessPage() {
           size={16} 
           color="#999" 
         />
-      </Animated.View>
+      </View>
 
       <ScrollView 
         contentContainerStyle={[
@@ -284,8 +256,7 @@ export default function HealthWellnessPage() {
           ))}
         </ScrollView>
 
-        {/* All Health Services */}
-        <Animated.Text 
+        {/* All Health Services */}        <Animated.Text 
           style={[
             styles.sectionTitle,
             {
@@ -294,7 +265,7 @@ export default function HealthWellnessPage() {
             }
           ]}
         >
-          All Health & Wellness Services
+          All Services
         </Animated.Text>
 
         {healthWellnessServices.map((item, index) => (
@@ -342,10 +313,7 @@ export default function HealthWellnessPage() {
               </TouchableOpacity>
             </View>
           </Animated.View>
-        ))}
-      </ScrollView>
-      
-      <BottomNavBar activePage='ServicesPage' />
+        ))}      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -369,15 +337,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: '5%',
-    paddingTop: Platform.OS === 'ios' ? '12%' : '8%',
+    paddingTop: Platform.OS === 'ios' ? '12%' : '15%',
     paddingBottom: '3%',
-    backgroundColor: '#F8F5F0',
+    backgroundColor: '#FFF8E7',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   backButton: {
     padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 20,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: Platform.OS === 'ios' ? 18 : 20,
     fontWeight: '600',
     color: '#333',
     textAlign: 'center',
@@ -389,19 +366,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderRadius: 25,
     marginHorizontal: '5%',
+    marginTop: '5%',
     marginBottom: '4%',
-    paddingHorizontal: 15,
-    height: 44,
+    paddingHorizontal: '4%',
+    height: Platform.OS === 'ios' ? 45 : 50,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowRadius: 4,
     elevation: 2,
-  },  searchInput: {
+  },searchInput: {
     flex: 1,
     fontSize: 16,
     color: '#333',

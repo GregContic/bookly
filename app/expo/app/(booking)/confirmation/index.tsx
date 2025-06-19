@@ -12,7 +12,7 @@ import {
     View,
     useWindowDimensions
 } from 'react-native';
-import { generateBookingId, useBooking } from '../../_context/BookingContext';
+import { generateBookingId, useBooking } from '../../../context/BookingContext';
 
 /**
  * ===========================================
@@ -116,7 +116,7 @@ export default function BookingConfirmationPage() {
 
   const handleBackToHome = () => {
     // Navigate back to home page
-    router.push('/HomePage');
+    router.push('/(drawer)/(tabs)/home');
   };
 
   return (

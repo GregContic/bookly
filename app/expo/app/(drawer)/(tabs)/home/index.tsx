@@ -4,18 +4,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Animated,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 // Components
-import BottomNavBar from '../../../_components/BottomNavBar';
 import { InfoCard } from '../../../_components/InfoCard';
 import { Tile } from '../../../_components/Tile';
 
@@ -29,7 +28,7 @@ import { serviceAPI } from '../../../_services/serviceAPI';
 import { ServiceData } from '../../../_types/interfaces';
 
 // Context
-import { useAuth } from '../../../_context/AuthContext';
+import { useAuth } from '../../../../context/AuthContext';
 
 // Mock data (replace with API calls)
 const mostBookedServices = [
@@ -441,13 +440,11 @@ export default function HomePage() {
                     <Text style={homeStyles.viewButtonText}>View</Text>
                   </TouchableOpacity>
                 </View>
-              </View>            ))}
-          </Animated.View>
+              </View>            ))}          </Animated.View>
             </>
           )}
         </ScrollView>
       </Animated.View>
-      <BottomNavBar activePage='HomePage' />
     </SafeAreaView>
   );
 }

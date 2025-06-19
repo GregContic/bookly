@@ -11,10 +11,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
-    useWindowDimensions
+    View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from '../../_components/BottomNavBar';
 
 /**
  * ===========================================
@@ -360,10 +358,7 @@ export default function TechItServicesPage() {
             </Animated.View>
           ))}
         </Animated.View>
-      </ScrollView>
-
-      <BottomNavBar activePage='TechItServicesPage' />
-    </SafeAreaView>
+      </ScrollView>    </SafeAreaView>
   );
 }
 

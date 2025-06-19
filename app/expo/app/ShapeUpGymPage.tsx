@@ -10,10 +10,8 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
-    useWindowDimensions
+    View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from './_components/BottomNavBar';
 
 /**
  * ===========================================
@@ -247,10 +245,8 @@ export default function ShapeUpGymPage() {
               <Text style={styles.bookButtonText}>Book an Appointment</Text>
             </TouchableOpacity>
           </Animated.View>
-        </Animated.View>
-      </ScrollView>
+        </Animated.View>      </ScrollView>
       
-      <BottomNavBar activePage='FitnessAndSportsPage' />
     </SafeAreaView>
   );
 }

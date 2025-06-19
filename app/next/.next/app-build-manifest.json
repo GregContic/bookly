@@ -21,16 +21,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/pages/services/page.js"
     ],
-    "/pages/services/shop/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/pages/services/shop/[id]/page.js"
-    ],
-    "/pages/services/shop/[id]/book/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/pages/services/shop/[id]/book/page.js"
-    ],
     "/pages/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -43,15 +33,25 @@
       "static/css/app/pages/contact/page.css",
       "static/chunks/app/pages/contact/page.js"
     ],
-    "/pages/services/category/[name]/page": [
+    "/pages/services/shop/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/pages/services/category/[name]/page.js"
+      "static/chunks/app/pages/services/shop/[id]/page.js"
     ],
-    "/_not-found/page": [
+    "/pages/services/shop/[id]/book/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/pages/services/shop/[id]/book/page.js"
+    ],
+    "/pages/profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pages/profile/page.js"
+    ],
+    "/pages/profile/bookings/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pages/profile/bookings/[id]/page.js"
     ]
   }
 }

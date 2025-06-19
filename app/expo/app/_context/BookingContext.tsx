@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 /**
  * ===========================================
@@ -122,4 +122,9 @@ export function formatBookingDate(date: string): string {
 
 export function formatBookingTime(time: string): string {
   return time;
+}
+
+// Default export for Expo Router
+export default function BookingContextScreen() {
+  return null; // This is a context file, not a screen
 }

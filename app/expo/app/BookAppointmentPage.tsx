@@ -1,7 +1,6 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import BottomNavBar from './_components/BottomNavBar';
 
 // Placeholder data for service categories - replace with actual data structure as needed
 const serviceCategories = [
@@ -214,10 +213,8 @@ export default function BookAppointmentPage() {
                 </Animated.View>
               ))}
             </ScrollView>
-          </Animated.View>
-        ))}
+          </Animated.View>        ))}
       </ScrollView>
-      <BottomNavBar activePage='BookAppointmentPage' />
     </SafeAreaView>
   );
 }

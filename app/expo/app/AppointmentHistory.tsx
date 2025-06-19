@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import { useBooking } from './_context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 
 export default function AppointmentHistory() {
   const router = useRouter();

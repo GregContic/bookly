@@ -41,22 +41,22 @@ const trainers = [
   {
     id: '1',
     name: 'Devon',
-    image: require('../../../assets/images/Logo-1.png'), // Using placeholder, replace with actual trainer images
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
   },
   {
     id: '2',
     name: 'Arlene',
-    image: require('../../../assets/images/Logo-2.png'), // Using placeholder, replace with actual trainer images
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
   },
   {
     id: '3',
     name: 'Darrell',
-    image: require('../../../assets/images/Logo-3.png'), // Using placeholder, replace with actual trainer images
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
   },
   {
     id: '4',
     name: 'Marvin',
-    image: require('../../../assets/images/Logo-1.png'), // Using placeholder, replace with actual trainer images
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
   }
 ];
 
@@ -139,62 +139,35 @@ export default function BookingDetailsPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
+    <SafeAreaView style={styles.safeArea}>      {/* Header */}
       <Animated.View 
         style={[
-          styles.headerRow,
+          styles.headerContainer,
           {
             opacity: fadeAnim,
             transform: [{ translateY: slideAnim }]
           }
         ]}
-      >        <TouchableOpacity onPress={handleBack}>
-          <Ionicons name="chevron-back" size={dynamicFontSize(24)} color="#333" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={[styles.headerTitle, { fontSize: dynamicFontSize(18) }]}>Booking Details</Text>
-          <Text style={[styles.headerSubtitle, { fontSize: dynamicFontSize(12) }]}>Step 1: Select Date & Time</Text>
+      >
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="chevron-back" size={dynamicFontSize(24)} color="#333" />
+          </TouchableOpacity>
+          <View style={styles.headerCenter}>
+            <Text style={[styles.headerTitle, { fontSize: dynamicFontSize(18) }]}>Booking Details</Text>
+            <Text style={[styles.headerSubtitle, { fontSize: dynamicFontSize(13) }]}>Next: Select Date & Time</Text>
+          </View>
+          <View style={styles.headerRight} />
         </View>
-        <View style={[styles.headerRight, { width: dynamicSpacing(24) }]} />
-      </Animated.View>
 
-      {/* Progress Indicator */}
-      <Animated.View 
-        style={[
-          styles.progressContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
-      >        <View style={styles.progressBar}>
-          <View style={[styles.progressStep, styles.progressActive, { 
-            width: dynamicSpacing(30), 
-            height: dynamicSpacing(30), 
-            borderRadius: dynamicSpacing(15) 
-          }]} />
-          <View style={[styles.progressLine, { width: dynamicSpacing(40) }]} />
-          <View style={[styles.progressStep, { 
-            width: dynamicSpacing(30), 
-            height: dynamicSpacing(30), 
-            borderRadius: dynamicSpacing(15) 
-          }]} />
-          <View style={[styles.progressLine, { width: dynamicSpacing(40) }]} />
-          <View style={[styles.progressStep, { 
-            width: dynamicSpacing(30), 
-            height: dynamicSpacing(30), 
-            borderRadius: dynamicSpacing(15) 
-          }]} />
-          <View style={[styles.progressLine, { width: dynamicSpacing(40) }]} />
-          <View style={[styles.progressStep, { 
-            width: dynamicSpacing(30), 
-            height: dynamicSpacing(30), 
-            borderRadius: dynamicSpacing(15) 
-          }]} />
+        {/* Progress Indicator */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressCircle}>
+            <Text style={[styles.progressNumber, { fontSize: dynamicFontSize(16) }]}>1</Text>
+          </View>
+          <Text style={[styles.progressLabel, { fontSize: dynamicFontSize(12) }]}>of 4</Text>
         </View>
-        <Text style={[styles.progressText, { fontSize: dynamicFontSize(12) }]}>1 of 4</Text>
-      </Animated.View>      <ScrollView 
+      </Animated.View><ScrollView 
         contentContainerStyle={[
           styles.scrollContent,
           { 
@@ -203,8 +176,7 @@ export default function BookingDetailsPage() {
           }
         ]} 
         showsVerticalScrollIndicator={false}
-      >
-        {/* Selected Business */}
+      >        {/* Selected Business */}
         <Animated.View 
           style={[
             styles.sectionContainer,
@@ -213,7 +185,8 @@ export default function BookingDetailsPage() {
               transform: [{ translateY: slideAnim }]
             }
           ]}
-        >          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Selected Business:</Text>
+        >
+          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Selected Business:</Text>
           <View style={[styles.businessCard, { 
             borderRadius: dynamicRadius(12), 
             padding: dynamicSpacing(15) 
@@ -221,7 +194,7 @@ export default function BookingDetailsPage() {
             <Image source={selectedBusiness.image} style={[styles.businessImage, { 
               width: dynamicSpacing(50), 
               height: dynamicSpacing(50), 
-              borderRadius: dynamicRadius(8),
+              borderRadius: dynamicRadius(25),
               marginRight: dynamicSpacing(15)
             }]} />
             <View style={styles.businessInfo}>
@@ -233,9 +206,7 @@ export default function BookingDetailsPage() {
               </View>
             </View>
           </View>
-        </Animated.View>
-
-        {/* Select Service */}
+        </Animated.View>        {/* Select Service */}
         <Animated.View 
           style={[
             styles.sectionContainer,
@@ -244,7 +215,8 @@ export default function BookingDetailsPage() {
               transform: [{ translateY: slideAnim }]
             }
           ]}
-        >          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Service:</Text>
+        >
+          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Service:</Text>
           {services.map((service) => (
             <TouchableOpacity
               key={service.id}
@@ -268,14 +240,15 @@ export default function BookingDetailsPage() {
           ))}
           
           <TouchableOpacity 
-            style={[styles.addAnotherButton, { padding: dynamicSpacing(15) }]}
+            style={[styles.addAnotherButton, { 
+              padding: dynamicSpacing(15),
+              borderRadius: dynamicRadius(12)
+            }]}
             onPress={handleAddAnother}
           >
             <Text style={[styles.addAnotherText, { fontSize: dynamicFontSize(14) }]}>+ Add Another</Text>
           </TouchableOpacity>
-        </Animated.View>
-
-        {/* Select Trainer */}
+        </Animated.View>        {/* Select Trainer */}
         <Animated.View 
           style={[
             styles.sectionContainer,
@@ -284,14 +257,10 @@ export default function BookingDetailsPage() {
               transform: [{ translateY: slideAnim }]
             }
           ]}
-        >          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Trainer:</Text>
+        >
+          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Trainer:</Text>
           <View style={styles.trainersGrid}>
             {trainers.map((trainer) => {
-              // Calculate dynamic trainer card width based on screen size
-              const cardWidth = orientation === 'LANDSCAPE' 
-                ? (width - dynamicSpacing(60)) / 6 // 6 cards per row in landscape
-                : (width - dynamicSpacing(60)) / 4; // 4 cards per row in portrait
-              
               return (
                 <TouchableOpacity
                   key={trainer.id}
@@ -299,18 +268,18 @@ export default function BookingDetailsPage() {
                     styles.trainerCard,
                     selectedTrainer?.id === trainer.id && styles.trainerCardSelected,
                     { 
-                      width: cardWidth,
                       borderRadius: dynamicRadius(12), 
                       padding: dynamicSpacing(10),
-                      marginBottom: dynamicSpacing(15)
+                      marginBottom: dynamicSpacing(15),
+                      marginRight: dynamicSpacing(10)
                     }
                   ]}
                   onPress={() => handleSelectTrainer(trainer)}
                 >
                   <Image source={trainer.image} style={[styles.trainerImage, { 
-                    width: dynamicSpacing(40), 
-                    height: dynamicSpacing(40), 
-                    borderRadius: dynamicSpacing(20),
+                    width: dynamicSpacing(50), 
+                    height: dynamicSpacing(50), 
+                    borderRadius: dynamicSpacing(25),
                     marginBottom: dynamicSpacing(8)
                   }]} />
                   <Text style={[styles.trainerName, { fontSize: dynamicFontSize(12) }]}>{trainer.name}</Text>
@@ -318,16 +287,16 @@ export default function BookingDetailsPage() {
               );
             })}
           </View>
-        </Animated.View>
-
-        {/* Pricing Summary */}        <Animated.View 
+        </Animated.View>        {/* Pricing Summary */}
+        <Animated.View 
           style={[
             styles.pricingContainer,
             {
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],
               borderRadius: dynamicRadius(12),
-              padding: dynamicSpacing(20)
+              padding: dynamicSpacing(20),
+              marginBottom: dynamicSpacing(20)
             }
           ]}
         >
@@ -348,9 +317,8 @@ export default function BookingDetailsPage() {
             <Text style={[styles.totalValue, { fontSize: dynamicFontSize(16) }]}>₱{totalAmount.toFixed(2)}</Text>
           </View>
         </Animated.View>
-      </ScrollView>
-
-      {/* Bottom Buttons */}      <Animated.View 
+      </ScrollView>      {/* Bottom Buttons */}
+      <Animated.View 
         style={[
           styles.bottomContainer,
           {
@@ -399,6 +367,14 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+  },  headerContainer: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    paddingBottom: '4%',
   },
   headerRow: {
     flexDirection: 'row',
@@ -406,8 +382,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: '5%',
     paddingTop: Platform.OS === 'ios' ? '5%' : '8%',
-    paddingBottom: '5%',
-    backgroundColor: '#F8F5F0',
+    paddingBottom: '3%',
+  },
+  backButton: {
+    padding: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderRadius: 20,
   },
   headerCenter: {
     flex: 1,
@@ -420,14 +400,32 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     color: '#666',
     marginTop: 2,
-  },
-  headerRight: {
-    // Dynamic width will be set inline
+  },  headerRight: {
+    width: 40,
   },
   progressContainer: {
     alignItems: 'center',
     paddingHorizontal: '5%',
-    paddingBottom: '5%',
+    paddingBottom: '2%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  progressCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#4CAF50',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  progressNumber: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  progressLabel: {
+    color: '#666',
+    fontWeight: '500',
   },
   progressBar: {
     flexDirection: 'row',
@@ -449,23 +447,26 @@ const styles = StyleSheet.create({
   },
   progressText: {
     color: '#666',
-  },
-  sectionContainer: {
+  },  sectionContainer: {
     marginBottom: '6%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: '4%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   sectionTitle: {
     fontWeight: 'bold',
     color: '#333',
     marginBottom: '4%',
-  },  businessCard: {
+  },
+  businessCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   businessImage: {
     // Dynamic dimensions will be set inline
@@ -488,22 +489,17 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     color: '#666',
-  },
-  serviceCard: {
+  },  serviceCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#F8F9FA',
     borderWidth: 2,
     borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   serviceCardSelected: {
     borderColor: '#EDAE49',
+    backgroundColor: '#FFF8E7',
   },
   serviceInfo: {
     flex: 1,
@@ -522,29 +518,29 @@ const styles = StyleSheet.create({
   },
   addAnotherButton: {
     alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderStyle: 'dashed',
   },
   addAnotherText: {
     color: '#EDAE49',
     fontWeight: '500',
-  },
-  trainersGrid: {
+  },  trainersGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   trainerCard: {
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    width: 80,
   },
   trainerCardSelected: {
     borderColor: '#EDAE49',
+    backgroundColor: '#FFF8E7',
   },
   trainerImage: {
     // Dynamic dimensions will be set inline
@@ -584,20 +580,24 @@ const styles = StyleSheet.create({
   totalValue: {
     fontWeight: 'bold',
     color: '#333',
-  },
-  bottomContainer: {
+  },  bottomContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F8F5F0',
+    backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
   },
   cancelButtonText: {
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     flex: 1,
-    backgroundColor: '#B0B0B0',
+    backgroundColor: '#EDAE49',
     alignItems: 'center',
   },
   nextButtonText: {

@@ -2,7 +2,6 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import BottomNavBar from './_components/BottomNavBar';
 
 // Placeholder data for saved items - replace with actual data structure as needed
 const savedItems = [
@@ -161,10 +160,8 @@ export default function SavedPage() {
                 </View>
               </View>
             ))}
-          </View>
-        ))}
+          </View>        ))}
       </ScrollView>
-      <BottomNavBar activePage='SavedPage' />
     </SafeAreaView>
   );
 }

@@ -12,10 +12,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
-    useWindowDimensions
+    View, useWindowDimensions
 } from 'react-native';
-import BottomNavBar from '../../_components/BottomNavBar';
 import ServiceCard from '../../_components/ServiceCard';
 import BeautyPersonalCareAPI from '../../_services/beautyPersonalCareAPI';
 import { Service } from '../../_types/interfaces';
@@ -343,9 +341,7 @@ export default function BeautyPersonalCarePage() {
             { paddingBottom: height * 0.15 }
           ]}
         />
-      )}
-      
-      <BottomNavBar activePage='BeautyPersonalCarePage' />
+      )}      
     </SafeAreaView>
   );
 }

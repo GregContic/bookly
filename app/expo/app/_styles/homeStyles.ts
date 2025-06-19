@@ -104,9 +104,9 @@ export const homeStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginBottom: 20,
-  },
-  cardList: {
-    marginBottom: 20,
+  },  cardList: {
+    marginBottom: 25,
+    paddingHorizontal: 5,
   },
   mostBookedSection: {
     marginTop: 20,

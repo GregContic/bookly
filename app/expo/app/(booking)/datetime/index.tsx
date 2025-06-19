@@ -2,15 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Animated,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Animated,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 
 /**
@@ -40,10 +40,9 @@ const daysOfWeek = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
 export default function SelectDateTimePage() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 2, 1)); // March 2025
+  const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
   
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -77,10 +76,9 @@ export default function SelectDateTimePage() {
 
   const handlePrevious = () => {
     router.back();
-  };
-  const handleNext = () => {
+  };  const handleNext = () => {
     // Navigate to booking summary page
-    router.push('/BookingSummaryPage');
+    router.push('/(booking)/summary');
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -336,20 +334,22 @@ export default function SelectDateTimePage() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F5F0',
+    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 20 : 30,
-    paddingBottom: 20,
-    backgroundColor: '#F8F5F0',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 15 : 25,
+    paddingBottom: 15,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
   headerCenter: {
     flex: 1,
@@ -357,12 +357,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600',
+    color: '#1A1A1A',
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#666',
+    color: '#666666',
     marginTop: 2,
   },
   headerRight: {
@@ -370,100 +370,103 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
   },
   progressBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   progressStep: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#E0E0E0',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#E8E8E8',
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: '#E8E8E8',
   },
   progressActive: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
   },
   progressCompleted: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
   },
   progressLine: {
-    width: 40,
+    width: 32,
     height: 2,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#E8E8E8',
   },
   progressLineCompleted: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007AFF',
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
+    color: '#666666',
+    fontWeight: '500',
   },
   sectionContainer: {
-    marginBottom: 25,
+    marginBottom: 32,
+    backgroundColor: '#FFFFFF',
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginBottom: 16,
   },
   calendarHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
-    paddingHorizontal: 10,
+    marginBottom: 16,
+    paddingHorizontal: 8,
   },
   monthYear: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600',
+    color: '#1A1A1A',
   },
   daysHeader: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 10,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    marginBottom: 8,
+    paddingVertical: 12,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
   },
   dayHeaderText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
-    color: '#666',
+    color: '#666666',
     width: '14.28%',
     textAlign: 'center',
   },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 5,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 4,
   },
   dayCell: {
     width: '14.28%',
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 1,
+    margin: 2,
     borderRadius: 8,
   },
   selectedDay: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007AFF',
   },
   todayDay: {
     backgroundColor: '#E3F2FD',
     borderWidth: 1,
-    borderColor: '#2196F3',
+    borderColor: '#007AFF',
   },
   pastDay: {
     opacity: 0.3,
@@ -473,22 +476,22 @@ const styles = StyleSheet.create({
   },
   dayText: {
     fontSize: 14,
-    color: '#333',
+    color: '#1A1A1A',
     fontWeight: '500',
   },
   selectedDayText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   todayDayText: {
-    color: '#2196F3',
-    fontWeight: 'bold',
+    color: '#007AFF',
+    fontWeight: '600',
   },
   pastDayText: {
-    color: '#999',
+    color: '#CCCCCC',
   },
   inactiveDayText: {
-    color: '#999',
+    color: '#CCCCCC',
   },
   timeSlotsGrid: {
     flexDirection: 'row',
@@ -497,36 +500,36 @@ const styles = StyleSheet.create({
   },
   timeSlot: {
     width: '30%',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    paddingVertical: 14,
     paddingHorizontal: 8,
-    marginBottom: 10,
+    marginBottom: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#E8E8E8',
   },
   selectedTimeSlot: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
   },
   timeSlotText: {
     fontSize: 12,
-    color: '#333',
+    color: '#1A1A1A',
     fontWeight: '500',
   },
   selectedTimeSlotText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   bottomContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    paddingBottom: Platform.OS === 'ios' ? 35 : 25,
-    backgroundColor: '#F8F5F0',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 20,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: '#F0F0F0',
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -534,34 +537,36 @@ const styles = StyleSheet.create({
   },
   previousButton: {
     flex: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#F8F9FA',
     borderRadius: 12,
-    paddingVertical: 15,
-    marginRight: 10,
+    paddingVertical: 16,
+    marginRight: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
   },
   previousButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
+    fontWeight: '600',
+    color: '#666666',
   },
   nextButton: {
     flex: 1,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007AFF',
     borderRadius: 12,
-    paddingVertical: 15,
-    marginLeft: 10,
+    paddingVertical: 16,
+    marginLeft: 8,
     alignItems: 'center',
   },
   nextButtonDisabled: {
-    backgroundColor: '#B0B0B0',
+    backgroundColor: '#CCCCCC',
   },
   nextButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   nextButtonTextDisabled: {
-    color: '#fff',
+    color: '#FFFFFF',
   },
 });

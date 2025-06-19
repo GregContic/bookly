@@ -2,7 +2,6 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Animated, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import BottomNavBar from './_components/BottomNavBar';
 
 const featuredServices = [
   {
@@ -270,10 +269,8 @@ export default function ServicesPage() {
                 <Text style={styles.bookNowTextSmall}>Book Now</Text>
               </TouchableOpacity>
             </View>
-          </Animated.View>
-        ))}
+          </Animated.View>        ))}
       </ScrollView>
-      <BottomNavBar activePage='ServicesPage' />
     </SafeAreaView>
   );
 }
