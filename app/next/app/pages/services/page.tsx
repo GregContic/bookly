@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Header from "../../../components/header";
 
 export default function Services() {
   const footerColor = "#EDAE49";
@@ -93,18 +94,19 @@ export default function Services() {
       </>
     );
   }
-
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "center",
-        background: "linear-gradient(120deg, #fff 60%, #EDAE49 120%)",
-        paddingTop: "8vh",
-      }}
-    >
+    <>
+      <Header />
+      <main
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          background: "linear-gradient(120deg, #fff 60%, #EDAE49 120%)",
+          paddingTop: "8vh",
+        }}
+      >
       <div className="w-full max-w-7xl flex flex-col">
         {/* Header Row */}
         <div className="flex flex-row items-start justify-between mb-8">
@@ -190,10 +192,10 @@ export default function Services() {
         <CategorySection title="Health & Wellness" services={healthWellness} />
         <CategorySection title="Beauty & Personal Care" services={beautyCare} />
         <CategorySection title="Automotive Services" services={automotive} />
-        <CategorySection title="Fitness & Sports" services={fitnessSports} />
-        <CategorySection title="Home Services" services={homeServices} />
+        <CategorySection title="Fitness & Sports" services={fitnessSports} />        <CategorySection title="Home Services" services={homeServices} />
         <CategorySection title="Tech & IT Services" services={techItServices} />
       </div>
     </main>
+    </>
   );
 }

@@ -1,8 +1,1 @@
-{
-  "/pages/services/page": "app/pages/services/page.js",
-  "/pages/contact/page": "app/pages/contact/page.js",
-  "/pages/services/shop/[id]/page": "app/pages/services/shop/[id]/page.js",
-  "/pages/profile/bookings/[id]/page": "app/pages/profile/bookings/[id]/page.js",
-  "/pages/profile/page": "app/pages/profile/page.js",
-  "/pages/services/shop/[id]/book/page": "app/pages/services/shop/[id]/book/page.js"
-}
+{}

@@ -39,9 +39,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="home/index"
-        options={{
-          title: 'Home',          tabBarIcon: ({ color, focused }) => (
+        name="home/index"        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 45,
               height: 45,

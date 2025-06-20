@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
     Animated,
@@ -21,32 +21,32 @@ import { generateBookingId, useBooking } from '../../../context/BookingContext';
  */
 export default function BookingConfirmationPage() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { width, height } = useWindowDimensions();
   const { addBooking } = useBooking();
   
-  // Generate dynamic booking data (this could come from route params in the future)
-  const getCurrentDate = () => {
-    const today = new Date();
-    today.setDate(today.getDate() + Math.floor(Math.random() * 30) + 1); // Random date 1-30 days from now
-    return today.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const getRandomTime = () => {
-    const hours = [8, 9, 10, 11, 14, 15, 16, 17];
-    const randomHour = hours[Math.floor(Math.random() * hours.length)];
-    const minutes = ['00', '30'];
-    const randomMinute = minutes[Math.floor(Math.random() * minutes.length)];
-    const period = randomHour >= 12 ? 'PM' : 'AM';
-    const displayHour = randomHour > 12 ? randomHour - 12 : randomHour;
-    return `${displayHour}:${randomMinute} ${period}`;
-  };
-
-  // Generate booking data
-  const bookingConfirmation = {
+  // Parse booking data from params
+  const bookingData = params.bookingData ? JSON.parse(params.bookingData as string) : null;
+  
+  // Generate booking confirmation data using actual booking data or fallback
+  const bookingConfirmation = bookingData ? {
+    bookingId: generateBookingId(),
+    business: {
+      name: bookingData.business.name,
+    },
+    trainer: {
+      name: bookingData.trainer.name,
+    },
+    service: {
+      name: bookingData.service.name,
+      duration: bookingData.service.duration,
+    },
+    dateTime: {
+      date: bookingData.dateTime.date,
+      time: bookingData.dateTime.time
+    },
+    totalAmount: bookingData.pricing.totalAmount
+  } : {
     bookingId: generateBookingId(),
     business: {
       name: 'Shape Up',
@@ -59,8 +59,12 @@ export default function BookingConfirmationPage() {
       duration: '1 hour',
     },
     dateTime: {
-      date: getCurrentDate(),
-      time: getRandomTime()
+      date: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+      time: '8:00 AM'
     },
     totalAmount: 900.00
   };
@@ -274,16 +278,15 @@ const styles = StyleSheet.create({
   successIconContainer: {
     alignItems: 'center',
     marginBottom: 30,
-  },
-  successIcon: {
+  },  successIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#EDAE49',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: '#81C784',
+    borderColor: '#F4D03F',
   },
   messageContainer: {
     alignItems: 'center',
@@ -385,11 +388,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-  },
-  totalAmount: {
+  },  totalAmount: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: '#EDAE49',
   },
   bottomContainer: {
     paddingHorizontal: 20,
@@ -400,9 +402,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  backToHomeButton: {
-    backgroundColor: '#FF9800',
+  },  backToHomeButton: {
+    backgroundColor: '#EDAE49',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',

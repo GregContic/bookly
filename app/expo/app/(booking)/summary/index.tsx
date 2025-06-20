@@ -1,5 +1,5 @@
 import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
   Animated,
@@ -52,7 +52,65 @@ const bookingSummary = {
  */
 export default function BookingSummaryPage() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { width, height } = useWindowDimensions();
+  
+  // Parse booking data from params, fallback to hardcoded data if not available
+  const bookingData = params.bookingData ? JSON.parse(params.bookingData as string) : null;
+    // Use actual booking data or fallback to hardcoded data
+  const bookingSummary = bookingData ? {
+    service: {
+      businessName: bookingData.business.name,
+      businessImage: typeof bookingData.business.image === 'string' 
+        ? require('../../../assets/images/shapeup_gym.png') 
+        : bookingData.business.image || require('../../../assets/images/shapeup_gym.png'),
+      rating: bookingData.business.rating,
+      reviewCount: bookingData.business.reviewCount,
+      serviceName: bookingData.service.name,
+      duration: bookingData.service.duration,
+      price: bookingData.service.price
+    },
+    dateTime: {
+      date: bookingData.dateTime.date,
+      time: bookingData.dateTime.time
+    },
+    trainer: {
+      name: bookingData.trainer.name,
+      image: typeof bookingData.trainer.image === 'string' 
+        ? require('../../../assets/images/Logo-3.png') 
+        : bookingData.trainer.image || require('../../../assets/images/Logo-3.png'),
+      rating: 4.95 // Default rating
+    },
+    pricing: {
+      subtotal: bookingData.pricing.subtotal,
+      bookingFee: bookingData.pricing.bookingFee,
+      totalAmount: bookingData.pricing.totalAmount
+    }
+  } : {
+    service: {
+      businessName: 'Shape Up',
+      businessImage: require('../../../assets/images/shapeup_gym.png'),
+      rating: 4.95,
+      reviewCount: 1374,
+      serviceName: 'Professional Training',
+      duration: '1 hour',
+      price: 800.00
+    },
+    dateTime: {
+      date: 'March 24, 2025',
+      time: '8:00 AM'
+    },
+    trainer: {
+      name: 'Darrell',
+      image: require('../../../assets/images/Logo-3.png'),
+      rating: 4.95
+    },
+    pricing: {
+      subtotal: 800.00,
+      bookingFee: 100.00,
+      totalAmount: 900.00
+    }
+  };
   
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -87,8 +145,40 @@ export default function BookingSummaryPage() {
   const handlePrevious = () => {
     router.back();
   };  const handleNext = () => {
-    // Navigate to payment method page
-    router.push('/(booking)/payment');
+    // Navigate to confirmation page with complete booking data
+    const completeBookingData = bookingData || {
+      business: {
+        name: bookingSummary.service.businessName,
+        image: bookingSummary.service.businessImage,
+        rating: bookingSummary.service.rating,
+        reviewCount: bookingSummary.service.reviewCount
+      },
+      service: {
+        name: bookingSummary.service.serviceName,
+        duration: bookingSummary.service.duration,
+        price: bookingSummary.service.price
+      },
+      trainer: {
+        name: bookingSummary.trainer.name,
+        image: bookingSummary.trainer.image
+      },
+      dateTime: {
+        date: bookingSummary.dateTime.date,
+        time: bookingSummary.dateTime.time
+      },
+      pricing: {
+        subtotal: bookingSummary.pricing.subtotal,
+        bookingFee: bookingSummary.pricing.bookingFee,
+        totalAmount: bookingSummary.pricing.totalAmount
+      }
+    };
+    
+    router.push({
+      pathname: '/(booking)/confirmation',
+      params: {
+        bookingData: JSON.stringify(completeBookingData)
+      }
+    });
   };
 
   return (
@@ -556,8 +646,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#666',
-  },
-  nextButton: {
+  },  nextButton: {
     flex: 1,
     backgroundColor: '#EDAE49',
     borderRadius: 12,

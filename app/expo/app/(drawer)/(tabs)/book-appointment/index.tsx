@@ -1,12 +1,14 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
-// Service categories data
+// Service categories data with navigation routes
 const serviceCategories = [
   {
     id: '1',
     title: 'Health & Wellness',
+    route: '/(services)/health-wellness',
     items: [
       { id: '1-1', name: 'PrimeCare Medical Clinic', image: require('../../../../assets/images/prime-care.png') },
       { id: '1-2', name: 'SmileBright Dental', image: require('../../../../assets/images/smile-bright.png') },
@@ -17,6 +19,7 @@ const serviceCategories = [
   {
     id: '2',
     title: 'Beauty & Personal Care',
+    route: '/(services)/beauty-personal-care',
     items: [
       { id: '2-1', name: 'Serene Escape Spa', image: require('../../../../assets/images/serenescape.png') },
       { id: '2-2', name: 'David\'s Salon', image: require('../../../../assets/images/davidsalon.png') },
@@ -27,6 +30,7 @@ const serviceCategories = [
   {
     id: '3',
     title: 'Automotive Services',
+    route: '/(services)/automotive-services',
     items: [
       { id: '3-1', name: 'Baguio AutoCare Center', image: require('../../../../assets/images/autocare.png') },
       { id: '3-2', name: 'SpeedMaster Auto Repair', image: require('../../../../assets/images/speedmaster.png') },
@@ -36,6 +40,7 @@ const serviceCategories = [
   {
     id: '4',
     title: 'Fitness & Sports',
+    route: '/(services)/fitness-sports',
     items: [
       { id: '4-1', name: 'Zen Yoga Studio', image: require('../../../../assets/images/zenyoga.png') },
       { id: '4-2', name: 'Elevate Dance Academy', image: require('../../../../assets/images/elevate.png') },
@@ -45,6 +50,7 @@ const serviceCategories = [
   {
     id: '5',
     title: 'Home Services',
+    route: '/(services)/home-services',
     items: [
       { id: '5-1', name: 'Fresh Nest Cleaning', image: require('../../../../assets/images/freshnest.png') },
       { id: '5-2', name: 'SwiftFix Plumbing Services', image: require('../../../../assets/images/swiftfix.png') },
@@ -54,6 +60,7 @@ const serviceCategories = [
   {
     id: '6',
     title: 'Tech & IT Services',
+    route: '/(services)/tech-it-services',
     items: [
       { id: '6-1', name: 'Byte Fix', image: require('../../../../assets/images/bytfix.png') },
       { id: '6-2', name: 'PC Masters Hub', image: require('../../../../assets/images/pcmaster.png') },
@@ -65,6 +72,7 @@ const serviceCategories = [
 export default function BookAppointmentTab() {
   const { width, height } = useWindowDimensions();
   const [orientation, setOrientation] = useState('PORTRAIT');
+  const router = useRouter();
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -106,9 +114,11 @@ export default function BookAppointmentTab() {
     ]).start();
 
     return () => subscription?.remove();
-  }, []);
+  }, []);  const handleServicePress = (categoryRoute: string) => {
+    router.push(categoryRoute as any);
+  };
 
-  const renderServiceItem = (item: any, index: number) => (
+  const renderServiceItem = (item: any, index: number, categoryRoute: string) => (
     <TouchableOpacity 
       key={item.id} 
       style={[
@@ -118,6 +128,7 @@ export default function BookAppointmentTab() {
           height: imageHeight + dynamicSpacing(50),
         }
       ]}
+      onPress={() => handleServicePress(categoryRoute)}
     >
       <Animated.View
         style={[
@@ -159,23 +170,25 @@ export default function BookAppointmentTab() {
       </Animated.View>
     </TouchableOpacity>
   );
-
   const renderCategory = (category: any, categoryIndex: number) => (
     <View key={category.id} style={styles.categoryContainer}>
-      <Animated.Text 
-        style={[
-          styles.categoryTitle,
-          {
-            fontSize: dynamicFontSize(16),
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
-      >
-        {category.title}
-      </Animated.Text>
-      <View style={styles.servicesGrid}>        {category.items.map((item: any, itemIndex: number) => 
-          renderServiceItem(item, categoryIndex * 10 + itemIndex)
+      <TouchableOpacity onPress={() => handleServicePress(category.route)}>
+        <Animated.Text 
+          style={[
+            styles.categoryTitle,
+            {
+              fontSize: dynamicFontSize(16),
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+          {category.title}
+        </Animated.Text>
+      </TouchableOpacity>
+      <View style={styles.servicesGrid}>
+        {category.items.map((item: any, itemIndex: number) => 
+          renderServiceItem(item, categoryIndex * 10 + itemIndex, category.route)
         )}
       </View>
     </View>

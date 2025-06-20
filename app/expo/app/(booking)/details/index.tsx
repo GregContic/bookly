@@ -1,7 +1,8 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   Image,
@@ -14,49 +15,53 @@ import {
   View,
   useWindowDimensions
 } from 'react-native';
+import { Service, ServiceItem } from '../../_types/interfaces';
+
+// Import all service APIs
+import AutomotiveServicesAPI from '../../_services/automotiveServicesAPI';
+import BeautyPersonalCareAPI from '../../_services/beautyPersonalCareAPI';
+import FitnessSportsAPI from '../../_services/fitnessSportsAPI';
+import HealthWellnessAPI from '../../_services/healthWellnessAPI';
+import HomeServicesAPI from '../../_services/homeServicesAPI';
+import TechItServicesAPI from '../../_services/techItServicesAPI';
 
 /**
  * ===========================================
- * BOOKING DETAILS DATA
+ * UTILITY FUNCTIONS
  * ===========================================
  */
-const selectedBusiness = {
-  id: '1',
-  name: 'Shape Up',
-  image: require('../../../assets/images/shapeup_gym.png'),
-  rating: 4.95,
-  reviewCount: 1374,
+const getServiceAPI = (serviceId: string) => {
+  if (serviceId.startsWith('auto_')) return AutomotiveServicesAPI;
+  if (serviceId.startsWith('beauty_')) return BeautyPersonalCareAPI;
+  if (serviceId.startsWith('fitness_')) return FitnessSportsAPI;
+  if (serviceId.startsWith('health_')) return HealthWellnessAPI;
+  if (serviceId.startsWith('home_')) return HomeServicesAPI;
+  if (serviceId.startsWith('tech_')) return TechItServicesAPI;
+  
+  // Default fallback
+  return AutomotiveServicesAPI;
 };
 
-const services = [
+const defaultTrainers = [
   {
     id: '1',
-    name: 'Professional Training',
-    duration: '1 hour',
-    price: 800.00
-  }
-];
-
-const trainers = [
-  {
-    id: '1',
-    name: 'Devon',
-    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
+    name: 'Professional Staff',
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder
   },
   {
-    id: '2',
-    name: 'Arlene',
-    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
+    id: '2', 
+    name: 'Expert Technician',
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder
   },
   {
     id: '3',
-    name: 'Darrell',
-    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
+    name: 'Specialist',
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder
   },
   {
     id: '4',
-    name: 'Marvin',
-    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder for trainer
+    name: 'Senior Professional',
+    image: require('../../../assets/images/placeholder_muscle.png'), // Placeholder
   }
 ];
 
@@ -67,12 +72,17 @@ const trainers = [
  */
 export default function BookingDetailsPage() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { width, height } = useWindowDimensions();
   const [orientation, setOrientation] = useState('PORTRAIT');
   
-  const [selectedService, setSelectedService] = useState(services[0]);
+  // State for dynamic data
+  const [selectedBusiness, setSelectedBusiness] = useState<Service | null>(null);
+  const [availableServices, setAvailableServices] = useState<ServiceItem[]>([]);
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [selectedTrainer, setSelectedTrainer] = useState<any>(null);
-  const [showAddAnother, setShowAddAnother] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Dynamic scaling calculations
   const scale = width / 375; // Base scale for iPhone X (375px wide)
@@ -86,9 +96,59 @@ export default function BookingDetailsPage() {
   const scaleAnim = React.useRef(new Animated.Value(0.95)).current;
 
   // Calculate pricing
-  const subtotal = selectedService.price;
+  const subtotal = selectedService?.price || 0;
   const bookingFee = 100.00;
   const totalAmount = subtotal + bookingFee;
+  // Load service data
+  useEffect(() => {
+    const loadServiceData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const serviceId = params.serviceId as string;
+        const serviceData = params.serviceData as string;
+        
+        if (!serviceId) {
+          throw new Error('Service ID not provided');
+        }
+        
+        // Try to use passed data first, then fetch from API if needed
+        if (serviceData) {
+          try {
+            const parsedData = JSON.parse(serviceData);
+            setSelectedBusiness(parsedData);
+            setAvailableServices(parsedData.services || []);
+            setSelectedService(parsedData.services?.[0] || null);
+            setIsLoading(false);
+            return;
+          } catch (parseError) {
+            console.warn('Failed to parse service data, fetching from API:', parseError);
+          }
+        }
+        
+        // Fallback to API fetch
+        const api = getServiceAPI(serviceId);
+        const service = await api.getServiceById(serviceId);
+        
+        if (!service) {
+          throw new Error('Service not found');
+        }
+        
+        setSelectedBusiness(service);
+        setAvailableServices(service.services);
+        setSelectedService(service.services[0] || null);
+        
+      } catch (err) {
+        console.error('Error loading service data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load service data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadServiceData();
+  }, [params.serviceId, params.serviceData]);
   useEffect(() => {
     // Handle orientation changes
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -123,20 +183,55 @@ export default function BookingDetailsPage() {
 
   const handleCancel = () => {
     router.back();
+  };  const handleNext = () => {
+    // Navigate to date/time selection page with booking data
+    const bookingData = {
+      business: selectedBusiness,
+      service: selectedService,
+      trainer: selectedTrainer,
+      pricing: {
+        subtotal: subtotal,
+        bookingFee: bookingFee,
+        totalAmount: totalAmount
+      }
+    };
+    
+    router.push({
+      pathname: '/(booking)/datetime',
+      params: {
+        bookingData: JSON.stringify(bookingData)
+      }
+    });
   };
-  const handleNext = () => {
-    // Navigate to date/time selection page
-    router.push('/(booking)/datetime');
-  };
-
   const handleSelectTrainer = (trainer: any) => {
     setSelectedTrainer(trainer);
   };
 
-  const handleAddAnother = () => {
-    setShowAddAnother(true);
-    // Logic to add another service
-  };
+  // Show loading state
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={[styles.loadingContainer, { height: height - 100 }]}>
+          <ActivityIndicator size="large" color="#EDAE49" />
+          <Text style={styles.loadingText}>Loading service details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state
+  if (error || !selectedBusiness) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={[styles.errorContainer, { height: height - 100 }]}>
+          <Text style={styles.errorText}>{error || 'Service not found'}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => router.back()}>
+            <Text style={styles.retryText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>      {/* Header */}
@@ -215,14 +310,13 @@ export default function BookingDetailsPage() {
               transform: [{ translateY: slideAnim }]
             }
           ]}
-        >
-          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Service:</Text>
-          {services.map((service) => (
+        >          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Service:</Text>
+          {availableServices.map((service, index) => (
             <TouchableOpacity
-              key={service.id}
+              key={`service_${index}`}
               style={[
                 styles.serviceCard,
-                selectedService.id === service.id && styles.serviceCardSelected,
+                selectedService?.name === service.name && styles.serviceCardSelected,
                 { 
                   borderRadius: dynamicRadius(12), 
                   padding: dynamicSpacing(15),
@@ -233,22 +327,13 @@ export default function BookingDetailsPage() {
             >
               <View style={styles.serviceInfo}>
                 <Text style={[styles.serviceName, { fontSize: dynamicFontSize(16) }]}>{service.name}</Text>
-                <Text style={[styles.serviceDuration, { fontSize: dynamicFontSize(12) }]}>Duration: {service.duration}</Text>
+                <Text style={[styles.serviceDuration, { fontSize: dynamicFontSize(12) }]}>Duration: {service.duration} min</Text>
               </View>
               <Text style={[styles.servicePrice, { fontSize: dynamicFontSize(16) }]}>₱{service.price.toFixed(2)}</Text>
             </TouchableOpacity>
-          ))}
-          
-          <TouchableOpacity 
-            style={[styles.addAnotherButton, { 
-              padding: dynamicSpacing(15),
-              borderRadius: dynamicRadius(12)
-            }]}
-            onPress={handleAddAnother}
-          >
-            <Text style={[styles.addAnotherText, { fontSize: dynamicFontSize(14) }]}>+ Add Another</Text>
-          </TouchableOpacity>
-        </Animated.View>        {/* Select Trainer */}
+          ))}        </Animated.View>
+
+        {/* Select Professional */}
         <Animated.View 
           style={[
             styles.sectionContainer,
@@ -258,9 +343,9 @@ export default function BookingDetailsPage() {
             }
           ]}
         >
-          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Trainer:</Text>
+          <Text style={[styles.sectionTitle, { fontSize: dynamicFontSize(16) }]}>Select Professional:</Text>
           <View style={styles.trainersGrid}>
-            {trainers.map((trainer) => {
+            {defaultTrainers.map((trainer) => {
               return (
                 <TouchableOpacity
                   key={trainer.id}
@@ -603,14 +688,49 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontWeight: 'bold',
     color: '#666',
-  },
-  nextButton: {
+  },  nextButton: {
     flex: 1,
     backgroundColor: '#EDAE49',
     alignItems: 'center',
-  },
-  nextButtonText: {
+  },  nextButtonText: {
     fontWeight: 'bold',
     color: '#fff',
+  },
+  // Loading and error states
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F5F0',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F5F0',
+    padding: 32,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#EDAE49',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

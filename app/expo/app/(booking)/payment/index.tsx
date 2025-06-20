@@ -95,11 +95,10 @@ export default function PaymentMethodPage() {
   const handleConfirmPayment = () => {
     // Show confirmation modal
     setShowConfirmModal(true);
-  };
-  const handleConfirmProceed = () => {
+  };  const handleConfirmProceed = () => {
     // Close modal and navigate to booking confirmation page
     setShowConfirmModal(false);
-    router.push('/BookingConfirmationPage');
+    router.push('/(booking)/confirmation');
   };
 
   const handleConfirmCancel = () => {
@@ -353,22 +352,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     borderWidth: 2,
     borderColor: '#E0E0E0',
-  },
-  progressActive: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+  },  progressActive: {
+    backgroundColor: '#EDAE49',
+    borderColor: '#EDAE49',
   },
   progressCompleted: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+    backgroundColor: '#EDAE49',
+    borderColor: '#EDAE49',
   },
   progressLine: {
     width: 40,
     height: 2,
     backgroundColor: '#E0E0E0',
-  },
-  progressLineCompleted: {
-    backgroundColor: '#4CAF50',
+  },  progressLineCompleted: {
+    backgroundColor: '#EDAE49',
   },
   progressText: {
     fontSize: 12,
@@ -397,10 +394,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
-  },
-  paymentOptionSelected: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#F8FFF8',
+  },  paymentOptionSelected: {
+    borderColor: '#EDAE49',
+    backgroundColor: '#FDF6E3',
   },
   radioContainer: {
     marginRight: 15,
@@ -413,24 +409,22 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  radioButtonSelected: {
-    borderColor: '#4CAF50',
+  },  radioButtonSelected: {
+    borderColor: '#EDAE49',
   },
   radioButtonInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#EDAE49',
   },
   paymentText: {
     fontSize: 16,
     color: '#333',
     fontWeight: '500',
     flex: 1,
-  },
-  paymentTextSelected: {
-    color: '#2E7D32',
+  },  paymentTextSelected: {
+    color: '#B8860B',
     fontWeight: '600',
   },
   bottomContainer: {
@@ -458,10 +452,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#666',
-  },
-  confirmButton: {
+  },  confirmButton: {
     flex: 1,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#EDAE49',
     borderRadius: 12,
     paddingVertical: 15,
     marginLeft: 10,
@@ -547,10 +540,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
-  },
-  modalProceedButton: {
+  },  modalProceedButton: {
     flex: 1,
-    backgroundColor: '#8BC34A',
+    backgroundColor: '#EDAE49',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,

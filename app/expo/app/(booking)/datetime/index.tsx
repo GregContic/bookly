@@ -1,16 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Animated,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    Animated,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 
 /**
@@ -39,8 +39,13 @@ const daysOfWeek = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
  */
 export default function SelectDateTimePage() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { width, height } = useWindowDimensions();
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  // Parse booking data from params
+  const bookingData = params.bookingData ? JSON.parse(params.bookingData as string) : null;
+  
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
   
@@ -77,8 +82,35 @@ export default function SelectDateTimePage() {
   const handlePrevious = () => {
     router.back();
   };  const handleNext = () => {
-    // Navigate to booking summary page
-    router.push('/(booking)/summary');
+    if (!selectedDate || !selectedTime) {
+      // Could add validation here
+      return;
+    }
+    
+    // Format date for display
+    const formattedDate = selectedDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    // Combine booking data with selected date/time
+    const completeBookingData = {
+      ...bookingData,
+      dateTime: {
+        date: formattedDate,
+        time: selectedTime,
+        selectedDate: selectedDate.toISOString(),
+      }
+    };
+    
+    // Navigate to booking summary page with complete data
+    router.push({
+      pathname: '/(booking)/summary',
+      params: {
+        bookingData: JSON.stringify(completeBookingData)
+      }
+    });
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -386,22 +418,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8E8E8',
     borderWidth: 2,
     borderColor: '#E8E8E8',
-  },
-  progressActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+  },  progressActive: {
+    backgroundColor: '#EDAE49',
+    borderColor: '#EDAE49',
   },
   progressCompleted: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+    backgroundColor: '#EDAE49',
+    borderColor: '#EDAE49',
   },
   progressLine: {
     width: 32,
     height: 2,
     backgroundColor: '#E8E8E8',
-  },
-  progressLineCompleted: {
-    backgroundColor: '#007AFF',
+  },  progressLineCompleted: {
+    backgroundColor: '#EDAE49',
   },
   progressText: {
     fontSize: 12,
@@ -459,14 +489,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 2,
     borderRadius: 8,
-  },
-  selectedDay: {
-    backgroundColor: '#007AFF',
+  },  selectedDay: {
+    backgroundColor: '#EDAE49',
   },
   todayDay: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#FDF6E3',
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: '#EDAE49',
   },
   pastDay: {
     opacity: 0.3,
@@ -482,9 +511,8 @@ const styles = StyleSheet.create({
   selectedDayText: {
     color: '#FFFFFF',
     fontWeight: '600',
-  },
-  todayDayText: {
-    color: '#007AFF',
+  },  todayDayText: {
+    color: '#EDAE49',
     fontWeight: '600',
   },
   pastDayText: {
@@ -508,10 +536,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E8E8E8',
-  },
-  selectedTimeSlot: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+  },  selectedTimeSlot: {
+    backgroundColor: '#EDAE49',
+    borderColor: '#EDAE49',
   },
   timeSlotText: {
     fontSize: 12,
@@ -549,10 +576,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#666666',
-  },
-  nextButton: {
+  },  nextButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#EDAE49',
     borderRadius: 12,
     paddingVertical: 16,
     marginLeft: 8,

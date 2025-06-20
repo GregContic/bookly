@@ -1,133 +1,22 @@
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Animated,
-    Image,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View, useWindowDimensions
+  ActivityIndicator,
+  Alert,
+  Animated,
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View, useWindowDimensions
 } from 'react-native';
-
-/**
- * ===========================================
- * TECH & IT SERVICES DUMMY DATA
- * ===========================================
- */
-const techItServices = [
-  {
-    id: '1',
-    name: 'ByteFix Computer Solutions',
-    image: require('../../../assets/images/bytfix.png'),
-    rating: 4.9,
-    desc: 'Computer Repair, Laptop Service, Data Recovery',
-    location: 'Session Road, Baguio City',
-    schedule: 'Monday - Saturday\n9:00 AM - 6:00 PM',
-    price: '₱500 - ₱8,000',
-    isPromo: true,
-  },
-  {
-    id: '2',
-    name: 'PC Master Tech Hub',
-    image: require('../../../assets/images/pcmaster.png'),
-    rating: 4.8,
-    desc: 'Custom PC Build, Gaming Setup, Hardware Upgrade',
-    location: 'Magsaysay Ave, Baguio City',
-    schedule: 'Monday - Sunday\n10:00 AM - 8:00 PM',
-    price: '₱1,000 - ₱50,000',
-    isPromo: false,
-  },
-  {
-    id: '3',
-    name: 'SmartFix Mobile Solutions',
-    image: require('../../../assets/images/smartfix-1.png'),
-    rating: 4.7,
-    desc: 'Phone Repair, Screen Replacement, Software Issues',
-    location: 'Upper Session Road, Baguio City',
-    schedule: 'Monday - Saturday\n8:00 AM - 7:00 PM',
-    price: '₱300 - ₱12,000',
-    isPromo: true,
-  },
-  {
-    id: '4',
-    name: 'DigitalCare IT Services',
-    image: require('../../../assets/images/bytfix.png'),
-    rating: 4.6,
-    desc: 'Network Setup, IT Consulting, System Maintenance',
-    location: 'Governor Pack Road, Baguio City',
-    schedule: 'Monday - Friday\n8:00 AM - 5:00 PM',
-    price: '₱800 - ₱25,000',
-    isPromo: false,
-  },
-  {
-    id: '5',
-    name: 'TechnoVibe Solutions',
-    image: require('../../../assets/images/pcmaster.png'),
-    rating: 4.8,
-    desc: 'Web Development, App Development, Digital Marketing',
-    location: 'Burnham Park Area, Baguio City',
-    schedule: 'Monday - Saturday\n9:00 AM - 6:00 PM',
-    price: '₱2,000 - ₱100,000',
-    isPromo: true,
-  },
-  {
-    id: '6',
-    name: 'CodeCraft Development Studio',
-    image: require('../../../assets/images/smartfix-1.png'),
-    rating: 4.9,
-    desc: 'Software Development, Database Design, API Integration',
-    location: 'Camp 7, Baguio City',
-    schedule: 'Monday - Friday\n9:00 AM - 6:00 PM',
-    price: '₱5,000 - ₱200,000',
-    isPromo: false,
-  },
-  {
-    id: '7',
-    name: 'CloudTech Infrastructure',
-    image: require('../../../assets/images/bytfix.png'),
-    rating: 4.7,
-    desc: 'Cloud Services, Server Setup, Data Backup Solutions',
-    location: 'Abanao Street, Baguio City',
-    schedule: 'Monday - Sunday\n24/7 Support',
-    price: '₱1,500 - ₱75,000',
-    isPromo: true,
-  },
-  {
-    id: '8',
-    name: 'CyberShield Security',
-    image: require('../../../assets/images/pcmaster.png'),
-    rating: 4.8,
-    desc: 'Cybersecurity, Antivirus Setup, Network Security',
-    location: 'Marcos Highway, Baguio City',
-    schedule: 'Monday - Saturday\n8:00 AM - 8:00 PM',
-    price: '₱1,000 - ₱30,000',
-    isPromo: false,
-  },
-];
-
-const featuredTechServices = [
-  {
-    id: '1',
-    name: 'ByteFix Solutions',
-    image: require('../../../assets/images/bytfix.png'),
-    rating: 4.9,
-    desc: 'Complete IT Solutions',
-    price: '₱500 - ₱8,000',
-  },
-  {
-    id: '2',
-    name: 'PC Master Hub',
-    image: require('../../../assets/images/pcmaster.png'),
-    rating: 4.8,
-    desc: 'Custom PC & Gaming',
-    price: '₱1,000 - ₱50,000',
-  },
-];
+import ServiceCard from '../../_components/ServiceCard';
+import TechItServicesAPI from '../../_services/techItServicesAPI';
+import { Service } from '../../_types/interfaces';
 
 /**
  * ===========================================
@@ -137,6 +26,16 @@ const featuredTechServices = [
 export default function TechItServicesPage() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
+  
+  // State management
+  const [services, setServices] = useState<Service[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -154,7 +53,81 @@ export default function TechItServicesPage() {
   const imageHeight = width * 0.3;
   const horizontalPadding = width * 0.05;
 
+  // Load initial data
+  const loadData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Load services and featured services in parallel
+      const [allServices, featured] = await Promise.all([
+        TechItServicesAPI.getAllServices(),
+        TechItServicesAPI.getFeaturedServices()
+      ]);
+      
+      setServices(allServices);
+      setFeaturedServices(featured);
+      setFilteredServices(allServices);
+      
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load services');
+      Alert.alert(
+        'Error',
+        'Failed to load services. Please check your connection and try again.',
+        [{ text: 'Retry', onPress: loadData }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Search functionality
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setFilteredServices(services);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const searchResults = await TechItServicesAPI.searchServices(query);
+      setFilteredServices(searchResults);
+    } catch (err) {
+      console.error('Search error:', err);
+      Alert.alert('Search Error', 'Failed to search services. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [services]);
+
+  // Pull to refresh
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadData();
+    setIsRefreshing(false);
+  }, [loadData]);
+
+  // Search input handler
+  const handleSearchInputChange = (text: string) => {
+    setSearchQuery(text);
+    
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      handleSearch(text);
+    }, 300);
+    
+    return () => clearTimeout(timeoutId);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setFilteredServices(services);
+  };
+
   useEffect(() => {
+    loadData();
+    
     // Start animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -183,11 +156,55 @@ export default function TechItServicesPage() {
   const handleBack = () => {
     router.back();
   };
-
-  const handleServicePress = (service: any) => {
+  const handleServicePress = (service: Service) => {
     // Navigate to service details or booking page
-    router.push('/BookAppointmentPage');
+    // Pass comprehensive service data through route params
+    router.push({
+      pathname: '/(booking)/details',
+      params: { 
+        serviceId: service.id, 
+        serviceName: service.name,
+        serviceData: JSON.stringify({
+          id: service.id,
+          name: service.name,
+          image: service.image,
+          rating: service.rating,
+          reviewCount: service.reviewCount,
+          services: service.services,
+          category: service.category
+        })
+      }
+    });
   };
+
+  // Render featured service item
+  const renderFeaturedService = ({ item }: { item: Service }) => (
+    <ServiceCard
+      service={item}
+      onPress={handleServicePress}
+      style={{ width: cardWidth, marginHorizontal: 8 }}
+    />
+  );
+
+  // Render main service item
+  const renderService = ({ item }: { item: Service }) => (
+    <ServiceCard
+      service={item}
+      onPress={handleServicePress}
+    />
+  );
+
+  // Loading state
+  if (isLoading && services.length === 0) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#9C27B0" />
+          <Text style={styles.loadingText}>Loading tech services...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -201,11 +218,13 @@ export default function TechItServicesPage() {
           }
         ]}
       >
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
+        <TouchableOpacity onPress={handleBack}>
+          <Ionicons name="chevron-back" size={24} color="#B0B0B0" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Tech & IT Services</Text>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity>
+          <Ionicons name="heart-outline" size={24} color="#B0B0B0" />
+        </TouchableOpacity>
       </Animated.View>
 
       {/* Search Bar */}
@@ -218,147 +237,124 @@ export default function TechItServicesPage() {
           }
         ]}
       >
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Search..." 
-          placeholderTextColor="#999" 
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search tech services..."
+          placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={handleSearchInputChange}
+          onSubmitEditing={() => handleSearch(searchQuery)}
+          returnKeyType="search"
         />
-        <FontAwesome 
-          name="search" 
-          size={16} 
-          color="#999" 
-        />
+        {isSearching ? (
+          <View style={styles.searchIndicator}>
+            <ActivityIndicator size="small" color="#9C27B0" />
+          </View>
+        ) : searchQuery ? (
+          <TouchableOpacity 
+            onPress={handleClearSearch}
+            style={styles.clearButton}
+          >
+            <Ionicons name="close-circle" size={20} color="#888" />
+          </TouchableOpacity>
+        ) : (
+          <Ionicons name="search" size={20} color="#888" />
+        )}
       </Animated.View>
 
-      <ScrollView 
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: height * 0.15 }
-        ]} 
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Featured Tech Services */}
-        <Animated.Text 
-          style={[
-            styles.sectionTitle,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: featuredSlideAnim }]
-            }
-          ]}
-        >
-          Featured Services
-        </Animated.Text>
+      {/* Main Content */}
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={loadData}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredServices}
+          renderItem={renderService}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              colors={['#9C27B0']}
+              tintColor="#9C27B0"
+            />
+          }
+          ListHeaderComponent={
+            <>
+              {/* Featured Services Section */}
+              {featuredServices.length > 0 && (
+                <>
+                  <Animated.Text 
+                    style={[
+                      styles.sectionTitle,
+                      {
+                        opacity: fadeAnim,
+                        transform: [{ translateY: slideAnim }]
+                      }
+                    ]}
+                  >
+                    Featured Services
+                  </Animated.Text>
+                  
+                  <Animated.View
+                    style={{
+                      opacity: fadeAnim,
+                      transform: [{ translateY: featuredSlideAnim }]
+                    }}
+                  >
+                    <FlatList
+                      data={featuredServices}
+                      renderItem={renderFeaturedService}
+                      keyExtractor={(item) => `featured_${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={styles.featuredContainer}
+                    />
+                  </Animated.View>
+                </>
+              )}
 
-        <Animated.View
-          style={[
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: featuredSlideAnim }]
-            }
-          ]}
-        >
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            style={styles.featuredScroll}
-          >
-            {featuredTechServices.map((service, index) => (
-              <Animated.View 
-                key={service.id} 
+              {/* All Services Header */}
+              <Animated.Text 
                 style={[
-                  styles.featuredCard,
+                  styles.sectionTitle,
                   {
-                    width: cardWidth,
-                    transform: [{ scale: scaleAnim }]
+                    opacity: fadeAnim,
+                    transform: [{ translateY: slideAnim }]
                   }
                 ]}
               >
-                <TouchableOpacity onPress={() => handleServicePress(service)}>
-                  <Image source={service.image} style={[styles.featuredImage, { height: imageHeight }]} resizeMode="cover" />
-                  <View style={[styles.featuredCardContent, { padding: dynamicSpacing(15) }]}>
-                    <Text style={[styles.featuredCardTitle, { fontSize: dynamicFontSize(18) }]}>{service.name}</Text>
-                    <View style={[styles.ratingRow, { marginVertical: dynamicSpacing(8) }]}>
-                      <FontAwesome name="star" size={dynamicFontSize(14)} color="#2196F3" />
-                      <Text style={[styles.rating, { fontSize: dynamicFontSize(14), marginLeft: dynamicSpacing(5) }]}>{service.rating}</Text>
-                    </View>
-                    <Text style={[styles.featuredCardDesc, { fontSize: dynamicFontSize(14), marginBottom: dynamicSpacing(10) }]}>{service.desc}</Text>
-                    <Text style={[styles.featuredCardPrice, { fontSize: dynamicFontSize(16) }]}>{service.price}</Text>
-                  </View>
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
-          </ScrollView>
-        </Animated.View>
-
-        {/* All Tech & IT Services */}
-        <Animated.Text 
-          style={[
-            styles.sectionTitle,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
-          ]}
-        >
-          All Tech & IT Services
-        </Animated.Text>
-
-        <Animated.View
-          style={[
-            styles.servicesGrid,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-              paddingHorizontal: horizontalPadding
-            }
-          ]}
-        >
-          {techItServices.map((service, index) => (
-            <Animated.View 
-              key={service.id} 
-              style={[
-                styles.serviceCard,
-                {
-                  width: (width - (horizontalPadding * 2) - dynamicSpacing(10)) / 2,
-                  marginBottom: dynamicSpacing(15),
-                  marginRight: index % 2 === 0 ? dynamicSpacing(10) : 0,
-                  transform: [{ scale: scaleAnim }]
-                }
-              ]}
-            >
-              <TouchableOpacity onPress={() => handleServicePress(service)}>
-                {service.isPromo && (
-                  <View style={[styles.promoTag, { 
-                    top: dynamicSpacing(10), 
-                    right: dynamicSpacing(10),
-                    paddingHorizontal: dynamicSpacing(8),
-                    paddingVertical: dynamicSpacing(4)
-                  }]}>
-                    <Text style={[styles.promoText, { fontSize: dynamicFontSize(10) }]}>PROMO</Text>
-                  </View>
+                {searchQuery ? `Search Results (${filteredServices.length})` : 'All Services'}
+              </Animated.Text>
+            </>
+          }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="search-outline" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>
+                  {searchQuery ? 'No services found' : 'No services available'}
+                </Text>
+                {searchQuery && (
+                  <TouchableOpacity onPress={handleClearSearch}>
+                    <Text style={styles.clearSearchText}>Clear search</Text>
+                  </TouchableOpacity>
                 )}
-                <Image source={service.image} style={[styles.serviceImage, { height: width * 0.25 }]} resizeMode="cover" />
-                <View style={[styles.serviceCardContent, { padding: dynamicSpacing(12) }]}>
-                  <Text style={[styles.serviceTitle, { fontSize: dynamicFontSize(14) }]} numberOfLines={1}>{service.name}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: dynamicSpacing(4) }}>
-                    <FontAwesome name="star" size={dynamicFontSize(12)} color="#2196F3" />
-                    <Text style={[styles.serviceRating, { fontSize: dynamicFontSize(12), marginLeft: dynamicSpacing(4) }]}>{service.rating}</Text>
-                  </View>
-                  <Text style={[styles.serviceDesc, { fontSize: dynamicFontSize(11) }]} numberOfLines={2}>{service.desc}</Text>
-                  <Text style={[styles.serviceLocation, { fontSize: dynamicFontSize(10), marginTop: dynamicSpacing(4) }]} numberOfLines={1}>
-                    📍 {service.location}
-                  </Text>
-                  <Text style={[styles.serviceSchedule, { fontSize: dynamicFontSize(10), marginTop: dynamicSpacing(2) }]} numberOfLines={2}>
-                    🕒 {service.schedule}
-                  </Text>
-                  <Text style={[styles.servicePrice, { fontSize: dynamicFontSize(12), marginTop: dynamicSpacing(8) }]}>{service.price}</Text>
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </Animated.View>
-      </ScrollView>    </SafeAreaView>
+              </View>
+            ) : null
+          }
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingBottom: height * 0.15 }
+          ]}
+        />
+      )}      
+    </SafeAreaView>
   );
 }
 
@@ -371,45 +367,40 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8F5F0',
-    paddingTop: Platform.OS === 'ios' ? 0 : 20,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
   },
-  scrollContent: {
-    flexGrow: 1,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: '5%',
-    paddingTop: Platform.OS === 'ios' ? '12%' : '8%',
-    paddingBottom: '3%',
-    backgroundColor: '#F8F5F0',
-  },
-  backButton: {
-    padding: 8,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 16,
+    backgroundColor: 'transparent',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    flex: 1,
-  },
-  headerSpacer: {
-    width: 40,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#9C27B0',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    marginHorizontal: '5%',
-    marginBottom: '4%',
-    paddingHorizontal: 15,
-    height: 44,
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 48,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -420,115 +411,67 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#333',
-    paddingVertical: 0,
+  },
+  searchIndicator: {
+    padding: 4,
+  },
+  clearButton: {
+    padding: 4,
   },
   sectionTitle: {
-    fontSize: Platform.OS === 'ios' ? 16 : 18,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#2196F3',
-    marginTop: '4%',
-    marginBottom: '2%',
-    marginLeft: '5%',
+    color: '#333',
+    marginTop: 24,
+    marginBottom: 16,
+    marginHorizontal: 16,
   },
-  featuredScroll: {
-    paddingLeft: '5%',
-    marginBottom: 10,
+  featuredContainer: {
+    paddingHorizontal: 8,
+    marginBottom: 16,
   },
-  featuredCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginRight: 15,
-    marginBottom: 10,
-    width: 200,
-    height: 280,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  listContainer: {
+    flexGrow: 1,
   },
-  featuredImage: {
-    width: '100%',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  featuredCardContent: {
+  errorContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-  },
-  featuredCardTitle: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  ratingRow: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 32,
   },
-  rating: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  featuredCardDesc: {
+  errorText: {
+    fontSize: 16,
     color: '#666',
-    lineHeight: 20,
+    textAlign: 'center',
+    marginBottom: 16,
   },
-  featuredCardPrice: {
-    fontWeight: 'bold',
-    color: '#2196F3',
+  retryButton: {
+    backgroundColor: '#9C27B0',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
   },
-  servicesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  serviceCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  promoTag: {
-    position: 'absolute',
-    backgroundColor: '#2196F3',
-    borderRadius: 12,
-    zIndex: 1,
-  },
-  promoText: {
+  retryText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
-  serviceImage: {
-    width: '100%',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  serviceCardContent: {
+  emptyContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
   },
-  serviceTitle: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  serviceRating: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  serviceDesc: {
+  emptyText: {
+    fontSize: 16,
     color: '#666',
-    lineHeight: 16,
+    textAlign: 'center',
+    marginTop: 16,
   },
-  serviceLocation: {
-    color: '#888',
-  },
-  serviceSchedule: {
-    color: '#888',
-    lineHeight: 14,
-  },
-  servicePrice: {
-    fontWeight: 'bold',
-    color: '#2196F3',
+  clearSearchText: {
+    fontSize: 16,
+    color: '#9C27B0',
+    marginTop: 16,
+    textDecorationLine: 'underline',
   },
 });

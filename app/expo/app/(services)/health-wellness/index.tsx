@@ -1,112 +1,22 @@
-import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Animated,
-  Image,
-  Platform,
+  FlatList,
+  RefreshControl,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View, useWindowDimensions
 } from 'react-native';
-
-/**
- * ===========================================
- * HEALTH & WELLNESS DUMMY DATA
- * ===========================================
- */
-const healthWellnessServices = [  {
-    id: '1',
-    name: 'Prime Care Medical Clinic',
-    image: require('../../../assets/images/prime-care.png'),
-    rating: 4.9,
-    desc: 'General Medicine, Laboratory, X-Ray',
-    location: 'Session Road, Baguio City',
-    schedule: 'Monday - Saturday\n8:00 AM - 5:00 PM',
-    price: '₱500 - ₱2,000',
-    isPromo: false,
-  },
-  {
-    id: '2',
-    name: 'Urban Smiles Dental',
-    image: require('../../../assets/images/urban_smiles.png'),
-    rating: 4.8,
-    desc: 'Dental Care, Orthodontics, Cleaning',
-    location: 'Magsaysay Ave, Baguio City',
-    schedule: 'Monday - Friday\n9:00 AM - 6:00 PM',
-    price: '₱800 - ₱3,500',
-    isPromo: true,
-  },
-  {
-    id: '3',
-    name: 'Serene Scape Wellness',
-    image: require('../../../assets/images/serenescape.png'),
-    rating: 4.7,
-    desc: 'Therapy, Counseling, Mental Health',
-    location: 'Upper Session Road, Baguio City',
-    schedule: 'Monday - Sunday\n10:00 AM - 8:00 PM',
-    price: '₱1,200 - ₱4,000',
-    isPromo: false,
-  },
-  {
-    id: '4',
-    name: 'Bright Eye Clinic',
-    image: require('../../../assets/images/eye-clinic.png'),
-    rating: 4.6,
-    desc: 'Eye Checkup, Glasses, Contact Lenses',
-    location: 'Governor Pack Road, Baguio City',
-    schedule: 'Tuesday - Saturday\n8:30 AM - 5:30 PM',
-    price: '₱600 - ₱2,500',
-    isPromo: false,
-  },
-  {
-    id: '5',
-    name: 'Zen Yoga Studio',
-    image: require('../../../assets/images/zenyoga.png'),
-    rating: 4.8,
-    desc: 'Yoga, Meditation, Wellness Classes',
-    location: 'Camp 7, Baguio City',
-    schedule: 'Monday - Sunday\n6:00 AM - 9:00 PM',
-    price: '₱300 - ₱1,500',
-    isPromo: true,
-  },
-  {
-    id: '6',
-    name: 'The Spa Wellness Center',
-    image: require('../../../assets/images/spa-wellness.png'),
-    rating: 4.9,
-    desc: 'Massage, Spa Treatments, Relaxation',
-    location: 'Burnham Park Area, Baguio City',
-    schedule: 'Monday - Sunday\n9:00 AM - 10:00 PM',
-    price: '₱800 - ₱3,500',
-    isPromo: false,
-  },
-];
-
-const featuredHealthServices = [
-  {
-    id: '1',
-    name: 'Prime Care Medical',
-    image: require('../../../assets/images/prime-care.png'),
-    rating: 4.9,
-    desc: 'Complete Medical Services',
-    price: '₱500 - ₱2,000/consultation',
-    isPromo: false,
-  },
-  {
-    id: '2',
-    name: 'The Spa Wellness',
-    image: require('../../../assets/images/spa-wellness.png'),
-    rating: 4.8,
-    desc: 'Relaxation & Therapy',
-    price: '₱800 - ₱3,500/session',
-    isPromo: true,
-  },
-];
+import ServiceCard from '../../_components/ServiceCard';
+import HealthWellnessAPI from '../../_services/healthWellnessAPI';
+import { Service } from '../../_types/interfaces';
 
 /**
  * ===========================================
@@ -116,6 +26,16 @@ const featuredHealthServices = [
 export default function HealthWellnessPage() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
+  
+  // State management
+  const [services, setServices] = useState<Service[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -133,7 +53,80 @@ export default function HealthWellnessPage() {
   const imageHeight = width * 0.3;
   const horizontalPadding = width * 0.05;
 
+  // Load initial data
+  const loadData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Load services and featured services in parallel
+      const [allServices, featured] = await Promise.all([
+        HealthWellnessAPI.getAllServices(),
+        HealthWellnessAPI.getFeaturedServices()
+      ]);
+      
+      setServices(allServices);
+      setFeaturedServices(featured);
+      setFilteredServices(allServices);
+      
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load services');
+      Alert.alert(
+        'Error',
+        'Failed to load services. Please check your connection and try again.',
+        [{ text: 'Retry', onPress: loadData }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  // Search functionality
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setFilteredServices(services);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const searchResults = await HealthWellnessAPI.searchServices(query);
+      setFilteredServices(searchResults);
+    } catch (err) {
+      console.error('Search error:', err);
+      Alert.alert('Search Error', 'Failed to search services. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [services]);
+
+  // Pull to refresh
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadData();
+    setIsRefreshing(false);
+  }, [loadData]);
+
+  // Search input handler
+  const handleSearchInputChange = (text: string) => {
+    setSearchQuery(text);
+    
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      handleSearch(text);
+    }, 300);
+    
+    return () => clearTimeout(timeoutId);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setFilteredServices(services);
+  };
+
   useEffect(() => {
+    loadData();
+    
     // Start animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -161,159 +154,203 @@ export default function HealthWellnessPage() {
 
   const handleBack = () => {
     router.back();
+  };  const handleServicePress = (service: Service) => {
+    // Navigate to service details or booking page
+    // Pass comprehensive service data through route params
+    router.push({
+      pathname: '/(booking)/details',
+      params: { 
+        serviceId: service.id, 
+        serviceName: service.name,
+        serviceData: JSON.stringify({
+          id: service.id,
+          name: service.name,
+          image: service.image,
+          rating: service.rating,
+          reviewCount: service.reviewCount,
+          services: service.services,
+          category: service.category
+        })
+      }
+    });
   };
 
-  const handleServicePress = (service: any) => {
-    // Navigate to service details or booking page
-    router.push('/BookAppointmentPage');
-  };  return (    <SafeAreaView style={styles.safeArea}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Search..." 
-          placeholderTextColor="#999" 
-        />
-        <FontAwesome 
-          name="search" 
-          size={16} 
-          color="#999" 
-        />
-      </View>
+  // Render featured service item
+  const renderFeaturedService = ({ item }: { item: Service }) => (
+    <ServiceCard
+      service={item}
+      onPress={handleServicePress}
+      style={{ width: cardWidth, marginHorizontal: 8 }}
+    />
+  );
 
-      <ScrollView 
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: height * 0.15 }
-        ]} 
-        showsVerticalScrollIndicator={false}
+  // Render main service item
+  const renderService = ({ item }: { item: Service }) => (
+    <ServiceCard
+      service={item}
+      onPress={handleServicePress}
+    />
+  );
+  // Loading state
+  if (isLoading && services.length === 0) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4CAF50" />
+          <Text style={styles.loadingText}>Loading health services...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      {/* Header */}
+      <Animated.View 
+        style={[
+          styles.headerRow,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }]
+          }
+        ]}
       >
-        {/* Featured Health Services */}
-        <Animated.Text 
-          style={[
-            styles.sectionTitle,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
-          ]}
-        >
-          Featured Health Services
-        </Animated.Text>
+        <TouchableOpacity onPress={handleBack}>
+          <Ionicons name="chevron-back" size={24} color="#B0B0B0" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Health & Wellness</Text>
+        <TouchableOpacity>
+          <Ionicons name="heart-outline" size={24} color="#B0B0B0" />
+        </TouchableOpacity>
+      </Animated.View>
 
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={[styles.featuredScroll, { paddingLeft: horizontalPadding }]}
-        >
-          {featuredHealthServices.map((item, index) => (
-            <Animated.View 
-              key={item.id} 
-              style={[
-                styles.featuredCard,
-                { 
-                  opacity: fadeAnim,
-                  transform: [
-                    { scale: scaleAnim },
-                    { 
-                      translateX: featuredSlideAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 50 + (index * 20)]
-                      })
-                    }
-                  ]
-                }
-              ]}
-            >
-              <Image 
-                source={item.image} 
-                style={styles.featuredImage} 
-                resizeMode="cover" 
-              />
-              <View style={styles.featuredInfo}>
-                <Text style={styles.featuredName}>{item.name}</Text>
-                <View style={styles.featuredRow}>
-                  <FontAwesome name="star" size={12} color="#4CAF50" />
-                  <Text style={styles.featuredRating}>{item.rating}</Text>
-                </View>
-                <Text style={styles.featuredLocation}>📍 Baguio City</Text>
-                <Text style={styles.featuredSchedule}>📅 Monday - Sunday</Text>
-                <Text style={styles.featuredTime}>🕐 9:00 AM - 6:00 PM</Text>
-                <Text style={styles.featuredPrice}>💰 {item.price}</Text>
-                <TouchableOpacity 
-                  style={styles.bookNowBtn}
-                  onPress={() => handleServicePress(item)}
-                >
-                  <Text style={styles.bookNowText}>Book Now</Text>
-                </TouchableOpacity>
-                {item.isPromo && (
-                  <View style={styles.promoTag}>
-                    <Text style={styles.promoText}>PROMO</Text>
-                  </View>
-                )}
-              </View>
-            </Animated.View>
-          ))}
-        </ScrollView>
-
-        {/* All Health Services */}        <Animated.Text 
-          style={[
-            styles.sectionTitle,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
-          ]}
-        >
-          All Services
-        </Animated.Text>
-
-        {healthWellnessServices.map((item, index) => (
-          <Animated.View 
-            key={item.id} 
-            style={[
-              styles.serviceRow,
-              {
-                opacity: fadeAnim,
-                transform: [
-                  { scale: scaleAnim },
-                  { 
-                    translateY: slideAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 30 + (index * 10)]
-                    })
-                  }
-                ]
-              }
-            ]}
+      {/* Search Bar */}
+      <Animated.View 
+        style={[
+          styles.searchContainer,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }]
+          }
+        ]}
+      >
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search health services..."
+          placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={handleSearchInputChange}
+          onSubmitEditing={() => handleSearch(searchQuery)}
+          returnKeyType="search"
+        />
+        {isSearching ? (
+          <View style={styles.searchIndicator}>
+            <ActivityIndicator size="small" color="#4CAF50" />
+          </View>
+        ) : searchQuery ? (
+          <TouchableOpacity 
+            onPress={handleClearSearch}
+            style={styles.clearButton}
           >
-            <Image source={item.image} style={styles.serviceImage} resizeMode="cover" />
-            <View style={styles.serviceInfo}>
-              <Text style={styles.serviceName}>{item.name}</Text>
-              <View style={styles.serviceRatingRow}>
-                <FontAwesome name="star" size={13} color="#4CAF50" />
-                <Text style={styles.serviceRating}>{item.rating}</Text>
-                {item.isPromo && (
-                  <View style={styles.promoTagSmall}>
-                    <Text style={styles.promoTextSmall}>PROMO</Text>
-                  </View>
+            <Ionicons name="close-circle" size={20} color="#888" />
+          </TouchableOpacity>
+        ) : (
+          <Ionicons name="search" size={20} color="#888" />
+        )}
+      </Animated.View>
+
+      {/* Main Content */}
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={loadData}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredServices}
+          renderItem={renderService}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              colors={['#4CAF50']}
+              tintColor="#4CAF50"
+            />
+          }
+          ListHeaderComponent={
+            <>
+              {/* Featured Services Section */}
+              {featuredServices.length > 0 && (
+                <>
+                  <Animated.Text 
+                    style={[
+                      styles.sectionTitle,
+                      {
+                        opacity: fadeAnim,
+                        transform: [{ translateY: slideAnim }]
+                      }
+                    ]}
+                  >
+                    Featured Services
+                  </Animated.Text>
+                  
+                  <Animated.View
+                    style={{
+                      opacity: fadeAnim,
+                      transform: [{ translateY: featuredSlideAnim }]
+                    }}
+                  >
+                    <FlatList
+                      data={featuredServices}
+                      renderItem={renderFeaturedService}
+                      keyExtractor={(item) => `featured_${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={styles.featuredContainer}
+                    />
+                  </Animated.View>
+                </>
+              )}
+
+              {/* All Services Header */}
+              <Animated.Text 
+                style={[
+                  styles.sectionTitle,
+                  {
+                    opacity: fadeAnim,
+                    transform: [{ translateY: slideAnim }]
+                  }
+                ]}
+              >
+                {searchQuery ? `Search Results (${filteredServices.length})` : 'All Services'}
+              </Animated.Text>
+            </>
+          }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="search-outline" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>
+                  {searchQuery ? 'No services found' : 'No services available'}
+                </Text>
+                {searchQuery && (
+                  <TouchableOpacity onPress={handleClearSearch}>
+                    <Text style={styles.clearSearchText}>Clear search</Text>
+                  </TouchableOpacity>
                 )}
               </View>
-              <Text style={styles.serviceDesc}>{item.desc}</Text>
-              <Text style={styles.serviceLocation}>📍 {item.location}</Text>
-              <Text style={styles.serviceSchedule}>{item.schedule}</Text>
-            </View>
-            <View style={styles.serviceRight}>
-              <Text style={styles.servicePrice}>{item.price}</Text>
-              <TouchableOpacity 
-                style={styles.bookNowBtnSmall}
-                onPress={() => handleServicePress(item)}
-              >
-                <Text style={styles.bookNowTextSmall}>Book Now</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        ))}      </ScrollView>
+            ) : null
+          }
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingBottom: height * 0.15 }
+          ]}
+        />
+      )}      
     </SafeAreaView>
   );
 }
@@ -327,263 +364,111 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8F5F0',
-    paddingTop: Platform.OS === 'ios' ? 0 : 20, // Adjust for iOS notch
-    paddingBottom: Platform.OS === 'ios' ? 20 : 0, // Adjust for Android navigation bar 
   },
-  scrollContent: {
-    flexGrow: 1,
-  },  headerRow: {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: '5%',
-    paddingTop: Platform.OS === 'ios' ? '12%' : '15%',
-    paddingBottom: '3%',
-    backgroundColor: '#FFF8E7',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  backButton: {
-    padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 16,
+    backgroundColor: 'transparent',
   },
   headerTitle: {
-    fontSize: Platform.OS === 'ios' ? 18 : 20,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    flex: 1,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50',
   },
-  headerSpacer: {
-    width: 40, // Same width as back button to center the title
-  },  searchContainer: {
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 25,
-    marginHorizontal: '5%',
-    marginTop: '5%',
-    marginBottom: '4%',
-    paddingHorizontal: '4%',
-    height: Platform.OS === 'ios' ? 45 : 50,
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 48,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 2,
-  },searchInput: {
+  },
+  searchInput: {
     flex: 1,
     fontSize: 16,
     color: '#333',
-    paddingVertical: 0, // Remove default padding
+  },
+  searchIndicator: {
+    padding: 4,
+  },
+  clearButton: {
+    padding: 4,
   },
   sectionTitle: {
-    fontSize: Platform.OS === 'ios' ? 16 : 18,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50',
-    marginTop: '4%',
-    marginBottom: '2%',
-    marginLeft: '5%',
+    color: '#333',
+    marginTop: 24,
+    marginBottom: 16,
+    marginHorizontal: 16,
   },
-  featuredScroll: {
-    paddingLeft: '5%',
-    marginBottom: 10,
+  featuredContainer: {
+    paddingHorizontal: 8,
+    marginBottom: 16,
   },
-  featuredCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginRight: 15,
-    marginBottom: 10,
-    width: 200,
-    height: 280,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    overflow: 'hidden',
-    flexDirection: 'column',
-    borderWidth: 1,
-    borderColor: '#E8F5E8',
+  listContainer: {
+    flexGrow: 1,
   },
-  featuredImage: {
-    width: '100%',
-    height: 120,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  featuredInfo: {
-    padding: 10,
+  errorContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-  },
-  featuredName: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 3,
-    textAlign: 'center',
-  },
-  featuredRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 3,
+    alignItems: 'center',
+    padding: 32,
   },
-  featuredRating: {
-    fontSize: 12,
-    color: '#4CAF50',
-    marginLeft: 3,
-    fontWeight: '600',
-  },
-  featuredLocation: {
-    fontSize: 10,
+  errorText: {
+    fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 2,
-    lineHeight: 14,
+    marginBottom: 16,
   },
-  featuredSchedule: {
-    fontSize: 10,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  featuredTime: {
-    fontSize: 10,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 3,
-  },
-  featuredPrice: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#222',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  bookNowBtn: {
+  retryButton: {
     backgroundColor: '#4CAF50',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: 'center',
-    minWidth: 80,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
   },
-  bookNowText: {
+  retryText: {
     color: '#fff',
-    fontWeight: '600',
-    fontSize: 11,
-    textAlign: 'center',
-  },
-  promoTag: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#FF4B4B',
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  promoText: {
-    color: '#fff',
-    fontSize: 9,
     fontWeight: 'bold',
+    fontSize: 16,
   },
-  serviceRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginHorizontal: '5%',
-    marginBottom: '3%',
-    padding: '3%',
-    minHeight: Platform.OS === 'ios' ? 100 : 110,
-    borderWidth: 1,
-    borderColor: '#E8F5E8',
-  },
-  serviceImage: {
-    width: '20%',
-    aspectRatio: 1,
-    borderRadius: 10,
-    marginRight: '3%',
-  },
-  serviceInfo: {
+  emptyContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-  },
-  serviceName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 2,
-  },
-  serviceRatingRow: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 2,
+    padding: 32,
   },
-  serviceRating: {
-    fontSize: 12,
-    color: '#4CAF50',
-    marginLeft: 3,
-    fontWeight: '600',
-  },
-  promoTagSmall: {
-    marginLeft: 8,
-    backgroundColor: '#FF4B4B',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-  },
-  promoTextSmall: {
-    color: '#fff',
-    fontSize: 8,
-    fontWeight: 'bold',
-  },
-  serviceDesc: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 2,
-  },
-  serviceLocation: {
-    fontSize: 11,
+  emptyText: {
+    fontSize: 16,
     color: '#666',
-    marginBottom: 2,
+    textAlign: 'center',
+    marginTop: 16,
   },
-  serviceSchedule: {
-    fontSize: 11,
-    color: '#888',
-    marginBottom: 2,
-  },
-  serviceRight: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: 64,
-  },
-  servicePrice: {
-    fontSize: 13,
-    color: '#222',
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  bookNowBtnSmall: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 6,
-    paddingVertical: '1%',
-    paddingHorizontal: '3%',
-    minWidth: '25%',
-    alignItems: 'center',
-  },
-  bookNowTextSmall: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: Platform.OS === 'ios' ? 12 : 13,
+  clearSearchText: {
+    fontSize: 16,
+    color: '#4CAF50',
+    marginTop: 16,
+    textDecorationLine: 'underline',
   },
 });

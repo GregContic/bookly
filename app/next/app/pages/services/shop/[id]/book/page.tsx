@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Header from "../../../../../../components/header";
 
 interface ServiceDetails {
   id: string;
@@ -221,9 +222,10 @@ export default function BookAppointment() {
     "Booking Summary",
     "Payment Method"
   ];
-
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      <Header />
+      <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -670,9 +672,9 @@ export default function BookAppointment() {
                 </button>
               )}
             </div>
-          </div>
-        )}
+          </div>        )}
       </div>
     </div>
+    </>
   );
 }

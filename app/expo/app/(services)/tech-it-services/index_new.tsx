@@ -2,28 +2,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View, useWindowDimensions
+    ActivityIndicator,
+    Alert,
+    Animated,
+    FlatList,
+    RefreshControl,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View, useWindowDimensions
 } from 'react-native';
 import ServiceCard from '../../_components/ServiceCard';
-import BeautyPersonalCareAPI from '../../_services/beautyPersonalCareAPI';
+import TechItServicesAPI from '../../_services/techItServicesAPI';
 import { Service } from '../../_types/interfaces';
 
 /**
  * ===========================================
- * BEAUTY & PERSONAL CARE PAGE COMPONENT
+ * TECH & IT SERVICES PAGE COMPONENT
  * ===========================================
  */
-export default function BeautyPersonalCarePage() {
+export default function TechItServicesPage() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
   
@@ -61,8 +61,8 @@ export default function BeautyPersonalCarePage() {
       
       // Load services and featured services in parallel
       const [allServices, featured] = await Promise.all([
-        BeautyPersonalCareAPI.getAllServices(),
-        BeautyPersonalCareAPI.getFeaturedServices()
+        TechItServicesAPI.getAllServices(),
+        TechItServicesAPI.getFeaturedServices()
       ]);
       
       setServices(allServices);
@@ -91,7 +91,7 @@ export default function BeautyPersonalCarePage() {
 
     try {
       setIsSearching(true);
-      const searchResults = await BeautyPersonalCareAPI.searchServices(query);
+      const searchResults = await TechItServicesAPI.searchServices(query);
       setFilteredServices(searchResults);
     } catch (err) {
       console.error('Search error:', err);
@@ -156,24 +156,13 @@ export default function BeautyPersonalCarePage() {
   const handleBack = () => {
     router.back();
   };
+
   const handleServicePress = (service: Service) => {
     // Navigate to service details or booking page
-    // Pass comprehensive service data through route params
+    // You can pass service data through route params
     router.push({
       pathname: '/(booking)/details',
-      params: { 
-        serviceId: service.id, 
-        serviceName: service.name,
-        serviceData: JSON.stringify({
-          id: service.id,
-          name: service.name,
-          image: service.image,
-          rating: service.rating,
-          reviewCount: service.reviewCount,
-          services: service.services,
-          category: service.category
-        })
-      }
+      params: { serviceId: service.id, serviceName: service.name }
     });
   };
 
@@ -199,8 +188,8 @@ export default function BeautyPersonalCarePage() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#EDAE49" />
-          <Text style={styles.loadingText}>Loading beauty services...</Text>
+          <ActivityIndicator size="large" color="#9C27B0" />
+          <Text style={styles.loadingText}>Loading tech services...</Text>
         </View>
       </SafeAreaView>
     );
@@ -221,7 +210,7 @@ export default function BeautyPersonalCarePage() {
         <TouchableOpacity onPress={handleBack}>
           <Ionicons name="chevron-back" size={24} color="#B0B0B0" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Beauty & Personal Care</Text>
+        <Text style={styles.headerTitle}>Tech & IT Services</Text>
         <TouchableOpacity>
           <Ionicons name="heart-outline" size={24} color="#B0B0B0" />
         </TouchableOpacity>
@@ -239,7 +228,7 @@ export default function BeautyPersonalCarePage() {
       >
         <TextInput
           style={styles.searchInput}
-          placeholder="Search beauty services..."
+          placeholder="Search tech services..."
           placeholderTextColor="#888"
           value={searchQuery}
           onChangeText={handleSearchInputChange}
@@ -248,7 +237,7 @@ export default function BeautyPersonalCarePage() {
         />
         {isSearching ? (
           <View style={styles.searchIndicator}>
-            <ActivityIndicator size="small" color="#EDAE49" />
+            <ActivityIndicator size="small" color="#9C27B0" />
           </View>
         ) : searchQuery ? (
           <TouchableOpacity 
@@ -256,7 +245,8 @@ export default function BeautyPersonalCarePage() {
             style={styles.clearButton}
           >
             <Ionicons name="close-circle" size={20} color="#888" />
-          </TouchableOpacity>        ) : (
+          </TouchableOpacity>
+        ) : (
           <Ionicons name="search" size={20} color="#888" />
         )}
       </Animated.View>
@@ -279,8 +269,8 @@ export default function BeautyPersonalCarePage() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={onRefresh}
-              colors={['#EDAE49']}
-              tintColor="#EDAE49"
+              colors={['#9C27B0']}
+              tintColor="#9C27B0"
             />
           }
           ListHeaderComponent={
@@ -359,7 +349,7 @@ export default function BeautyPersonalCarePage() {
 
 /**
  * ===========================================
- * BEAUTY & PERSONAL CARE PAGE STYLES
+ * TECH & IT SERVICES PAGE STYLES
  * ===========================================
  */
 const styles = StyleSheet.create({
@@ -389,7 +379,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#EDAE49',
+    color: '#9C27B0',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -445,7 +435,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#EDAE49',
+    backgroundColor: '#9C27B0',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
@@ -469,7 +459,7 @@ const styles = StyleSheet.create({
   },
   clearSearchText: {
     fontSize: 16,
-    color: '#EDAE49',
+    color: '#9C27B0',
     marginTop: 16,
     textDecorationLine: 'underline',
   },

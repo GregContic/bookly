@@ -36,8 +36,7 @@ const BookingProgress = ({ currentStep, totalSteps }: { currentStep: number; tot
 
 export default function BookingLayout() {
   return (
-    <>
-      {/* Status bar configuration for booking screens */}
+    <>      {/* Status bar configuration for booking screens */}
       <StatusBar
         barStyle="light-content" // Changed to light for golden headers
         backgroundColor="#EDAE49"
@@ -51,8 +50,7 @@ export default function BookingLayout() {
           animation: 'slide_from_right', // Smooth forward transitions
           contentStyle: { 
             backgroundColor: '#FFFFFF' // Clean white background
-          },
-          // Header styling for booking flow
+          },          // Header styling for booking flow
           headerStyle: {
             backgroundColor: '#EDAE49', // Golden header for booking
           },
@@ -66,8 +64,7 @@ export default function BookingLayout() {
           headerBackTitle: '', // Clean back navigation
           headerTitleAlign: 'center', // Center all titles
         }}
-      >        {/* Step 1: Booking Details */}
-        <Stack.Screen
+      >        {/* Step 1: Booking Details */}        <Stack.Screen
           name="details/index"
           options={{
             title: 'Select Service & Trainer',
@@ -88,8 +85,7 @@ export default function BookingLayout() {
         <Stack.Screen
           name="datetime/index"
           options={{
-            title: 'Select Date & Time',
-            header: () => (
+            title: 'Select Date & Time',            header: () => (
               <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <BookingProgress currentStep={2} totalSteps={5} />
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
@@ -105,8 +101,7 @@ export default function BookingLayout() {
           name="summary/index"
           options={{
             title: 'Review Booking',
-            gestureEnabled: true,
-            header: () => (
+            gestureEnabled: true,            header: () => (
               <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <BookingProgress currentStep={3} totalSteps={5} />
                 <View style={{ paddingBottom: 12, alignItems: 'center' }}>
@@ -121,9 +116,8 @@ export default function BookingLayout() {
         <Stack.Screen
           name="payment/index"
           options={{
-            title: 'Payment Method',
-            header: () => (
-              <View style={{ backgroundColor: '#2C5530', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
+            title: 'Payment Method',            header: () => (
+              <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <View style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -160,15 +154,14 @@ export default function BookingLayout() {
           }}
         />
         
-        {/* Step 5: Booking Confirmation */}
-        <Stack.Screen
+        {/* Step 5: Booking Confirmation */}        <Stack.Screen
           name="confirmation/index"
           options={{
             title: 'Booking Confirmed',
             headerLeft: () => null, // No back button on success
             gestureEnabled: false, // Prevent going back from confirmation
             header: () => (
-              <View style={{ backgroundColor: '#4CAF50', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
+              <View style={{ backgroundColor: '#EDAE49', paddingTop: Platform.OS === 'ios' ? 44 : 0 }}>
                 <View style={{
                   flexDirection: 'row',
                   alignItems: 'center',
