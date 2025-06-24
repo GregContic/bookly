@@ -178,8 +178,7 @@ export default function HomePage() {
     }
   };
 
-  return (
-    <SafeAreaView style={homeStyles.safeArea}>
+  return (    <SafeAreaView style={homeStyles.safeArea}>
       <LinearGradient
         colors={['rgba(255, 192, 203, 0.6)', 'rgba(255, 182, 193, 0.2)', 'rgba(255, 192, 203, 0.1)']}
         style={homeStyles.pinkCircle}
@@ -194,8 +193,22 @@ export default function HomePage() {
         end={{ x: 1, y: 1 }}
         locations={[0, 0.5, 1]}
       />
+      <LinearGradient
+        colors={['rgba(255, 165, 0, 0.6)', 'rgba(255, 140, 0, 0.2)', 'rgba(255, 165, 0, 0.1)']}
+        style={homeStyles.orangeCircleBottom}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
       <Animated.View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={homeStyles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          contentContainerStyle={homeStyles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          scrollEventThrottle={16}
+          keyboardShouldPersistTaps="handled"
+          style={{ flex: 1 }}
+        >
           {/* Header */}
           
             <Animated.View 
@@ -306,12 +319,8 @@ export default function HomePage() {
                   <Text style={homeStyles.clearSearchText}>Clear</Text>
                 </TouchableOpacity>
               </View>
-              
-              {searchResults.length > 0 && (
-                <ScrollView 
-                  style={homeStyles.searchResultsList}
-                  showsVerticalScrollIndicator={false}
-                >
+                {searchResults.length > 0 && (
+                <View style={homeStyles.searchResultsList}>
                   {searchResults.map((service, index) => (
                     <TouchableOpacity
                       key={`${service.id}-${index}`}
@@ -336,7 +345,7 @@ export default function HomePage() {
                       </View>
                     </TouchableOpacity>
                   ))}
-                </ScrollView>
+                </View>
               )}
             </Animated.View>          )}
 
@@ -382,9 +391,7 @@ export default function HomePage() {
             ]}
           >
             For you
-          </Animated.Text>
-
-          <Animated.View 
+          </Animated.Text>          <Animated.View 
             style={[
               homeStyles.cardList,
               {
@@ -395,12 +402,24 @@ export default function HomePage() {
           >            <InfoCard
               title="Pulse Fitness Center"
               description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
-              onPress={() => router.push('/ServicesPage')}
+              onPress={() => router.push({
+                pathname: '/(booking)/details',
+                params: { 
+                  serviceId: 'fs_004',
+                  serviceName: 'Pulse Fitness Studio'
+                }
+              })}
               imageSource={require('../../../../assets/images/pulse.png')} />
             <InfoCard
               title="The Glow Haven Spa"
               description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
-              onPress={() => router.push('/ServicesPage')}
+              onPress={() => router.push({
+                pathname: '/(booking)/details',
+                params: { 
+                  serviceId: 'bpc_002',
+                  serviceName: 'Glow Haven Aesthetics'
+                }
+              })}
               imageSource={require('../../../../assets/images/glow-haven-2.png')} />
           </Animated.View>
 
@@ -435,8 +454,38 @@ export default function HomePage() {
                     <MaterialIcons name="star" size={16} color="#EDAE49" />
                     <Text style={{ fontWeight: 'bold', marginLeft: 2 }}>{service.rating}</Text>
                     <Text style={{ color: '#888', marginLeft: 4 }}>({service.reviews} Reviews)</Text>
-                  </View>
-                  <Text style={homeStyles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>                  <TouchableOpacity style={homeStyles.viewButton} onPress={() => router.push('/ServicesPage')}>
+                  </View>                  <Text style={homeStyles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>                  <TouchableOpacity 
+                    style={homeStyles.viewButton} 
+                    onPress={() => {
+                      if (service.name === 'The Spa Wellness') {
+                        router.push({
+                          pathname: '/(booking)/details',
+                          params: { 
+                            serviceId: 'hw_006',
+                            serviceName: 'The Spa Wellness Center'
+                          }
+                        });
+                      } else if (service.name === 'Shape Up Gym') {
+                        router.push({
+                          pathname: '/(booking)/details',
+                          params: { 
+                            serviceId: 'fs_016',
+                            serviceName: 'Shape Up Fitness Center'
+                          }
+                        });
+                      } else if (service.name === 'Urban Smiles') {
+                        router.push({
+                          pathname: '/(booking)/details',
+                          params: { 
+                            serviceId: 'hw_002',
+                            serviceName: 'Urban Smiles Dental'
+                          }
+                        });
+                      } else {
+                        router.push('/ServicesPage');
+                      }
+                    }}
+                  >
                     <Text style={homeStyles.viewButtonText}>View</Text>
                   </TouchableOpacity>
                 </View>

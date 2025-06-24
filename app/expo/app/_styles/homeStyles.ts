@@ -18,8 +18,7 @@ export const homeStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 5,
-  },
-  pinkCircleRight: {
+  },  pinkCircleRight: {
     position: 'absolute',
     width: 250,
     height: 250,
@@ -34,7 +33,22 @@ export const homeStyles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
   },
-  scrollContent: {
+  orangeCircleBottom: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    bottom: '10%',
+    left: -80,
+    opacity: 0.5,
+    zIndex: 0,
+    shadowColor: '#FF8C00',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 25,
+    elevation: 5,
+  },scrollContent: {
+    flexGrow: 1,
     padding: '5%',
     paddingBottom: 120,
     paddingTop: '25%',
@@ -189,9 +203,8 @@ export const homeStyles = StyleSheet.create({
     fontSize: 14,
     color: '#EDAE49',
     fontWeight: '500',
-  },
-  searchResultsList: {
-    maxHeight: 400, // Limit height to prevent taking full screen
+  },  searchResultsList: {
+    // Remove maxHeight to allow proper scrolling in main ScrollView
   },
   searchResultItem: {
     flexDirection: 'row',

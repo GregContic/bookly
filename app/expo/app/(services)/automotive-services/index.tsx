@@ -2,17 +2,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View, useWindowDimensions
+    ActivityIndicator,
+    Alert,
+    Animated,
+    FlatList,
+    RefreshControl,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View, useWindowDimensions
 } from 'react-native';
 import ServiceCard from '../../_components/ServiceCard';
 import AutomotiveServicesAPI from '../../_services/automotiveServicesAPI';
@@ -185,12 +185,12 @@ export default function AutomotiveServicesPage() {
       style={{ width: cardWidth, marginHorizontal: 8 }}
     />
   );
-
   // Render main service item
   const renderService = ({ item }: { item: Service }) => (
     <ServiceCard
       service={item}
       onPress={handleServicePress}
+      variant="compact"
     />
   );
 

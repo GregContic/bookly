@@ -14,9 +14,10 @@ interface ServiceCardProps {
   service: Service;
   onPress: (service: Service) => void;
   style?: any;
+  variant?: 'default' | 'compact';
 }
 
-export default function ServiceCard({ service, onPress, style }: ServiceCardProps) {
+export default function ServiceCard({ service, onPress, style, variant = 'default' }: ServiceCardProps) {
   const { width } = useWindowDimensions();
   const scale = width / 375;
   const dynamicFontSize = (size: number) => Math.round(size * scale);
@@ -25,7 +26,6 @@ export default function ServiceCard({ service, onPress, style }: ServiceCardProp
   const formatPriceRange = () => {
     return `₱${service.priceRange.min.toLocaleString()} - ₱${service.priceRange.max.toLocaleString()}`;
   };
-
   const formatSchedule = () => {
     const today = new Date().getDay();
     const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -37,6 +37,43 @@ export default function ServiceCard({ service, onPress, style }: ServiceCardProp
       return 'Closed today';
     }
   };
+
+  // Compact card layout for the image style
+  if (variant === 'compact') {
+    return (
+      <TouchableOpacity
+        style={[styles.compactCard, style]}
+        onPress={() => onPress(service)}
+        activeOpacity={0.8}
+      >
+        {/* Left: Business Logo */}
+        <View style={styles.compactImageContainer}>
+          <Image source={service.image} style={styles.compactLogo} />
+        </View>
+
+        {/* Center: Business Info */}
+        <View style={styles.compactContent}>
+          <Text style={styles.compactBusinessName} numberOfLines={1}>
+            {service.name}
+          </Text>
+          <Text style={styles.compactLocation} numberOfLines={1}>
+            📍 {service.location}
+          </Text>
+          <Text style={styles.compactSchedule} numberOfLines={1}>
+            🕒 {formatSchedule()}
+          </Text>
+          <Text style={styles.compactPrice}>
+            {formatPriceRange()}/session
+          </Text>
+        </View>
+
+        {/* Right: Book Now Button */}
+        <TouchableOpacity style={styles.bookNowButton} onPress={() => onPress(service)}>
+          <Text style={styles.bookNowText}>Book Now</Text>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity
@@ -256,9 +293,87 @@ const styles = StyleSheet.create({
   },
   amenityText: {
     color: '#666',
-  },
-  moreAmenities: {
+  },  moreAmenities: {
     color: '#999',
     fontStyle: 'italic',
+  },  // Compact card styles for horizontal layout
+  compactCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginVertical: 6,
+    marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    minHeight: 90,
+  },
+  compactImageContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: 16,
+    backgroundColor: '#F5F5F5',
+  },
+  compactLogo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  compactContent: {
+    flex: 1,
+    paddingRight: 16,
+    justifyContent: 'center',
+  },
+  compactBusinessName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2C2C2C',
+    marginBottom: 4,
+  },
+  compactLocation: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 2,
+  },
+  compactSchedule: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 4,
+  },
+  compactPrice: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#EDAE49',
+  },
+  bookNowButton: {
+    backgroundColor: '#EDAE49',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    minWidth: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#EDAE49',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  bookNowText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 });

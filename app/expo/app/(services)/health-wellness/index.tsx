@@ -183,12 +183,12 @@ export default function HealthWellnessPage() {
       style={{ width: cardWidth, marginHorizontal: 8 }}
     />
   );
-
   // Render main service item
   const renderService = ({ item }: { item: Service }) => (
     <ServiceCard
       service={item}
       onPress={handleServicePress}
+      variant="compact"
     />
   );
   // Loading state
