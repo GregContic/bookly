@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
-  "scripts": {
+  "workspaces": [
+    "app/expo",
+    "app/next",
+    "shared"
+  ],  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "expo start",
@@ -12,6 +16,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "next lint",
+    "expo-dev": "cd app/expo && expo start",
+    "next-dev": "cd app/next && npm run dev",
+    "test-solito": "node test-solito.js",
     "reset-project": "node ./scripts/reset-project.js"
   },
   "dependencies": {
@@ -41,7 +48,6 @@
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
     "lucide-react": "^0.511.0",
-    "magicui": "^0.3.2",
     "motion": "^12.12.1",
     "nativewind": "^4.1.23",
     "next": "15.3.2",
@@ -54,6 +60,7 @@
     "react-native-screens": "~4.10.0",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
+    "solito": "^4.4.1",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.0.0",
     "tamagui": "^1.126.13"

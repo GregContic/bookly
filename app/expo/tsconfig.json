@@ -3,10 +3,12 @@
   "compilerOptions": {
     "jsx": "react",
     "strict": true,
-    "esModuleInterop": true,
-    "paths": {
+    "esModuleInterop": true,    "paths": {
       "@/*": [
         "./*"
+      ],
+      "@shared/*": [
+        "../../shared/*"
       ]
     }
   },
