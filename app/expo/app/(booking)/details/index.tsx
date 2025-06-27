@@ -32,14 +32,14 @@ import TechItServicesAPI from '../../_services/techItServicesAPI';
  */
 const getServiceAPI = (serviceId: string) => {
   if (serviceId.startsWith('auto_')) return AutomotiveServicesAPI;
-  if (serviceId.startsWith('beauty_')) return BeautyPersonalCareAPI;
-  if (serviceId.startsWith('fitness_')) return FitnessSportsAPI;
-  if (serviceId.startsWith('health_')) return HealthWellnessAPI;
-  if (serviceId.startsWith('home_')) return HomeServicesAPI;
-  if (serviceId.startsWith('tech_')) return TechItServicesAPI;
+  if (serviceId.startsWith('bpc_')) return BeautyPersonalCareAPI;
+  if (serviceId.startsWith('fs_')) return FitnessSportsAPI;
+  if (serviceId.startsWith('hw_')) return HealthWellnessAPI;
+  if (serviceId.startsWith('hs_')) return HomeServicesAPI;
+  if (serviceId.startsWith('ts_')) return TechItServicesAPI;
   
   // Default fallback
-  return AutomotiveServicesAPI;
+  return HealthWellnessAPI;
 };
 
 const defaultTrainers = [
@@ -120,6 +120,12 @@ export default function BookingDetailsPage() {
             setSelectedBusiness(parsedData);
             setAvailableServices(parsedData.services || []);
             setSelectedService(parsedData.services?.[0] || null);
+            
+            // Set default trainer if none selected
+            if (!selectedTrainer) {
+              setSelectedTrainer(defaultTrainers[0]);
+            }
+            
             setIsLoading(false);
             return;
           } catch (parseError) {
@@ -138,6 +144,11 @@ export default function BookingDetailsPage() {
         setSelectedBusiness(service);
         setAvailableServices(service.services);
         setSelectedService(service.services[0] || null);
+        
+        // Set default trainer if none selected
+        if (!selectedTrainer) {
+          setSelectedTrainer(defaultTrainers[0]);
+        }
         
       } catch (err) {
         console.error('Error loading service data:', err);

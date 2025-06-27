@@ -4,16 +4,10 @@ const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
   reactStrictMode: true,
   
-  // Support for Solito and React Native Web
+  // Support for React Native Web
   transpilePackages: [
     'react-native-web',
-    'solito',
-    '@shared',
     'react-native',
-    'expo-router',
-    'expo-linking',
-    'expo-constants',
-    'expo-modules-core',
   ],
   
   webpack: (config, { isServer }) => {

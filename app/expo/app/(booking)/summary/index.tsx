@@ -14,6 +14,23 @@ import {
   useWindowDimensions
 } from 'react-native';
 
+// Helper function to get service image by ID
+const getServiceImage = (serviceId: string) => {
+  const imageMap: { [key: string]: any } = {
+    'hw_001': require('../../../assets/images/prime-care.png'),
+    'hw_002': require('../../../assets/images/urban_smiles.png'),
+    'hw_003': require('../../../assets/images/serenescape.png'),
+    'hw_004': require('../../../assets/images/eye-clinic.png'),
+    'hw_005': require('../../../assets/images/zenyoga.png'),
+    'hw_006': require('../../../assets/images/spa-wellness.png'),
+    'fs_016': require('../../../assets/images/shapeup_gym.png'),
+    'fs_004': require('../../../assets/images/pulse.png'),
+    'bpc_002': require('../../../assets/images/glow-haven-2.png'),
+  };
+  
+  return imageMap[serviceId] || require('../../../assets/images/shapeup_gym.png');
+};
+
 /**
  * ===========================================
  * BOOKING SUMMARY DATA
@@ -61,13 +78,11 @@ export default function BookingSummaryPage() {
   const bookingSummary = bookingData ? {
     service: {
       businessName: bookingData.business.name,
-      businessImage: typeof bookingData.business.image === 'string' 
-        ? require('../../../assets/images/shapeup_gym.png') 
-        : bookingData.business.image || require('../../../assets/images/shapeup_gym.png'),
+      businessImage: getServiceImage(bookingData.business.id || 'hw_006'),
       rating: bookingData.business.rating,
       reviewCount: bookingData.business.reviewCount,
       serviceName: bookingData.service.name,
-      duration: bookingData.service.duration,
+      duration: `${bookingData.service.duration} mins`,
       price: bookingData.service.price
     },
     dateTime: {
@@ -75,10 +90,8 @@ export default function BookingSummaryPage() {
       time: bookingData.dateTime.time
     },
     trainer: {
-      name: bookingData.trainer.name,
-      image: typeof bookingData.trainer.image === 'string' 
-        ? require('../../../assets/images/Logo-3.png') 
-        : bookingData.trainer.image || require('../../../assets/images/Logo-3.png'),
+      name: bookingData.trainer?.name || 'Professional Staff',
+      image: require('../../../assets/images/Logo-3.png'),
       rating: 4.95 // Default rating
     },
     pricing: {

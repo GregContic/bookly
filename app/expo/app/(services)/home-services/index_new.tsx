@@ -158,12 +158,9 @@ export default function HomeServicesPage() {
   };
 
   const handleServicePress = (service: Service) => {
-    // Navigate to service details or booking page
-    // You can pass service data through route params
-    router.push({
-      pathname: '/(booking)/details',
-      params: { serviceId: service.id, serviceName: service.name }
-    });
+    // Navigate to service detail page
+    console.log('🚀 Home service clicked:', service.id);
+    router.push(`/(services)/${service.id}`);
   };
 
   // Render featured service item

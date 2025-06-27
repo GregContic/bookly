@@ -10,7 +10,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, description, onPress, imageS
     <View style={styles.cardContent}>
       <Text style={styles.cardTitle}>{title}</Text>
       <Text style={styles.cardDescription}>{description}</Text>
-      <TouchableOpacity style={styles.viewButton}>
+      <TouchableOpacity style={styles.viewButton} onPress={onPress}>
         <Text style={styles.viewButtonText}>View</Text>
       </TouchableOpacity>
     </View>

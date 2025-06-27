@@ -157,24 +157,9 @@ export default function HomeServicesPage() {
     router.back();
   };
   const handleServicePress = (service: Service) => {
-    // Navigate to service details or booking page
-    // Pass comprehensive service data through route params
-    router.push({
-      pathname: '/(booking)/details',
-      params: { 
-        serviceId: service.id, 
-        serviceName: service.name,
-        serviceData: JSON.stringify({
-          id: service.id,
-          name: service.name,
-          image: service.image,
-          rating: service.rating,
-          reviewCount: service.reviewCount,
-          services: service.services,
-          category: service.category
-        })
-      }
-    });
+    // Navigate to service detail page
+    console.log('🚀 Home services clicked:', service.id);
+    router.push(`/(services)/${service.id}`);
   };
 
   // Render featured service item

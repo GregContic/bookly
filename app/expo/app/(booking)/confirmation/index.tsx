@@ -32,20 +32,20 @@ export default function BookingConfirmationPage() {
   const bookingConfirmation = bookingData ? {
     bookingId: generateBookingId(),
     business: {
-      name: bookingData.business.name,
+      name: bookingData.business?.name || 'Unknown Business',
     },
     trainer: {
-      name: bookingData.trainer.name,
+      name: bookingData.trainer?.name || 'Professional Staff',
     },
     service: {
-      name: bookingData.service.name,
-      duration: bookingData.service.duration,
+      name: bookingData.service?.name || 'Service',
+      duration: bookingData.service?.duration || '1 hour',
     },
     dateTime: {
-      date: bookingData.dateTime.date,
-      time: bookingData.dateTime.time
+      date: bookingData.dateTime?.date || 'TBD',
+      time: bookingData.dateTime?.time || 'TBD'
     },
-    totalAmount: bookingData.pricing.totalAmount
+    totalAmount: bookingData.pricing?.totalAmount || 0
   } : {
     bookingId: generateBookingId(),
     business: {

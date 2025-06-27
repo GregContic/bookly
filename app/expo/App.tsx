@@ -1,13 +1,10 @@
-import { SolitoAppProvider } from '@shared';
+import 'react-native-gesture-handler';
+import React from 'react';
 import { registerRootComponent } from 'expo';
-import { ExpoRoot } from 'solito/router';
+import { Slot } from 'expo-router';
 
 export default function App() {
-  return (
-    <SolitoAppProvider>
-      <ExpoRoot />
-    </SolitoAppProvider>
-  );
+  return <Slot />;
 }
 
 registerRootComponent(App);

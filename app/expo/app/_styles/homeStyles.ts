@@ -18,7 +18,8 @@ export const homeStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 5,
-  },  pinkCircleRight: {
+  },
+  pinkCircleRight: {
     position: 'absolute',
     width: 250,
     height: 250,
@@ -47,7 +48,23 @@ export const homeStyles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 25,
     elevation: 5,
-  },scrollContent: {
+  },
+  pinkCircleBottomRight: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    bottom: '5%',
+    right: -70,
+    opacity: 0.4,
+    zIndex: 0,
+    shadowColor: '#FFA500',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 5,
+  },
+  scrollContent: {
     flexGrow: 1,
     padding: '5%',
     paddingBottom: 120,
@@ -118,7 +135,8 @@ export const homeStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginBottom: 20,
-  },  cardList: {
+  },
+  cardList: {
     marginBottom: 25,
     paddingHorizontal: 5,
   },
@@ -203,7 +221,8 @@ export const homeStyles = StyleSheet.create({
     fontSize: 14,
     color: '#EDAE49',
     fontWeight: '500',
-  },  searchResultsList: {
+  },
+  searchResultsList: {
     // Remove maxHeight to allow proper scrolling in main ScrollView
   },
   searchResultItem: {

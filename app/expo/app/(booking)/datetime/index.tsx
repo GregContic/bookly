@@ -49,6 +49,9 @@ export default function SelectDateTimePage() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
   
+  // Validation logic for Next button
+  const isNextDisabled = !selectedDate || !selectedTime;
+  
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(30)).current;
@@ -198,8 +201,6 @@ export default function SelectDateTimePage() {
     setCurrentMonth(newMonth);
   };
 
-  const isNextDisabled = !selectedDate || !selectedTime;
-
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
@@ -237,9 +238,9 @@ export default function SelectDateTimePage() {
           <View style={[styles.progressLine, styles.progressLineCompleted]} />
           <View style={[styles.progressStep, styles.progressActive]} />
           <View style={styles.progressLine} />
-          <View style={styles.progressStep} />
+          <View style={[styles.progressStep, styles.progressCompleted]} />
           <View style={styles.progressLine} />
-          <View style={styles.progressStep} />
+          <View style={[styles.progressStep, styles.progressCompleted]} />
         </View>
         <Text style={styles.progressText}>2 of 4</Text>
       </Animated.View>

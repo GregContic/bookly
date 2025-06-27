@@ -33,7 +33,7 @@ import { useAuth } from '../../../../context/AuthContext';
 // Mock data (replace with API calls)
 const mostBookedServices = [
   {
-    id: 1,
+    id: 'hw_006',
     name: 'The Spa Wellness',
     image: require('../../../../assets/images/spa-wellness.png'), // Replace with your actual image path
     rating: 4.95,
@@ -41,7 +41,7 @@ const mostBookedServices = [
     description: 'A sanctuary of relaxation offering rejuvenating massages, facials, and holistic therapies to restore your mind and body. Step into a serene oasis where tranquility meets luxury, and let our expert therapists provide you with a truly rejuvenating experience.',
   },
   {
-    id: 2,
+    id: 'fs_016',
     name: 'Shape Up Gym',
     image: require('../../../../assets/images/shapeup_gym.png'), // Replace with your actual image path
     rating: 4.85,
@@ -49,7 +49,7 @@ const mostBookedServices = [
     description: 'Your go-to fitness destination, offering state-of-the-art equipment, expert trainers, and a motivating environment to help you achieve your health and wellness goals. Join us and take the next step in your fitness journey!',
   },
   {
-    id: 3,
+    id: 'hw_002',
     name: 'Urban Smiles',
     image: require('../../../../assets/images/urban_smiles.png'), // Replace with your actual image path
     rating: 4.90,
@@ -166,15 +166,15 @@ export default function HomePage() {
   };
 
   const handleServicePress = (service: ServiceData) => {
-    // Navigate to appropriate service page based on category
-    if (service.category === 'Beauty & Personal Care') {
-      router.push('/(services)/beauty-personal-care');
-    } else if (service.category === 'Health & Wellness') {
-      router.push('/(services)/health-wellness');
-    } else if (service.category === 'Fitness & Sports') {
-      router.push('/(services)/fitness-sports');
-    } else {
-      router.push('/ServicesPage');
+    // Navigate to service detail page
+    console.log('🚀 Navigating to service detail page:', service.id);
+    console.log('🚀 Service object:', service);
+    console.log('🚀 Using router.push with path:', `/(services)/${service.id}`);
+    try {
+      router.push(`/(services)/${service.id}`);
+      console.log('✅ Navigation call completed');
+    } catch (error) {
+      console.error('💥 Navigation error:', error);
     }
   };
 
@@ -194,8 +194,15 @@ export default function HomePage() {
         locations={[0, 0.5, 1]}
       />
       <LinearGradient
-        colors={['rgba(255, 165, 0, 0.6)', 'rgba(255, 140, 0, 0.2)', 'rgba(255, 165, 0, 0.1)']}
+        colors={['rgba(255, 192, 203, 0.6)', 'rgba(255, 182, 193, 0.2)', 'rgba(255, 192, 203, 0.1)']}
         style={homeStyles.orangeCircleBottom}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.6)', 'rgba(255, 182, 193, 0.2)', 'rgba(255, 192, 203, 0.1)']}
+        style={homeStyles.pinkCircleBottomRight}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         locations={[0, 0.5, 1]}
@@ -402,24 +409,18 @@ export default function HomePage() {
           >            <InfoCard
               title="Pulse Fitness Center"
               description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
-              onPress={() => router.push({
-                pathname: '/(booking)/details',
-                params: { 
-                  serviceId: 'fs_004',
-                  serviceName: 'Pulse Fitness Studio'
-                }
-              })}
+              onPress={() => {
+                console.log('🚀 InfoCard clicked: fs_004');
+                router.push('/(services)/fs_004');
+              }}
               imageSource={require('../../../../assets/images/pulse.png')} />
             <InfoCard
               title="The Glow Haven Spa"
               description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
-              onPress={() => router.push({
-                pathname: '/(booking)/details',
-                params: { 
-                  serviceId: 'bpc_002',
-                  serviceName: 'Glow Haven Aesthetics'
-                }
-              })}
+              onPress={() => {
+                console.log('🚀 InfoCard clicked: bpc_002');
+                router.push('/(services)/bpc_002');
+              }}
               imageSource={require('../../../../assets/images/glow-haven-2.png')} />
           </Animated.View>
 
@@ -457,33 +458,8 @@ export default function HomePage() {
                   </View>                  <Text style={homeStyles.mostBookedDescription} numberOfLines={3}>{service.description}</Text>                  <TouchableOpacity 
                     style={homeStyles.viewButton} 
                     onPress={() => {
-                      if (service.name === 'The Spa Wellness') {
-                        router.push({
-                          pathname: '/(booking)/details',
-                          params: { 
-                            serviceId: 'hw_006',
-                            serviceName: 'The Spa Wellness Center'
-                          }
-                        });
-                      } else if (service.name === 'Shape Up Gym') {
-                        router.push({
-                          pathname: '/(booking)/details',
-                          params: { 
-                            serviceId: 'fs_016',
-                            serviceName: 'Shape Up Fitness Center'
-                          }
-                        });
-                      } else if (service.name === 'Urban Smiles') {
-                        router.push({
-                          pathname: '/(booking)/details',
-                          params: { 
-                            serviceId: 'hw_002',
-                            serviceName: 'Urban Smiles Dental'
-                          }
-                        });
-                      } else {
-                        router.push('/ServicesPage');
-                      }
+                      console.log('🚀 Most Booked Service clicked:', service.id);
+                      router.push(`/(services)/${service.id}`);
                     }}
                   >
                     <Text style={homeStyles.viewButtonText}>View</Text>
