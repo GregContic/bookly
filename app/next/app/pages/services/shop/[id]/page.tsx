@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Header from "../../../../../components/header";
 
 interface ServiceDetails {
   id: string;
@@ -174,10 +173,9 @@ export default function ServiceDetails() {
       </div>
     );
   }
+
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Hero Image */}
       <div className="relative h-96 bg-gray-900 overflow-hidden">
         <img
@@ -277,10 +275,10 @@ export default function ServiceDetails() {
                   </div>
                 ))}
               </div>
-            </div>          </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </>
   );
 }
