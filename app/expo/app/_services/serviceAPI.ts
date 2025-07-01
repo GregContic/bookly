@@ -84,6 +84,9 @@ class ServiceAPI {
     if (endpoint.includes('/services/most-booked')) {
       return getMostBookedServices() as unknown as T;
     }
+    if (endpoint === '/services') {
+      return allServices as unknown as T;
+    }
     if (endpoint.includes('/services/search')) {
       // Extract query parameter
       const url = new URL(`http://dummy.com${endpoint}`);
@@ -105,6 +108,10 @@ class ServiceAPI {
   }
 
   // Service methods
+  async getAllServices(): Promise<ServiceData[]> {
+    return this.fetchApi<ServiceData[]>('/services');
+  }
+
   async getMostBookedServices(): Promise<ServiceData[]> {
     return this.fetchApi<ServiceData[]>('/services/most-booked');
   }

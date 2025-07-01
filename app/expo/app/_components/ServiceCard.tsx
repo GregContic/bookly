@@ -1,12 +1,13 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 import { Service } from '../_types/interfaces';
 
@@ -23,6 +24,11 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
   const dynamicFontSize = (size: number) => Math.round(size * scale);
   const dynamicSpacing = (size: number) => Math.round(size * scale);
 
+  // Animation state for promo tag
+  const [isPromoExpanded, setIsPromoExpanded] = useState(false);
+  const promoWidthAnim = useRef(new Animated.Value(60)).current; // Initial width for "PROMO" text
+  const promoOpacityAnim = useRef(new Animated.Value(1)).current;
+
   const formatPriceRange = () => {
     return `₱${service.priceRange.min.toLocaleString()} - ₱${service.priceRange.max.toLocaleString()}`;
   };
@@ -35,6 +41,44 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
       return `Open today: ${todaySchedule.open} - ${todaySchedule.close}`;
     } else {
       return 'Closed today';
+    }
+  };
+
+  // Handle promo tag click animation
+  const handlePromoClick = () => {
+    if (!service.promoText) return;
+
+    if (isPromoExpanded) {
+      // Collapse animation
+      Animated.parallel([
+        Animated.timing(promoWidthAnim, {
+          toValue: 60,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(promoOpacityAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        setIsPromoExpanded(false);
+      });
+    } else {
+      // Expand animation
+      setIsPromoExpanded(true);
+      Animated.parallel([
+        Animated.timing(promoWidthAnim, {
+          toValue: Math.min(width * 0.7, 250), // Max width based on screen size
+          duration: 400,
+          useNativeDriver: false,
+        }),
+        Animated.timing(promoOpacityAnim, {
+          toValue: 0.95,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
     }
   };
 
@@ -51,26 +95,31 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
           <Image source={service.image} style={styles.compactLogo} />
         </View>
 
-        {/* Center: Business Info */}
-        <View style={styles.compactContent}>
-          <Text style={styles.compactBusinessName} numberOfLines={1}>
-            {service.name}
-          </Text>
-          <Text style={styles.compactLocation} numberOfLines={1}>
-            📍 {service.location}
-          </Text>
-          <Text style={styles.compactSchedule} numberOfLines={1}>
-            🕒 {formatSchedule()}
-          </Text>
-          <Text style={styles.compactPrice}>
-            {formatPriceRange()}/session
-          </Text>
-        </View>
+        {/* Right: Business Info and Button */}
+        <View style={styles.compactRightSection}>
+          {/* Business Info */}
+          <View style={styles.compactContent}>
+            <Text style={styles.compactBusinessName} numberOfLines={1}>
+              {service.name}
+            </Text>
+            <Text style={styles.compactLocation} numberOfLines={1}>
+              📍 {service.location}
+            </Text>
+            <Text style={styles.compactSchedule} numberOfLines={1}>
+              🕒 {formatSchedule()}
+            </Text>
+            <Text style={styles.compactPrice}>
+              {formatPriceRange()}/session
+            </Text>
+          </View>
 
-        {/* Right: Book Now Button */}
-        <TouchableOpacity style={styles.bookNowButton} onPress={() => onPress(service)}>
-          <Text style={styles.bookNowText}>Book Now</Text>
-        </TouchableOpacity>
+          {/* Book Now Button - Below the text content */}
+          <View style={styles.compactButtonContainer}>
+            <TouchableOpacity style={styles.bookNowButton} onPress={() => onPress(service)}>
+              <Text style={styles.bookNowText}>Book Now</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </TouchableOpacity>
     );
   }
@@ -85,9 +134,32 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
       <View style={styles.imageContainer}>
         <Image source={service.image} style={styles.serviceImage} />
         {service.isPromo && (
-          <View style={styles.promoTag}>
-            <Text style={styles.promoText}>PROMO</Text>
-          </View>
+          <Animated.View style={[
+            styles.promoTag,
+            {
+              width: promoWidthAnim,
+              opacity: promoOpacityAnim,
+            }
+          ]}>
+            <TouchableOpacity 
+              onPress={handlePromoClick}
+              style={styles.promoTouchable}
+              activeOpacity={0.8}
+            >
+              {isPromoExpanded && service.promoText ? (
+                <Text style={styles.promoTextExpanded} numberOfLines={2}>
+                  {service.promoText}
+                </Text>
+              ) : (
+                <View style={styles.promoContent}>
+                  <Text style={styles.promoText}>PROMO</Text>
+                  {service.promoText && (
+                    <Ionicons name="chevron-forward" size={12} color="#FFFFFF" style={styles.promoIcon} />
+                  )}
+                </View>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
         )}
         {service.isVerified && (
           <View style={styles.verifiedBadge}>
@@ -131,14 +203,6 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
           </Text>
         </View>
 
-        {service.isPromo && service.promoText && (
-          <View style={styles.promoContainer}>
-            <Text style={[styles.promoDescription, { fontSize: dynamicFontSize(11) }]}>
-              {service.promoText}
-            </Text>
-          </View>
-        )}
-
         {/* Amenities */}
         <View style={styles.amenitiesContainer}>
           {service.amenities.slice(0, 3).map((amenity, index) => (
@@ -154,6 +218,13 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
             </Text>
           )}
         </View>
+
+        {/* Book Now Button */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.featuredBookNowButton} onPress={() => onPress(service)}>
+            <Text style={styles.featuredBookNowText}>Book Now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -162,7 +233,9 @@ export default function ServiceCard({ service, onPress, style, variant = 'defaul
 const styles = StyleSheet.create({
   serviceCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 9,
+    borderWidth: 0.8,
+    borderColor: '#9e9999',
     marginVertical: 8,
     marginHorizontal: 16,
     shadowColor: '#000',
@@ -178,11 +251,16 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     height: 150,
+    padding: 10,
+    marginBottom: 12,
   },
   serviceImage: {
     width: '100%',
-    height: '100%',
+    height: '115%',
     resizeMode: 'cover',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#9e9999',
   },
   promoTag: {
     position: 'absolute',
@@ -192,11 +270,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    minHeight: 28,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    shadowColor: '#FF6B35',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 10,
+  },
+  promoTouchable: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingHorizontal: 4,
+  },
+  promoContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   promoText: {
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  promoIcon: {
+    marginLeft: 2,
+  },
+  promoTextExpanded: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '600',
+    textAlign: 'left',
+    lineHeight: 12,
+    flexWrap: 'wrap',
   },
   verifiedBadge: {
     position: 'absolute',
@@ -268,16 +382,6 @@ const styles = StyleSheet.create({
     color: '#666',
     fontStyle: 'italic',
   },
-  promoContainer: {
-    backgroundColor: '#FFF3E0',
-    padding: 6,
-    borderRadius: 6,
-    marginBottom: 8,
-  },
-  promoDescription: {
-    color: '#FF8F00',
-    fontWeight: '500',
-  },
   amenitiesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -296,10 +400,33 @@ const styles = StyleSheet.create({
   },  moreAmenities: {
     color: '#999',
     fontStyle: 'italic',
+  },
+  buttonContainer: {
+    alignItems: 'flex-end',
+    marginTop: 12,
+  },
+  featuredBookNowButton: {
+    backgroundColor: '#EDAE49',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 5,
+    shadowColor: '#EDAE49',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  featuredBookNowText: {
+    color: '#000000',
+    fontSize: 12,
+    fontWeight: 'bold',
   },  // Compact card styles for horizontal layout
   compactCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 9,
     marginVertical: 6,
     marginHorizontal: 16,
     shadowColor: '#000',
@@ -311,13 +438,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: 16,
-    minHeight: 90,
+    minHeight: 110,
+    borderColor: '#9e9999',
+    borderWidth: 0.8,
+    position: 'relative',
   },
   compactImageContainer: {
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     borderRadius: 12,
     overflow: 'hidden',
     marginRight: 16,
@@ -330,14 +460,26 @@ const styles = StyleSheet.create({
   },
   compactContent: {
     flex: 1,
-    paddingRight: 16,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 4,
+  },
+  compactRightSection: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    minHeight: 80,
+  },
+  compactButtonContainer: {
+    alignItems: 'flex-end',
+    marginTop: 8,
+    paddingTop: 4,
   },
   compactBusinessName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2C2C2C',
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1A1A1A',
+    marginBottom: 6,
+    lineHeight: 22,
   },
   compactLocation: {
     fontSize: 12,
@@ -356,10 +498,10 @@ const styles = StyleSheet.create({
   },
   bookNowButton: {
     backgroundColor: '#EDAE49',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    minWidth: 90,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    minWidth: 80,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#EDAE49',
@@ -372,8 +514,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   bookNowText: {
-    color: '#FFFFFF',
-    fontSize: 13,
+    color: '#000000',
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });

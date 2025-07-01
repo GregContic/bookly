@@ -4,14 +4,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Animated,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 // Components
@@ -64,6 +64,7 @@ export default function HomePage() {
   const navigation = useNavigation();
   const { signOut } = useAuth();
   const [services, setServices] = useState<ServiceData[]>(mostBookedServices);
+  const [forYouServices, setForYouServices] = useState<ServiceData[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<ServiceData[]>([]);
@@ -77,6 +78,7 @@ export default function HomePage() {
   useEffect(() => {
     // Load data
     loadMostBookedServices();
+    loadForYouServices();
 
     // Start animations
     Animated.parallel([
@@ -109,6 +111,24 @@ export default function HomePage() {
   const loadMostBookedServices = async () => {
     const data = await serviceAPI.getMostBookedServices();
     setServices(data);
+  };
+
+  const loadForYouServices = async () => {
+    try {
+      // Get all services from the API
+      const allServices = await serviceAPI.getAllServices();
+      
+      // Shuffle and pick 3 random services
+      const shuffled = [...allServices].sort(() => 0.5 - Math.random());
+      const randomThree = shuffled.slice(0, 3);
+      
+      setForYouServices(randomThree);
+    } catch (error) {
+      console.error('Error loading For You services:', error);
+      // Fallback to a subset of mostBookedServices if API fails
+      const shuffled = [...mostBookedServices].sort(() => 0.5 - Math.random());
+      setForYouServices(shuffled.slice(0, 3));
+    }
   };
   // Event handlers
   const handleSignOut = async () => {
@@ -406,22 +426,19 @@ export default function HomePage() {
                 transform: [{ translateY: slideAnim }]
               }
             ]}
-          >            <InfoCard
-              title="Pulse Fitness Center"
-              description="⭐⭐⭐⭐⭐ 2.1km | Modern fitness center with certified trainers and group classes."
-              onPress={() => {
-                console.log('🚀 InfoCard clicked: fs_004');
-                router.push('/(services)/fs_004');
-              }}
-              imageSource={require('../../../../assets/images/pulse.png')} />
-            <InfoCard
-              title="The Glow Haven Spa"
-              description="⭐⭐⭐⭐ 1.2km | Luxurious spa offering massages, facials and relaxation."
-              onPress={() => {
-                console.log('🚀 InfoCard clicked: bpc_002');
-                router.push('/(services)/bpc_002');
-              }}
-              imageSource={require('../../../../assets/images/glow-haven-2.png')} />
+          >
+            {forYouServices.map((service, index) => (
+              <InfoCard
+                key={`${service.id}-${index}`}
+                title={service.name}
+                description={`⭐ ${service.rating} | ${service.description.substring(0, 80)}...`}
+                onPress={() => {
+                  console.log('🚀 InfoCard clicked:', service.id);
+                  router.push(`/(services)/${service.id}`);
+                }}
+                imageSource={service.image}
+              />
+            ))}
           </Animated.View>
 
           {/* Most Booked Services */}

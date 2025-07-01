@@ -3,8 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import ServicesAggregatorAPI from './_services/servicesAggregatorAPI';
-import { Service } from './_types/interfaces';
+import ServicesAggregatorAPI from '../_services/servicesAggregatorAPI';
+import { Service } from '../_types/interfaces';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -52,23 +52,31 @@ export default function ServicesPage() {
       setIsLoading(true);
       setError(null);
       
+      console.log('🔄 Loading services data...');
+      
       // Fetch featured and all services in parallel
       const [featured, all] = await Promise.all([
         ServicesAggregatorAPI.getAllFeaturedServices(),
         ServicesAggregatorAPI.getAllServices()
       ]);
       
+      console.log('✅ Featured services loaded:', featured.length);
+      console.log('✅ All services loaded:', all.length);
+      
       setFeaturedServices(featured.slice(0, 10)); // Limit featured to 10 for performance
       setAllServices(all);
       setFilteredServices(all);
       
     } catch (err) {
-      console.error('Error loading services:', err);
+      console.error('❌ Error loading services:', err);
       setError(err instanceof Error ? err.message : 'Failed to load services');
       Alert.alert(
         'Error',
         'Failed to load services. Please check your connection and try again.',
-        [{ text: 'Retry', onPress: loadServicesData }]
+        [
+          { text: 'Retry', onPress: loadServicesData },
+          { text: 'Cancel', style: 'cancel' }
+        ]
       );
     } finally {
       setIsLoading(false);
@@ -111,11 +119,20 @@ export default function ServicesPage() {
 
     try {
       setIsSearching(true);
+      console.log('🔍 Searching for:', query);
+      
       const searchResults = await ServicesAggregatorAPI.searchAllServices(query);
+      console.log('✅ Search results:', searchResults.length);
+      
       setFilteredServices(searchResults);
     } catch (err) {
-      console.error('Error searching services:', err);
-      Alert.alert('Error', 'Failed to search services. Please try again.');
+      console.error('❌ Error searching services:', err);
+      Alert.alert(
+        'Search Error', 
+        'Failed to search services. Please try again.',
+        [{ text: 'OK' }]
+      );
+      // Keep the current filtered services on error
     } finally {
       setIsSearching(false);
     }
@@ -123,11 +140,36 @@ export default function ServicesPage() {
 
   const handleServicePress = (service: Service) => {
     // Navigate to service details
-    router.push(`/(services)/${service.id}`);
+    try {
+      if (!service?.id) {
+        throw new Error('Service ID is missing');
+      }
+      
+      console.log('🚀 Navigating to service:', service.id);
+      router.push(`/(services)/${service.id}`);
+    } catch (error) {
+      console.error('❌ Navigation error:', error);
+      Alert.alert(
+        'Navigation Error',
+        'Failed to open service details. Please try again.',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const handleBack = () => {
-    router.back();
+    try {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        // Fallback to home if there's no history
+        router.replace('/(drawer)/(tabs)/home');
+      }
+    } catch (error) {
+      console.error('❌ Back navigation error:', error);
+      // Ultimate fallback
+      router.replace('/(drawer)/(tabs)/home');
+    }
   };
 
   const formatPrice = (service: Service) => {
@@ -293,8 +335,8 @@ export default function ServicesPage() {
                     <FontAwesome name="star" size={12} color="#EDAE49" />
                     <Text style={styles.featuredRating}>{service.rating}</Text>
                   </View>
-                  <Text style={styles.featuredLocation}>� {service.location}</Text>
-                  <Text style={styles.featuredSchedule}>� {formatSchedule(service)}</Text>
+                  <Text style={styles.featuredLocation}>📍 {service.location}</Text>
+                  <Text style={styles.featuredSchedule}>🕐 {formatSchedule(service)}</Text>
                   <View style={styles.featuredDetailRow}>
                     <Ionicons name="card-outline" size={12} color="#6B7280" />
                     <Text style={styles.featuredPrice}>{formatPrice(service)}</Text>

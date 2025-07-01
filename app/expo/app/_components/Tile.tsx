@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   tileText: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '500',
     color: '#222',
     textAlign: 'center',
