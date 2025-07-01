@@ -156,6 +156,7 @@ export default function TechItServicesPage() {
   const handleBack = () => {
     router.back();
   };
+
   const handleServicePress = (service: Service) => {
     // Navigate to service detail page
     console.log('🚀 Tech IT service clicked:', service.id);
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#9C27B0',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',

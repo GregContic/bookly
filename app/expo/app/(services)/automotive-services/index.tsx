@@ -156,6 +156,7 @@ export default function AutomotiveServicesPage() {
   const handleBack = () => {
     router.back();
   };
+
   const handleServicePress = (service: Service) => {
     // Navigate to service detail page
     console.log('🚀 Automotive service clicked:', service.id);
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF6B35',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',

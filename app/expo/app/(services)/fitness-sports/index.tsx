@@ -156,6 +156,7 @@ export default function FitnessSportsPage() {
   const handleBack = () => {
     router.back();
   };
+
   const handleServicePress = (service: Service) => {
     // Navigate to service detail page
     console.log('🚀 Fitness & sports service clicked:', service.id);
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#E91E63',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',

@@ -156,9 +156,10 @@ export default function HomeServicesPage() {
   const handleBack = () => {
     router.back();
   };
+
   const handleServicePress = (service: Service) => {
     // Navigate to service detail page
-    console.log('🚀 Home services clicked:', service.id);
+    console.log('🚀 Home service clicked:', service.id);
     router.push(`/(services)/${service.id}`);
   };
 
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2196F3',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',

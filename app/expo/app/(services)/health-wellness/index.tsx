@@ -2,17 +2,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View, useWindowDimensions
+    ActivityIndicator,
+    Alert,
+    Animated,
+    FlatList,
+    RefreshControl,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View, useWindowDimensions
 } from 'react-native';
 import ServiceCard from '../../_components/ServiceCard';
 import HealthWellnessAPI from '../../_services/healthWellnessAPI';
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',

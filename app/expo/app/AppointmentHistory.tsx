@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
@@ -50,6 +51,34 @@ export default function AppointmentHistory() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircle}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircleRight}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.orangeCircleBottom}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircleBottomRight}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
       <Animated.View 
         style={[
           styles.headerRow,
@@ -152,6 +181,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F5F0',
   },
+  pinkCircle: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 150,
+    top: -10,
+    left: -100,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  pinkCircleRight: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 150,
+    top: 50,
+    right: -100,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  orangeCircleBottom: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    bottom: '10%',
+    left: -80,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  pinkCircleBottomRight: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    bottom: '25%',
+    right: -70,
+    opacity: 0.3,
+    zIndex: 0,
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -163,7 +232,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontWeight: 'bold',
-    color: '#222',
+    color: '#000',
   },
   appointmentCard: {
     backgroundColor: '#fff',

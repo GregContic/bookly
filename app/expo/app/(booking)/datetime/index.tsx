@@ -391,11 +391,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: '#000',
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#666666',
+    color: '#000',
     marginTop: 2,
   },
   headerRight: {

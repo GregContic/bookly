@@ -1,80 +1,23 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { Animated, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-
-const featuredServices = [
-  {
-    id: '1',
-    name: 'Glow Haven Aesthetics',
-    image: require('../assets/images/glow-haven.png'),
-    rating: 4.8,
-    desc: 'Facials, Skin Rejuvenation, Beauty Care',
-    price: '₱800 - ₱2,500',
-    isPromo: false,
-  },
-  {
-    id: '2',
-    name: 'Apex Performance Gym',
-    image: require('../assets/images/apex-gym.png'),
-    rating: 4.9,
-    desc: 'Strength, Cardio, Group Classes',
-    price: '₱900 - ₱1,500',
-    isPromo: true,
-  },
-];
-
-const allServices = [
-  {
-    id: '1',
-    name: 'HandyPro Home Repairs',
-    image: require('../assets/images/handypro-1.png'),
-    rating: 4.8,
-    desc: 'La Trinidad, Benguet',
-    schedule: 'Monday - Sunday\n8:00 AM - 6:00 PM',
-    price: '₱1,300 - ₱8,000',
-  },
-  {
-    id: '2',
-    name: 'SmartFix IT Solutions',
-    image: require('../assets/images/smartfix-1.png'),
-    rating: 4.6,
-    desc: '24 Lopez Jaena St., Baguio City',
-    schedule: 'Monday - Saturday\n9:00 AM - 5:00 PM',
-    price: '₱800 - ₱1,000',
-  },
-  {
-    id: '3',
-    name: 'Turbo Care Auto Hub',
-    image: require('../assets/images/turbo-hub.png'),
-    rating: 4.7,
-    desc: 'Naguilian Rd., Baguio City',
-    schedule: 'Monday - Saturday\n8:00 AM - 5:00 PM',
-    price: '₱1,500 - ₱7,000',
-  },
-  {
-      id: '4',
-      name: 'Peak Performance',
-      image: require('../assets/images/peak-performance.png'),
-      rating: 4.7,
-      desc: 'La Trinidad, Baguio City',
-      schedule: 'Monday - Sunday\n9:00 AM - 8:00 PM',
-      price: '₱1,200 - ₱4,500',
-    },
-    {
-      id: '5',
-      name: 'Harmony',
-      image: require('../assets/images/harmony.png'),
-      rating: 4.85,
-      desc: 'Upper Gen.Luna Rd., Baguio City',
-      schedule: 'Monday - Sunday\n9:00 AM - 8:00 PM',
-      price: '₱1,200 - ₱4,500',
-    },
-];
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Animated, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import ServicesAggregatorAPI from './_services/servicesAggregatorAPI';
+import { Service } from './_types/interfaces';
 
 export default function ServicesPage() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
+  
+  // State for services data
+  const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
+  const [allServices, setAllServices] = useState<Service[]>([]);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
   
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -92,8 +35,47 @@ export default function ServicesPage() {
   const imageHeight = width * 0.3;
   const horizontalPadding = width * 0.05;
 
+  // Load data on component mount
   useEffect(() => {
-    // Start animations
+    loadServicesData();
+  }, []);
+
+  // Start animations after data loads
+  useEffect(() => {
+    if (!isLoading) {
+      startAnimations();
+    }
+  }, [isLoading]);
+
+  const loadServicesData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Fetch featured and all services in parallel
+      const [featured, all] = await Promise.all([
+        ServicesAggregatorAPI.getAllFeaturedServices(),
+        ServicesAggregatorAPI.getAllServices()
+      ]);
+      
+      setFeaturedServices(featured.slice(0, 10)); // Limit featured to 10 for performance
+      setAllServices(all);
+      setFilteredServices(all);
+      
+    } catch (err) {
+      console.error('Error loading services:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load services');
+      Alert.alert(
+        'Error',
+        'Failed to load services. Please check your connection and try again.',
+        [{ text: 'Retry', onPress: loadServicesData }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startAnimations = () => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -116,14 +98,102 @@ export default function ServicesPage() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  };
+
+  // Search functionality
+  const handleSearch = useCallback(async (query: string) => {
+    setSearchQuery(query);
+    
+    if (!query.trim()) {
+      setFilteredServices(allServices);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const searchResults = await ServicesAggregatorAPI.searchAllServices(query);
+      setFilteredServices(searchResults);
+    } catch (err) {
+      console.error('Error searching services:', err);
+      Alert.alert('Error', 'Failed to search services. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [allServices]);
+
+  const handleServicePress = (service: Service) => {
+    // Navigate to service details
+    router.push(`/(services)/${service.id}`);
+  };
 
   const handleBack = () => {
     router.back();
   };
 
+  const formatPrice = (service: Service) => {
+    const min = service.priceRange?.min || 0;
+    const max = service.priceRange?.max || 0;
+    const currency = service.priceRange?.currency || 'PHP';
+    
+    if (min && max) {
+      return `₱${min.toLocaleString()} - ₱${max.toLocaleString()}`;
+    }
+    return '₱Price on request';
+  };
+
+  const formatSchedule = (service: Service) => {
+    // Get today's schedule as an example
+    const today = new Date().getDay();
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const todaySchedule = service.schedule?.[days[today] as keyof typeof service.schedule];
+    
+    if (todaySchedule?.isOpen) {
+      return `Today: ${todaySchedule.open} - ${todaySchedule.close}`;
+    }
+    return 'Check schedule';
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>Loading services...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircle}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircleRight}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.orangeCircleBottom}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
+      <LinearGradient
+        colors={['rgba(255, 192, 203, 0.08)', 'rgba(255, 182, 193, 0.04)', 'rgba(255, 192, 203, 0.02)']}
+        style={styles.pinkCircleBottomRight}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+      />
       <Animated.View 
         style={[
           styles.headerRow,
@@ -149,8 +219,18 @@ export default function ServicesPage() {
           }
         ]}
       >
-        <TextInput style={styles.searchInput} placeholder="Search.." placeholderTextColor="#888" />
-        <FontAwesome name="search" size={18} color="#888" style={{ position: 'absolute', right: 15, top: 12 }} />
+        <TextInput 
+          style={styles.searchInput} 
+          placeholder="Search services..." 
+          placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+        {isSearching ? (
+          <ActivityIndicator size="small" color="#007AFF" style={{ position: 'absolute', right: 15, top: 12 }} />
+        ) : (
+          <FontAwesome name="search" size={18} color="#888" style={{ position: 'absolute', right: 15, top: 12 }} />
+        )}
       </Animated.View>
 
       <ScrollView 
@@ -175,9 +255,9 @@ export default function ServicesPage() {
           showsHorizontalScrollIndicator={false} 
           style={[styles.featuredScroll, { paddingLeft: horizontalPadding }]}
         >
-          {featuredServices.map((item, index) => (
+          {featuredServices.map((service, index) => (
             <Animated.View 
-              key={item.id} 
+              key={service.id} 
               style={[
                 styles.featuredCard,
                 { 
@@ -194,30 +274,39 @@ export default function ServicesPage() {
                 }
               ]}
             >
-              <Image 
-                source={item.image} 
-                style={styles.featuredImage} 
-                resizeMode="cover" 
-              />
-              <View style={styles.featuredInfo}>
-                <Text style={styles.featuredName}>{item.name}</Text>
-                <View style={styles.featuredRow}>
-                  <FontAwesome name="star" size={12} color="#EDAE49" />
-                  <Text style={styles.featuredRating}>{item.rating}</Text>
+              <TouchableOpacity onPress={() => handleServicePress(service)}>
+                <View style={styles.featuredImageContainer}>
+                  <Image 
+                    source={service.image} 
+                    style={styles.featuredImage} 
+                    resizeMode="cover" 
+                  />
+                  {service.isPromo && (
+                    <View style={styles.promoTag}>
+                      <Text style={styles.promoText}>PROMO</Text>
+                    </View>
+                  )}
                 </View>
-                <Text style={styles.featuredLocation}>📍 47 Upper Session Road, Baguio City</Text>
-                <Text style={styles.featuredSchedule}>📅 Monday - Sunday</Text>
-                <Text style={styles.featuredTime}>🕐 9:00 AM - 10:00 PM</Text>
-                <Text style={styles.featuredPrice}>💰 {item.price}/session</Text>
-                <TouchableOpacity style={styles.bookNowBtn}>
-                  <Text style={styles.bookNowText}>Book Now</Text>
-                </TouchableOpacity>
-                {item.isPromo && (
-                  <View style={styles.promoTag}>
-                    <Text style={styles.promoText}>PROMO</Text>
+                <View style={styles.featuredInfo}>
+                  <Text style={styles.featuredName}>{service.name}</Text>
+                  <View style={styles.featuredRow}>
+                    <FontAwesome name="star" size={12} color="#EDAE49" />
+                    <Text style={styles.featuredRating}>{service.rating}</Text>
                   </View>
-                )}
-              </View>
+                  <Text style={styles.featuredLocation}>� {service.location}</Text>
+                  <Text style={styles.featuredSchedule}>� {formatSchedule(service)}</Text>
+                  <View style={styles.featuredDetailRow}>
+                    <Ionicons name="card-outline" size={12} color="#6B7280" />
+                    <Text style={styles.featuredPrice}>{formatPrice(service)}</Text>
+                  </View>
+                  <TouchableOpacity 
+                    style={styles.bookNowBtn}
+                    onPress={() => handleServicePress(service)}
+                  >
+                    <Text style={styles.bookNowText}>Book Now</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
             </Animated.View>
           ))}
         </ScrollView>
@@ -234,11 +323,11 @@ export default function ServicesPage() {
           All Services
         </Animated.Text>
 
-        {allServices.map((item, index) => (
+        {filteredServices.map((service, index) => (
           <Animated.View 
-            key={item.id} 
+            key={service.id} 
             style={[
-              styles.serviceRow,
+              styles.serviceCard,
               {
                 opacity: fadeAnim,
                 transform: [
@@ -253,23 +342,50 @@ export default function ServicesPage() {
               }
             ]}
           >
-            <Image source={item.image} style={styles.serviceImage} resizeMode="cover" />
-            <View style={styles.serviceInfo}>
-              <Text style={styles.serviceName}>{item.name}</Text>
-              <View style={styles.serviceRatingRow}>
-                <FontAwesome name="star" size={13} color="#EDAE49" />
-                <Text style={styles.serviceRating}>{item.rating}</Text>
+            <TouchableOpacity onPress={() => handleServicePress(service)}>
+              {/* Header Image Area */}
+              <View style={styles.serviceImageContainer}>
+                <Image source={service.image} style={styles.serviceImage} resizeMode="cover" />
+                {service.isPromo && (
+                  <View style={styles.promoTag}>
+                    <Text style={styles.promoText}>PROMO</Text>
+                  </View>
+                )}
               </View>
-              <Text style={styles.serviceDesc}>{item.desc}</Text>
-              <Text style={styles.serviceSchedule}>{item.schedule}</Text>
-            </View>
-            <View style={styles.serviceRight}>
-              <Text style={styles.servicePrice}>{item.price}</Text>
-              <TouchableOpacity style={styles.bookNowBtnSmall}>
-                <Text style={styles.bookNowTextSmall}>Book Now</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>        ))}
+              
+              {/* Content Area */}
+              <View style={styles.serviceContent}>
+                <View style={styles.serviceInfo}>
+                  <Text style={styles.serviceName}>{service.name}</Text>
+                  <View style={styles.serviceRatingRow}>
+                    <FontAwesome name="star" size={13} color="#EDAE49" />
+                    <Text style={styles.serviceRating}>{service.rating}</Text>
+                  </View>
+                  <View style={styles.serviceDetailRow}>
+                    <Ionicons name="location-outline" size={14} color="#6B7280" />
+                    <Text style={styles.serviceLocation}>{service.location}</Text>
+                  </View>
+                  <View style={styles.serviceDetailRow}>
+                    <Ionicons name="time-outline" size={14} color="#6B7280" />
+                    <Text style={styles.serviceSchedule}>{formatSchedule(service)}</Text>
+                  </View>
+                  <View style={styles.serviceDetailRow}>
+                    <Ionicons name="card-outline" size={14} color="#6B7280" />
+                    <Text style={styles.servicePriceText}>{formatPrice(service)}</Text>
+                  </View>
+                </View>
+                
+                {/* Book Now Button */}
+                <TouchableOpacity 
+                  style={styles.bookNowBtnService}
+                  onPress={() => handleServicePress(service)}
+                >
+                  <Text style={styles.bookNowTextService}>Book Now</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -279,6 +395,58 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8F5F0',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F5F0',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'Montserrat',
+  },
+  pinkCircle: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 150,
+    top: -10,
+    left: -100,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  pinkCircleRight: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 150,
+    top: 50,
+    right: -100,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  orangeCircleBottom: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    bottom: '10%',
+    left: -80,
+    opacity: 0.3,
+    zIndex: 0,
+  },
+  pinkCircleBottomRight: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    bottom: '25%',
+    right: -70,
+    opacity: 0.3,
+    zIndex: 0,
   },
   scrollContent: {
     flexGrow: 1,
@@ -295,7 +463,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Platform.OS === 'ios' ? 20 : 22,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -324,178 +492,224 @@ const styles = StyleSheet.create({
   },
   featuredScroll: {
     paddingLeft: '5%',
-    marginBottom: 10,
-  },  featuredCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginRight: 15,
-    marginBottom: 10,
-    width: 200, // Narrower width for vertical layout
-    height: 280, // Taller height for vertical layout
+    marginBottom: 15,
+  },
+  featuredCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginRight: 20,
+    marginBottom: 15,
+    width: 240,
+    height: 320,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
     overflow: 'hidden',
-    flexDirection: 'column', // Vertical layout
+    borderWidth: 0.5,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  featuredImageContainer: {
+    height: 140,
+    backgroundColor: '#F8F9FA',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    position: 'relative',
   },
   featuredImage: {
-    width: '100%', // Full width
-    height: 120, // Fixed height for image
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
   },
   featuredInfo: {
-    padding: 10,
+    padding: 16,
     flex: 1,
     justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
   },
   featuredName: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 3,
-    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 8,
+    lineHeight: 20,
   },
   featuredRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 3,
-  },
-  featuredRating: {
-    fontSize: 12,
-    color: '#EDAE49',
-    marginLeft: 3,
-    fontWeight: '600',
-  },
-  featuredLocation: {
-    fontSize: 10,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 2,
-    lineHeight: 14,
-  },
-  featuredSchedule: {
-    fontSize: 10,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  featuredTime: {
-    fontSize: 10,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 3,
-  },  featuredDesc: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
-  },
-  featuredPrice: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#222',
-    textAlign: 'center',
     marginBottom: 8,
   },
+  featuredRating: {
+    fontSize: 13,
+    color: '#FF6B35',
+    marginLeft: 4,
+    fontWeight: '600',
+  },
+  featuredDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  featuredLocation: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 6,
+    lineHeight: 16,
+  },
+  featuredSchedule: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 6,
+    lineHeight: 16,
+  },
+  featuredPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginLeft: 6,
+    marginBottom: 12,
+  },
   bookNowBtn: {
-    backgroundColor: '#EDAE49',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: 'center',
-    minWidth: 80,
+    backgroundColor: '#FF6B35',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    alignSelf: 'flex-end',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   bookNowText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: '600',
-    fontSize: 11,
+    fontSize: 13,
     textAlign: 'center',
   },
   promoTag: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#FF4B4B',
-    borderRadius: 4,
+    top: 12,
+    right: 12,
+    backgroundColor: '#EF4444',
+    borderRadius: 6,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
   promoText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
-  serviceRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginHorizontal: '5%',
-    marginBottom: '3%',
-    padding: '3%',
-    minHeight: Platform.OS === 'ios' ? 80 : 90,
+  serviceCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0,0,0,0.05)',
+    overflow: 'hidden',
+  },
+  serviceImageContainer: {
+    height: 120,
+    backgroundColor: '#F8F9FA',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    position: 'relative',
   },
   serviceImage: {
-    width: '20%',
-    aspectRatio: 1,
-    borderRadius: 10,
-    marginRight: '3%',
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  serviceContent: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   serviceInfo: {
     flex: 1,
-    justifyContent: 'space-between',
+    paddingRight: 12,
   },
   serviceName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 2,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 6,
+    lineHeight: 20,
   },
   serviceRatingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    marginBottom: 8,
   },
   serviceRating: {
-    fontSize: 12,
-    color: '#EDAE49',
-    marginLeft: 3,
-  },
-  serviceDesc: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 2,
-  },
-  serviceSchedule: {
-    fontSize: 11,
-    color: '#888',
-    marginBottom: 2,
-  },
-  serviceRight: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: 54,
-  },
-  servicePrice: {
     fontSize: 13,
-    color: '#222',
-    fontWeight: 'bold',
+    color: '#FF6B35',
+    marginLeft: 4,
+    fontWeight: '600',
+  },
+  serviceDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
   },
-  bookNowBtnSmall: {
-    backgroundColor: '#EDAE49',
-    borderRadius: 6,
-    paddingVertical: '1%',
-    paddingHorizontal: '3%',
-    minWidth: '25%',
-    alignItems: 'center',
+  serviceLocation: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 6,
+    lineHeight: 16,
   },
-  bookNowTextSmall: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: Platform.OS === 'ios' ? 12 : 13,
+  serviceSchedule: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 6,
+    lineHeight: 16,
   },
+  servicePriceText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 6,
+    lineHeight: 16,
+  },
+  bookNowBtnService: {
+    backgroundColor: '#FF6B35',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    alignSelf: 'flex-start',
+  },
+  bookNowTextService: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 13,
+    textAlign: 'center',
+  },
+
 }); 

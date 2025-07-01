@@ -30,7 +30,10 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: {
           display: 'none',
+          fontSize: 0,
+          height: 0,
         },
+        tabBarShowLabel: false,
         tabBarItemStyle: {
           paddingTop: 10,
           paddingBottom: 10,
@@ -39,8 +42,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="home/index"        options={{
-          title: 'Home',
+        name="home/index"
+        options={{
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 45,
@@ -62,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="services/index"
         options={{
-          title: 'Services',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 45,
@@ -84,7 +88,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="book-appointment/index"
         options={{
-          title: 'Book',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 60,
@@ -114,7 +118,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="saved/index"
         options={{
-          title: 'Saved',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 45,
@@ -136,7 +140,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: 'Profile',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={{
               width: 45,

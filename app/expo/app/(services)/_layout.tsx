@@ -10,12 +10,17 @@ export default function ServicesLayout() {
       }}
     >
       <Stack.Screen name="[serviceId]" />
-      <Stack.Screen name="automotive-services" />
-      <Stack.Screen name="beauty-personal-care" />
-      <Stack.Screen name="fitness-sports" />
-      <Stack.Screen name="health-wellness" />
-      <Stack.Screen name="home-services" />
-      <Stack.Screen name="tech-it-services" />
+      <Stack.Screen name="automotive-services/index" />
+      <Stack.Screen name="automotive-services/index_new" />
+      <Stack.Screen name="beauty-personal-care/index" />
+      <Stack.Screen name="fitness-sports/index" />
+      <Stack.Screen name="fitness-sports/index_new" />
+      <Stack.Screen name="health-wellness/index" />
+      <Stack.Screen name="health-wellness/index.shared" />
+      <Stack.Screen name="home-services/index" />
+      <Stack.Screen name="home-services/index_new" />
+      <Stack.Screen name="tech-it-services/index" />
+      <Stack.Screen name="tech-it-services/index_new" />
     </Stack>
   );
 }
