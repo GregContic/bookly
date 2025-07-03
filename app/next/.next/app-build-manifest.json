@@ -16,15 +16,27 @@
       "static/chunks/main-app.js",
       "static/chunks/app/sign-in/page.js"
     ],
-    "/pages/services/category/[name]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/pages/services/category/[name]/page.js"
-    ],
     "/pages/services/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/pages/services/page.js"
+    ],
+    "/pages/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/pages/about/page.css",
+      "static/chunks/app/pages/about/page.js"
+    ],
+    "/pages/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/pages/contact/page.css",
+      "static/chunks/app/pages/contact/page.js"
+    ],
+    "/pages/services/shop/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pages/services/shop/[id]/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

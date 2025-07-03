@@ -309,6 +309,39 @@ export const homeStyles = StyleSheet.create({
     color: '#666',
     fontWeight: '500',
   },
+
+  // Empty Search State Styles
+  emptySearchContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  emptySearchTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptySearchText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  browseAllButton: {
+    backgroundColor: '#EDAE49',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  browseAllButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+  },
 });
 
 export default homeStyles;

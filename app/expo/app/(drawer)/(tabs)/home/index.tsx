@@ -4,8 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Image,
+  Keyboard,
   SafeAreaView,
   ScrollView,
   Text,
@@ -73,7 +75,7 @@ export default function HomePage() {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(50)).current;
   const scaleAnim = React.useRef(new Animated.Value(0.9)).current;
-  const searchTimeout = React.useRef<number | null>(null);
+  const searchTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   // Effects
   useEffect(() => {
     // Load data
@@ -139,30 +141,41 @@ export default function HomePage() {
     }
   };
   const handleSearch = async (query: string) => {
+    console.log('🔍 Search initiated with query:', query);
+    
     if (!query.trim()) {
       // Clear search results if query is empty
+      console.log('📝 Empty query, clearing search results');
       setShowSearchResults(false);
       setSearchResults([]);
       return;
     }
 
     setIsSearching(true);
+    console.log('⏳ Setting search loading state to true');
     
     try {
+      console.log('🔍 Calling serviceAPI.searchServices with query:', query);
       const results = await serviceAPI.searchServices(query);
+      console.log('✅ Search results received:', results.length, 'items');
+      console.log('📋 Search results:', results.map(r => ({ id: r.id, name: r.name })));
+      
       setSearchResults(results);
       setShowSearchResults(true);
+      console.log('🎯 Search results state updated, showing results');
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('💥 Search error:', error);
       setSearchResults([]);
       setShowSearchResults(true);
     } finally {
       setIsSearching(false);
+      console.log('✅ Search loading state set to false');
     }
   };
 
   // Real-time search handler
   const handleSearchInputChange = (text: string) => {
+    console.log('🔍 Search input changed:', text);
     setSearchQuery(text);
     
     // Debounce the search to avoid too many API calls
@@ -171,21 +184,33 @@ export default function HomePage() {
     }
     
     if (text.trim()) {
+      console.log('⏰ Setting search timeout for query:', text);
       searchTimeout.current = setTimeout(() => {
         handleSearch(text);
       }, 300); // Wait 300ms after user stops typing
     } else {
+      console.log('🧹 Empty text, clearing search');
       handleClearSearch();
     }
   };
 
   const handleClearSearch = () => {
+    console.log('🧹 Clearing search');
     setSearchQuery('');
     setSearchResults([]);
     setShowSearchResults(false);
+    
+    // Clear any pending timeout
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+      searchTimeout.current = null;
+    }
   };
 
   const handleServicePress = (service: ServiceData) => {
+    // Dismiss keyboard if it's open
+    Keyboard.dismiss();
+    
     // Navigate to service detail page
     console.log('🚀 Navigating to service detail page:', service.id);
     console.log('🚀 Service object:', service);
@@ -274,15 +299,18 @@ export default function HomePage() {
           >
             <TextInput
               style={homeStyles.searchInput}
-              placeholder="Search..."
+              placeholder="Search for services, categories, or locations..."
               placeholderTextColor="#888"
               value={searchQuery}
               onChangeText={handleSearchInputChange}
               onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
               returnKeyType="search"
+              autoCorrect={false}
+              autoCapitalize="none"
             />
             {isSearching ? (
-              <View style={{ position: 'absolute', right: 15 }}>
+              <View style={{ position: 'absolute', right: 15, top: 12, flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator size="small" color="#EDAE49" style={{ marginRight: 5 }} />
                 <Text style={{ color: '#888', fontSize: 12 }}>Searching...</Text>
               </View>
             ) : searchQuery ? (
@@ -309,10 +337,11 @@ export default function HomePage() {
             >
               <Text style={homeStyles.quickSearchTitle}>Popular searches:</Text>
               <View style={homeStyles.quickSearchTags}>
-                {['Gym', 'Spa', 'Salon', 'Dental', 'Massage', 'Fitness'].map((tag) => (                  <TouchableOpacity
+                {['Gym', 'Spa', 'Salon', 'Dental', 'Massage', 'Fitness', 'Clinic', 'Wellness', 'Beauty', 'Tattoo'].map((tag) => (                  <TouchableOpacity
                     key={tag}
                     style={homeStyles.quickSearchTag}
                     onPress={() => {
+                      console.log('🏷️ Quick search tag pressed:', tag);
                       setSearchQuery(tag);
                       handleSearch(tag);
                     }}
@@ -337,16 +366,18 @@ export default function HomePage() {
             >
               <View style={homeStyles.searchHeader}>
                 <Text style={homeStyles.searchHeaderText}>
-                  {searchResults.length > 0 
-                    ? `Found ${searchResults.length} result${searchResults.length > 1 ? 's' : ''} for "${searchQuery}"`
-                    : `No results found for "${searchQuery}"`
+                  {isSearching 
+                    ? `Searching for "${searchQuery}"...`
+                    : searchResults.length > 0 
+                      ? `Found ${searchResults.length} result${searchResults.length > 1 ? 's' : ''} for "${searchQuery}"`
+                      : `No results found for "${searchQuery}"`
                   }
                 </Text>
                 <TouchableOpacity onPress={handleClearSearch}>
                   <Text style={homeStyles.clearSearchText}>Clear</Text>
                 </TouchableOpacity>
               </View>
-                {searchResults.length > 0 && (
+                {searchResults.length > 0 ? (
                 <View style={homeStyles.searchResultsList}>
                   {searchResults.map((service, index) => (
                     <TouchableOpacity
@@ -372,6 +403,22 @@ export default function HomePage() {
                       </View>
                     </TouchableOpacity>
                   ))}
+                </View>
+              ) : (
+                <View style={homeStyles.emptySearchContainer}>
+                  <Feather name="search" size={48} color="#ccc" />
+                  <Text style={homeStyles.emptySearchTitle}>No services found</Text>
+                  <Text style={homeStyles.emptySearchText}>
+                    Try searching with different keywords or check the popular searches above.
+                  </Text>
+                  <TouchableOpacity 
+                    style={homeStyles.browseAllButton}
+                    onPress={() => {
+                      handleClearSearch();
+                    }}
+                  >
+                    <Text style={homeStyles.browseAllButtonText}>Browse All Services</Text>
+                  </TouchableOpacity>
                 </View>
               )}
             </Animated.View>          )}
