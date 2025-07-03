@@ -2,6 +2,6 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
   "/pages/services/page": "app/pages/services/page.js",
-  "/pages/services/shop/[id]/page": "app/pages/services/shop/[id]/page.js",
-  "/sign-in/page": "app/sign-in/page.js"
+  "/sign-in/page": "app/sign-in/page.js",
+  "/pages/services/shop/[id]/page": "app/pages/services/shop/[id]/page.js"
 }

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
-import { allWebServices, searchWebServices, getWebServicesByCategory, type WebService } from "../../../lib/services";
+import { useEffect, useRef, useState } from "react";
+import { getWebServicesByCategory, searchWebServices, type WebService } from "../../../lib/services";
 
 export default function Services() {
   const [searchQuery, setSearchQuery] = useState('');
