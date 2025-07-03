@@ -1,7 +1,8 @@
 import { Stack, useRouter, useSegments } from "expo-router";
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { BookingProvider } from '../context/BookingContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
@@ -36,9 +37,11 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <BookingProvider>
-        <RootLayoutNav />
-      </BookingProvider>
+      <NotificationProvider>
+        <BookingProvider>
+          <RootLayoutNav />
+        </BookingProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
+import { useNotificationContext } from '../app/context/NotificationContext';
 
 /**
  * ===========================================
@@ -23,7 +24,7 @@ export interface BookingData {
 
 export interface BookingContextType {
   bookings: BookingData[];
-  addBooking: (booking: Omit<BookingData, 'id' | 'createdAt'>) => void;
+  addBooking: (booking: Omit<BookingData, 'id' | 'createdAt'>) => Promise<void>;
   updateBookingStatus: (bookingId: string, status: BookingData['status']) => void;
   getBookingById: (bookingId: string) => BookingData | undefined;
   clearBookings: () => void;
@@ -43,14 +44,28 @@ const BookingContext = createContext<BookingContextType | undefined>(undefined);
  */
 export function BookingProvider({ children }: { children: ReactNode }) {
   const [bookings, setBookings] = useState<BookingData[]>([]);
+  const notifications = useNotificationContext();
 
-  const addBooking = (booking: Omit<BookingData, 'id' | 'createdAt'>) => {
+  const addBooking = async (booking: Omit<BookingData, 'id' | 'createdAt'>) => {
     const newBooking: BookingData = {
       ...booking,
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
     };
     setBookings(prev => [newBooking, ...prev]);
+    
+    // Send booking confirmation notification if notifications are initialized
+    if (notifications?.isInitialized) {
+      try {
+        await notifications.handleBookingCreated({
+          id: newBooking.bookingId,
+          serviceName: newBooking.serviceName,
+          date: `${newBooking.date} at ${newBooking.time}`,
+        });
+      } catch (error) {
+        console.error('Failed to send booking notification:', error);
+      }
+    }
   };
 
   const updateBookingStatus = (bookingId: string, status: BookingData['status']) => {
