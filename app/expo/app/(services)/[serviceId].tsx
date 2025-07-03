@@ -1,3 +1,9 @@
+// ==========================================
+// SERVICE DETAILS PAGE - MAIN IMPORTS
+// ==========================================
+// This page displays comprehensive information about a specific service
+// including images, descriptions, pricing, gallery, and customer reviews
+
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -14,14 +20,28 @@ import {
   View
 } from 'react-native';
 
-// Types
+// Types - Service interface defining the structure of service data
 import { Service } from '../_types/interfaces';
 
-// Services
+// Services - API service for fetching service data
 import { serviceAPI } from '../_services/serviceAPI';
 
-// Mock service data - In a real app, this would come from an API
+// Context - Saved services context for bookmark functionality
+import { useSavedServices } from '../../context/SavedServicesContext';
+
+// ==========================================
+// MOCK SERVICE DATA - COMPREHENSIVE SERVICE CATALOG
+// ==========================================
+// This mock data represents the complete service catalog with detailed information
+// In a production app, this would come from a backend API/database
+// Each service includes: basic info, pricing, scheduling, amenities, gallery, and reviews
+
 const mockServiceData: { [key: string]: Service } = {
+  // ==========================================
+  // FITNESS & SPORTS SERVICES
+  // ==========================================
+  
+  // Shape Up Gym - Premium fitness center with modern equipment
   'fs_016': {
     id: 'fs_016',
     name: 'Shape Up',
@@ -105,6 +125,11 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // ==========================================
+  // HEALTH & WELLNESS SERVICES
+  // ==========================================
+  
+  // The Spa Wellness Center - Premium spa and wellness treatments
   'hw_006': {
     id: 'hw_006',
     name: 'The Spa Wellness Center',
@@ -190,6 +215,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Urban Smiles Dental - Professional dental care and orthodontics
   'hw_002': {
     id: 'hw_002',
     name: 'Urban Smiles Dental',
@@ -275,6 +301,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Pulse Fitness Center - Modern fitness center with certified trainers
   'fs_004': {
     id: 'fs_004',
     name: 'Pulse Fitness Center',
@@ -359,6 +386,11 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // ==========================================
+  // BEAUTY & PERSONAL CARE SERVICES
+  // ==========================================
+  
+  // The Glow Haven Spa - Luxurious spa with premium treatments
   'bpc_002': {
     id: 'bpc_002',
     name: 'The Glow Haven Spa',
@@ -444,6 +476,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Prime Care Medical Clinic - Comprehensive medical services
   'hw_001': {
     id: 'hw_001',
     name: 'Prime Care Medical Clinic',
@@ -529,6 +562,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Serene Scape Wellness - Mental health and wellness services
   'hw_003': {
     id: 'hw_003',
     name: 'Serene Scape Wellness',
@@ -614,6 +648,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Bright Eye Clinic - Complete eye care and vision services
   'hw_004': {
     id: 'hw_004',
     name: 'Bright Eye Clinic',
@@ -699,6 +734,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Zen Yoga Studio - Yoga, meditation, and wellness classes
   'hw_005': {
     id: 'hw_005',
     name: 'Zen Yoga Studio',
@@ -785,6 +821,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // Ink Haven Tattoo Studio - Professional tattoo and piercing services
   'bpc_003': {
     id: 'bpc_003',
     name: 'Ink Haven Tattoo Studio',
@@ -870,6 +907,7 @@ const mockServiceData: { [key: string]: Service } = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  // David Salon & Spa - Professional hair and spa services
   'bpc_001': {
     id: 'bpc_001',
     name: 'David Salon & Spa',
@@ -958,23 +996,50 @@ const mockServiceData: { [key: string]: Service } = {
   }
 };
 
+// ==========================================
+// DEVICE DIMENSIONS & MAIN COMPONENT
+// ==========================================
+
 const { width } = Dimensions.get('window');
 
+// ==========================================
+// SERVICE DETAIL PAGE COMPONENT
+// ==========================================
+// Main component that handles the service details display
+// Features: image gallery, service info, booking, reviews, etc.
+
 export default function ServiceDetailPage() {
+  // ==========================================
+  // COMPONENT STATE & HOOKS
+  // ==========================================
+  
   const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
   const router = useRouter();
   const [service, setService] = useState<Service | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
+  
+  // Saved services context for bookmark functionality
+  const { isSaved, addService, removeService } = useSavedServices();
 
+  // Debug logging for service ID and available services
   console.log('🔍 ServiceDetailPage loaded with serviceId:', serviceId);
   console.log('🔍 Type of serviceId:', typeof serviceId);
   console.log('🔍 Available services:', Object.keys(mockServiceData));
 
+  // ==========================================
+  // COMPONENT LIFECYCLE
+  // ==========================================
+  
   useEffect(() => {
     loadServiceData();
   }, [serviceId]);
 
+  // ==========================================
+  // DATA LOADING FUNCTION
+  // ==========================================
+  // Handles loading service data from API or mock data
+  // Includes error handling and loading states
+  
   const loadServiceData = async () => {
     try {
       setIsLoading(true);
@@ -989,7 +1054,7 @@ export default function ServiceDetailPage() {
         const serviceData = allServices.find(s => s.id === serviceId);
         
         if (serviceData) {
-          // Convert ServiceData to Service format
+          // Convert ServiceData to Service format for compatibility
           const convertedService: Service = {
             id: serviceData.id.toString(),
             name: serviceData.name,
@@ -1077,6 +1142,11 @@ export default function ServiceDetailPage() {
     }
   };
 
+  // ==========================================
+  // BOOKING HANDLER
+  // ==========================================
+  // Navigates to booking page with service data
+  
   const handleBookAppointment = () => {
     if (service) {
       console.log('🎯 Navigating to booking with service:', service.id, service.name);
@@ -1093,11 +1163,40 @@ export default function ServiceDetailPage() {
     }
   };
 
-  const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
-    // Here you would typically save to favorites in your backend/storage
+  // ==========================================
+  // BOOKMARK HANDLER
+  // ==========================================
+  // Toggles bookmark/saved status for the service using context
+  
+  const handleBookmarkToggle = () => {
+    if (service) {
+      const serviceIsSaved = isSaved(service.id);
+      if (serviceIsSaved) {
+        removeService(service.id);
+        console.log('📌 Service removed from saved:', service.name);
+      } else {
+        // Convert Service to SavedService format
+        const savedService = {
+          id: service.id,
+          name: service.name,
+          image: service.image,
+          rating: service.rating,
+          address: service.address,
+          schedule: `${service.schedule.monday.open} - ${service.schedule.monday.close}`,
+          price: `₱${service.priceRange.min} - ₱${service.priceRange.max}`,
+          category: service.category
+        };
+        addService(savedService);
+        console.log('📌 Service added to saved:', service.name);
+      }
+    }
   };
 
+  // ==========================================
+  // SCHEDULE HELPER
+  // ==========================================
+  // Gets the current day's schedule for the service
+  
   const getCurrentDaySchedule = () => {
     if (!service) return null;
     
@@ -1106,6 +1205,11 @@ export default function ServiceDetailPage() {
     return service.schedule[today as keyof typeof service.schedule];
   };
 
+  // ==========================================
+  // LOADING STATE COMPONENT
+  // ==========================================
+  // Displays loading spinner while service data is being fetched
+  
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1117,6 +1221,11 @@ export default function ServiceDetailPage() {
     );
   }
 
+  // ==========================================
+  // ERROR STATE COMPONENT
+  // ==========================================
+  // Displays error message when service is not found
+  
   if (!service) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1132,46 +1241,69 @@ export default function ServiceDetailPage() {
 
   const todaySchedule = getCurrentDaySchedule();
 
+  // ==========================================
+  // MAIN SERVICE DETAILS UI
+  // ==========================================
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header Image */}
+        
+        {/* ==========================================
+            HEADER IMAGE SECTION
+            ==========================================
+            - Full-width service image
+            - Back button overlay */}
+        
         <View style={styles.imageContainer}>
           <Image source={service.image} style={styles.headerImage} resizeMode="cover" />
           
-          {/* Back Button */}
+          {/* Navigation Back Button */}
           <TouchableOpacity style={styles.backIconButton} onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#333" />
           </TouchableOpacity>
-          
-          {/* Favorite Button */}
-          <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoriteToggle}>
-            <Ionicons 
-              name={isFavorite ? "bookmark" : "bookmark-outline"} 
-              size={24} 
-              color={isFavorite ? "#EDAE49" : "#333"} 
-            />
-          </TouchableOpacity>
         </View>
 
-        {/* Service Info */}
+        {/* ==========================================
+            SERVICE INFORMATION SECTION
+            ==========================================
+            - Service name and rating
+            - Location and schedule info
+            - Description and amenities
+            - Services and pricing */}
+        
         <View style={styles.contentContainer}>
-          {/* Service Name and Rating */}
+          
+          {/* Service Name and Rating Display */}
           <View style={styles.headerInfo}>
-            <Text style={styles.serviceName}>{service.name}</Text>
-            <View style={styles.ratingContainer}>
-              <MaterialIcons name="star" size={16} color="#EDAE49" />
-              <Text style={styles.ratingText}>{service.rating}</Text>
-              <Text style={styles.reviewText}>({service.reviewCount} Reviews)</Text>
+            <View style={styles.serviceInfoRow}>
+              <View style={styles.serviceNameContainer}>
+                <Text style={styles.serviceName}>{service.name}</Text>
+                <View style={styles.ratingContainer}>
+                  <MaterialIcons name="star" size={16} color="#EDAE49" />
+                  <Text style={styles.ratingText}>{service.rating}</Text>
+                  <Text style={styles.reviewText}>({service.reviewCount} Reviews)</Text>
+                </View>
+              </View>
+              
+              {/* Bookmark Button - Upper Right */}
+              <TouchableOpacity style={styles.bookmarkButton} onPress={handleBookmarkToggle}>
+                <Ionicons 
+                  name={service && isSaved(service.id) ? "bookmark" : "bookmark-outline"} 
+                  size={24} 
+                  color={service && isSaved(service.id) ? "#EDAE49" : "#666"} 
+                />
+              </TouchableOpacity>
             </View>
           </View>
 
-          {/* Location and Schedule */}
+          {/* Location Information */}
           <View style={styles.infoRow}>
             <Ionicons name="location-outline" size={16} color="#666" />
             <Text style={styles.infoText}>{service.location}</Text>
           </View>
 
+          {/* Operating Hours for Today */}
           {todaySchedule && (
             <View style={styles.infoRow}>
               <Ionicons name="time-outline" size={16} color="#666" />
@@ -1184,13 +1316,13 @@ export default function ServiceDetailPage() {
             </View>
           )}
 
-          {/* About Us Section */}
+          {/* About Us Section - Service Description */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About Us</Text>
             <Text style={styles.description}>{service.description}</Text>
           </View>
 
-          {/* We Offer Section */}
+          {/* We Offer Section - Available Amenities */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>We Offer:</Text>
             {service.amenities.map((amenity, index) => (
@@ -1201,7 +1333,7 @@ export default function ServiceDetailPage() {
             ))}
           </View>
 
-          {/* Services Section */}
+          {/* Services Section - Available Services and Pricing */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Services</Text>
             {service.services.map((serviceItem, index) => (
@@ -1215,7 +1347,12 @@ export default function ServiceDetailPage() {
             ))}
           </View>
 
-          {/* Gallery Section */}
+          {/* ==========================================
+              GALLERY SECTION
+              ==========================================
+              - Horizontal scrollable image gallery
+              - Shows multiple service images */}
+          
           {service.gallery && service.gallery.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Gallery</Text>
@@ -1233,7 +1370,13 @@ export default function ServiceDetailPage() {
             </View>
           )}
 
-          {/* Customer Reviews Section */}
+          {/* ==========================================
+              CUSTOMER REVIEWS SECTION
+              ==========================================
+              - Customer review cards
+              - User avatars, names, ratings
+              - Review comments and dates */}
+          
           {service.reviews && service.reviews.length > 0 && (
             <View style={styles.section}>
               <View style={styles.reviewsHeader}>
@@ -1242,6 +1385,8 @@ export default function ServiceDetailPage() {
                   <Text style={styles.viewMoreText}>View More</Text>
                 </TouchableOpacity>
               </View>
+              
+              {/* Individual Review Cards */}
               {service.reviews.slice(0, 2).map((review, index) => (
                 <View key={review.id} style={styles.reviewItem}>
                   <View style={styles.reviewHeader}>
@@ -1279,7 +1424,12 @@ export default function ServiceDetailPage() {
         </View>
       </ScrollView>
 
-      {/* Book Appointment Button */}
+      {/* ==========================================
+          BOOKING BUTTON SECTION
+          ==========================================
+          - Fixed bottom booking button
+          - Navigates to booking flow */}
+      
       <View style={styles.bookingContainer}>
         <TouchableOpacity style={styles.bookButton} onPress={handleBookAppointment}>
           <Text style={styles.bookButtonText}>Book an Appointment</Text>
@@ -1289,11 +1439,27 @@ export default function ServiceDetailPage() {
   );
 }
 
+// ==========================================
+// STYLESHEET DEFINITIONS
+// ==========================================
+// Comprehensive styles for all UI components in the service details page
+// Organized by section: layout, components, states, and interactive elements
+
 const styles = StyleSheet.create({
+  
+  // ==========================================
+  // MAIN LAYOUT STYLES
+  // ==========================================
+  
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
+  
+  // ==========================================
+  // LOADING & ERROR STATES
+  // ==========================================
+  
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -1326,6 +1492,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  
+  // ==========================================
+  // HEADER IMAGE SECTION STYLES
+  // ==========================================
+  
   imageContainer: {
     position: 'relative',
     height: 250,
@@ -1334,6 +1505,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  
+  // ==========================================
+  // FLOATING ACTION BUTTONS
+  // ==========================================
+  
   backIconButton: {
     position: 'absolute',
     top: 40,
@@ -1347,24 +1523,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  favoriteButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    padding: 8,
-    borderRadius: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
+  
+  // ==========================================
+  // CONTENT CONTAINER & SECTIONS
+  // ==========================================
+  
   contentContainer: {
     padding: 20,
   },
+  section: {
+    marginTop: 25,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  
+  // ==========================================
+  // SERVICE HEADER INFO STYLES
+  // ==========================================
+  
   headerInfo: {
     marginBottom: 15,
+  },
+  serviceInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  serviceNameContainer: {
+    flex: 1,
+    paddingRight: 10,
   },
   serviceName: {
     fontSize: 24,
@@ -1387,6 +1578,18 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: 4,
   },
+  bookmarkButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#f8f9fa',
+    marginLeft: 10,
+    marginTop: 5,
+  },
+  
+  // ==========================================
+  // INFORMATION ROW STYLES
+  // ==========================================
+  
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1397,15 +1600,11 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: 8,
   },
-  section: {
-    marginTop: 25,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
+  
+  // ==========================================
+  // DESCRIPTION & AMENITIES STYLES
+  // ==========================================
+  
   description: {
     fontSize: 14,
     lineHeight: 22,
@@ -1427,6 +1626,11 @@ const styles = StyleSheet.create({
     color: '#666',
     flex: 1,
   },
+  
+  // ==========================================
+  // SERVICES & PRICING STYLES
+  // ==========================================
+  
   serviceItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1450,6 +1654,11 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 2,
   },
+  
+  // ==========================================
+  // BOOKING BUTTON STYLES
+  // ==========================================
+  
   bookingContainer: {
     padding: 20,
     backgroundColor: '#fff',
@@ -1459,20 +1668,25 @@ const styles = StyleSheet.create({
   bookButton: {
     backgroundColor: '#EDAE49',
     paddingVertical: 15,
-    borderRadius: 25,
+    borderRadius: 9,
     alignItems: 'center',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    marginBottom: '10%',
   },
   bookButtonText: {
-    color: '#fff',
+    color: '#000000',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  // Gallery styles
+  
+  // ==========================================
+  // GALLERY SECTION STYLES
+  // ==========================================
+  
   galleryScrollView: {
     marginTop: 10,
   },
@@ -1486,7 +1700,11 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 8,
   },
-  // Reviews styles
+  
+  // ==========================================
+  // CUSTOMER REVIEWS SECTION STYLES
+  // ==========================================
+  
   reviewsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -1,53 +1,22 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-
-// Placeholder data for saved items
-const savedItems = [
-  {
-    id: '1',
-    category: 'Beauty & Personal Care',
-    items: [
-      {
-        id: '1-1',
-        name: 'Ink Haven Tattoo Studio',
-        image: require('../../../../assets/images/ink-haven.png'),
-        rating: 4.8,
-        address: '9 Lakandula Street, Baguio City',
-        schedule: 'Monday - Sunday\n7:00 AM - 9:00 PM',
-        price: '₱1,500 - ₱20,000/session',
-      },
-      {
-        id: '1-2',
-        name: 'Glow Haven Aesthetics',
-        image: require('../../../../assets/images/glow-haven.png'),
-        rating: 4.9,
-        address: '47 Upper Session Road, Baguio City',
-        schedule: 'Monday - Sunday\n9:00 AM - 10:00 PM',
-        price: '₱800 - ₱2,500/session',
-      },
-    ],
-  },
-  {
-    id: '2',
-    category: 'Health & Wellness',
-    items: [
-      {
-        id: '2-1',
-        name: 'Serene Scape Wellness Spa',
-        image: require('../../../../assets/images/serenescape.png'),
-        rating: 4.7,
-        address: '123 Wellness Ave, Baguio City',
-        schedule: 'Tuesday - Sunday\n8:00 AM - 8:00 PM',
-        price: '₱1,200 - ₱3,500/session',
-      },
-    ],
-  },
-];
+import { useSavedServices } from '../../../../context/SavedServicesContext';
 
 export default function SavedTab() {
   const { width, height } = useWindowDimensions();
   const [orientation, setOrientation] = useState('PORTRAIT');
+  
+  // Get saved services from context
+  const { getSavedServicesByCategory, removeService } = useSavedServices();
+  const savedServicesByCategory = getSavedServicesByCategory();
+  
+  // Convert to the same format as the original placeholder data
+  const savedItems = Object.entries(savedServicesByCategory).map(([category, services]) => ({
+    id: category,
+    category,
+    items: services
+  }));
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -110,7 +79,7 @@ export default function SavedTab() {
       <View style={styles.serviceInfo}>
         <View style={styles.serviceHeader}>
           <Text style={[styles.serviceName, { fontSize: dynamicFontSize(16) }]}>{item.name}</Text>
-          <TouchableOpacity style={styles.saveButton}>
+          <TouchableOpacity style={styles.saveButton} onPress={() => removeService(item.id)}>
             <Ionicons name="heart" size={20} color="#FF4B4B" />
           </TouchableOpacity>
         </View>

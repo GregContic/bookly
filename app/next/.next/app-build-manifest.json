@@ -38,6 +38,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/pages/services/shop/[id]/page.js"
     ],
+    "/api/services/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/services/route.js"
+    ],
     "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

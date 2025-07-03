@@ -2,6 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { BookingProvider } from '../context/BookingContext';
+import { SavedServicesProvider } from '../context/SavedServicesContext';
 import { NotificationProvider } from './context/NotificationContext';
 
 function RootLayoutNav() {
@@ -39,7 +40,9 @@ export default function RootLayout() {
     <AuthProvider>
       <NotificationProvider>
         <BookingProvider>
-          <RootLayoutNav />
+          <SavedServicesProvider>
+            <RootLayoutNav />
+          </SavedServicesProvider>
         </BookingProvider>
       </NotificationProvider>
     </AuthProvider>
