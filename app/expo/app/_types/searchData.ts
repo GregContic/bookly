@@ -2,7 +2,7 @@
 export const allServices = [
   // Beauty & Personal Care Services
   {
-    id: 'beauty-1',
+    id: 'bpc_001',
     name: 'David Salon & Spa',
     category: 'Beauty & Personal Care',
     subcategory: 'Hair & Spa',
@@ -17,7 +17,7 @@ export const allServices = [
     isPromo: true,
   },
   {
-    id: 'beauty-2',
+    id: 'bpc_002',
     name: 'Glow Haven Aesthetics',
     category: 'Beauty & Personal Care',
     subcategory: 'Skin Care',
@@ -32,7 +32,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'beauty-3',
+    id: 'bpc_003',
     name: 'Ink Haven Tattoo Studio',
     category: 'Beauty & Personal Care',
     subcategory: 'Body Art',
@@ -47,7 +47,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'beauty-4',
+    id: 'bpc_004',
     name: 'Harmony Beauty Clinic',
     category: 'Beauty & Personal Care',
     subcategory: 'Medical Aesthetics',
@@ -62,7 +62,7 @@ export const allServices = [
     isPromo: true,
   },
   {
-    id: 'beauty-5',
+    id: 'bpc_005',
     name: 'Fresh Nest Beauty Bar',
     category: 'Beauty & Personal Care',
     subcategory: 'Nail Care',
@@ -77,7 +77,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'beauty-6',
+    id: 'bpc_006',
     name: 'Smile Bright Dental Cosmetics',
     category: 'Beauty & Personal Care',
     subcategory: 'Dental Cosmetics',
@@ -94,7 +94,7 @@ export const allServices = [
 
   // Health & Wellness Services
   {
-    id: 'health-1',
+    id: 'hw_001',
     name: 'Prime Care Medical Clinic',
     category: 'Health & Wellness',
     subcategory: 'Medical Care',
@@ -109,7 +109,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'health-2',
+    id: 'hw_002',
     name: 'Urban Smiles Dental',
     category: 'Health & Wellness',
     subcategory: 'Dental Care',
@@ -124,7 +124,7 @@ export const allServices = [
     isPromo: true,
   },
   {
-    id: 'health-3',
+    id: 'hw_003',
     name: 'Serene Scape Wellness',
     category: 'Health & Wellness',
     subcategory: 'Mental Health',
@@ -139,7 +139,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'health-4',
+    id: 'hw_004',
     name: 'Bright Eye Clinic',
     category: 'Health & Wellness',
     subcategory: 'Eye Care',
@@ -154,7 +154,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'health-5',
+    id: 'hw_006',
     name: 'The Spa Wellness Center',
     category: 'Health & Wellness',
     subcategory: 'Spa & Relaxation',
@@ -168,10 +168,25 @@ export const allServices = [
     tags: ['spa', 'massage', 'relaxation', 'wellness', 'treatments'],
     isPromo: false,
   },
+  {
+    id: 'hw_005',
+    name: 'Zen Yoga Studio',
+    category: 'Health & Wellness',
+    subcategory: 'Fitness & Wellness',
+    image: require('../../assets/images/zenyoga.png'),
+    rating: 4.8,
+    reviews: 123,
+    description: 'Yoga, Meditation, Wellness Classes',
+    location: 'Camp 7, Baguio City',
+    schedule: 'Monday - Sunday\n6:00 AM - 9:00 PM',
+    price: '₱300 - ₱1,500',
+    tags: ['yoga', 'meditation', 'wellness', 'zen', 'classes'],
+    isPromo: true,
+  },
 
   // Fitness & Sports Services
   {
-    id: 'fitness-1',
+    id: 'fs_016',
     name: 'Shape Up Gym',
     category: 'Fitness & Sports',
     subcategory: 'Gym & Training',
@@ -201,7 +216,7 @@ export const allServices = [
     isPromo: false,
   },
   {
-    id: 'fitness-3',
+    id: 'fs_004',
     name: 'Pulse Fitness Center',
     category: 'Fitness & Sports',
     subcategory: 'Fitness Center',

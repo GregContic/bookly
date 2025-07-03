@@ -1,21 +1,24 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Dimensions
+  View
 } from 'react-native';
 
 // Types
 import { Service } from '../_types/interfaces';
+
+// Services
+import { serviceAPI } from '../_services/serviceAPI';
 
 // Mock service data - In a real app, this would come from an API
 const mockServiceData: { [key: string]: Service } = {
@@ -55,6 +58,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Wide Locker Room',
       'Hot and Cold Shower Room',
       'Parking'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/shapeup_gym.png'),
+        caption: 'Main workout area',
+        type: 'image' as const
+      },
+      {
+        id: 'g2', 
+        url: require('../../assets/images/apex-gym.png'),
+        caption: 'Cardio section',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/peak-performance.png'),
+        caption: 'Weight training area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u1',
+        userName: 'Jacob Jones',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 5,
+        comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        date: new Date('2024-02-15')
+      },
+      {
+        id: 'r2',
+        userId: 'u2', 
+        userName: 'Kathryn Murphy',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 5,
+        comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        date: new Date('2024-02-10')
+      }
     ],
     isPromo: false,
     isFeatured: true,
@@ -101,6 +144,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Spa Facilities',
       'Relaxation Areas'
     ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/spa-wellness.png'),
+        caption: 'Relaxation room',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/glow-haven.png'),
+        caption: 'Treatment room',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/serenescape.png'),
+        caption: 'Massage area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u3',
+        userName: 'Sarah Johnson',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 5,
+        comment: 'Amazing spa experience! The hot stone therapy was incredibly relaxing and the staff was very professional.',
+        date: new Date('2024-02-20')
+      },
+      {
+        id: 'r2',
+        userId: 'u4',
+        userName: 'Michael Chen',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 4,
+        comment: 'Great aromatherapy session. The ambiance is perfect for relaxation. Will definitely come back!',
+        date: new Date('2024-02-18')
+      }
+    ],
     isPromo: false,
     isFeatured: true,
     isVerified: true,
@@ -144,6 +227,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Parking',
       'Card Payment',
       'Modern Equipment'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/urban_smiles.png'),
+        caption: 'Modern dental clinic',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/dr-teeth.png'),
+        caption: 'Treatment room',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/smile-bright.png'),
+        caption: 'Reception area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u5',
+        userName: 'Emily Rodriguez',
+        userAvatar: require('../../assets/images/placeholder_scissors.png'),
+        rating: 5,
+        comment: 'Excellent dental care! The dentist was very gentle and explained everything clearly. Highly recommend!',
+        date: new Date('2024-02-22')
+      },
+      {
+        id: 'r2',
+        userId: 'u6',
+        userName: 'David Park',
+        userAvatar: require('../../assets/images/placeholder_house.png'),
+        rating: 4,
+        comment: 'Professional service and modern equipment. The dental cleaning was thorough and comfortable.',
+        date: new Date('2024-02-19')
+      }
     ],
     isPromo: true,
     promoText: '15% off on first visit',
@@ -190,6 +313,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Locker Rooms',
       'Shower Facilities'
     ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/pulse.png'),
+        caption: 'Main gym floor',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/shapeup_gym.png'),
+        caption: 'Cardio equipment area',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/apex-gym.png'),
+        caption: 'Weight training section',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u7',
+        userName: 'Alex Rivera',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 5,
+        comment: 'Great gym with modern equipment and knowledgeable trainers. The group classes are fantastic!',
+        date: new Date('2024-02-25')
+      },
+      {
+        id: 'r2',
+        userId: 'u8',
+        userName: 'Maria Santos',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 4,
+        comment: 'Clean facilities and good hours. The personal training sessions really helped me reach my goals.',
+        date: new Date('2024-02-23')
+      }
+    ],
     isPromo: false,
     isFeatured: true,
     isVerified: true,
@@ -233,6 +396,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Expert Therapists',
       'Aromatherapy',
       'Calm Environment'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/glow-haven-2.png'),
+        caption: 'Luxurious spa interior',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/glow-haven.png'),
+        caption: 'Treatment room',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/spa-wellness.png'),
+        caption: 'Relaxation area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u9',
+        userName: 'Jessica Wong',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 5,
+        comment: 'The most relaxing spa experience I\'ve ever had! The signature facial left my skin glowing.',
+        date: new Date('2024-02-26')
+      },
+      {
+        id: 'r2',
+        userId: 'u10',
+        userName: 'Andrew Kim',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 4,
+        comment: 'Great Swedish massage and excellent service. The ambiance is perfect for relaxation.',
+        date: new Date('2024-02-24')
+      }
     ],
     isPromo: true,
     promoText: '15% off spa packages',
@@ -280,6 +483,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Insurance Accepted',
       'Modern Equipment'
     ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/prime-care.png'),
+        caption: 'Modern medical facility',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/eye-clinic.png'),
+        caption: 'Consultation room',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/urban_smiles.png'),
+        caption: 'Waiting area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u11',
+        userName: 'Carlos Mendoza',
+        userAvatar: require('../../assets/images/placeholder_house.png'),
+        rating: 5,
+        comment: 'Excellent medical care and professional staff. The doctor was very thorough and knowledgeable.',
+        date: new Date('2024-02-27')
+      },
+      {
+        id: 'r2',
+        userId: 'u12',
+        userName: 'Lisa Chen',
+        userAvatar: require('../../assets/images/placeholder_scissors.png'),
+        rating: 5,
+        comment: 'Quick and efficient service. Lab results were ready fast and the staff was very accommodating.',
+        date: new Date('2024-02-25')
+      }
+    ],
     isPromo: false,
     isFeatured: true,
     isVerified: true,
@@ -324,6 +567,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Card Payment',
       'Confidential Environment',
       'Comfortable Setting'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/serenescape.png'),
+        caption: 'Peaceful therapy room',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/zenyoga.png'),
+        caption: 'Meditation space',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/spa-wellness.png'),
+        caption: 'Comfortable consultation area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u13',
+        userName: 'Rachel Thompson',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 5,
+        comment: 'The therapy sessions have been life-changing. The therapist is compassionate and skilled.',
+        date: new Date('2024-02-28')
+      },
+      {
+        id: 'r2',
+        userId: 'u14',
+        userName: 'Mark Johnson',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 4,
+        comment: 'Great environment for healing. The stress management program really helped me cope better.',
+        date: new Date('2024-02-26')
+      }
     ],
     isPromo: false,
     isFeatured: false,
@@ -370,6 +653,46 @@ const mockServiceData: { [key: string]: Service } = {
       'Insurance Accepted',
       'Modern Equipment'
     ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/eye-clinic.png'),
+        caption: 'Modern eye examination room',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/prime-care.png'),
+        caption: 'Waiting area',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/urban_smiles.png'),
+        caption: 'Consultation room',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u15',
+        userName: 'Anna Martinez',
+        userAvatar: require('../../assets/images/placeholder_scissors.png'),
+        rating: 5,
+        comment: 'Very professional eye examination. The doctor explained everything clearly and helped me find the perfect glasses.',
+        date: new Date('2024-02-29')
+      },
+      {
+        id: 'r2',
+        userId: 'u16',
+        userName: 'James Wilson',
+        userAvatar: require('../../assets/images/placeholder_house.png'),
+        rating: 4,
+        comment: 'Good service and quality eyewear. The contact lens fitting was thorough and comfortable.',
+        date: new Date('2024-02-27')
+      }
+    ],
     isPromo: false,
     isFeatured: false,
     isVerified: true,
@@ -415,8 +738,219 @@ const mockServiceData: { [key: string]: Service } = {
       'Card Payment',
       'Peaceful Environment'
     ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/zenyoga.png'),
+        caption: 'Peaceful yoga studio',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/serenescape.png'),
+        caption: 'Meditation space',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/spa-wellness.png'),
+        caption: 'Relaxation area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u17',
+        userName: 'Sophie Lee',
+        userAvatar: require('../../assets/images/placeholder_lotus.png'),
+        rating: 5,
+        comment: 'Amazing yoga classes with skilled instructors. The peaceful environment helps me relax and focus.',
+        date: new Date('2024-03-01')
+      },
+      {
+        id: 'r2',
+        userId: 'u18',
+        userName: 'Tom Rodriguez',
+        userAvatar: require('../../assets/images/placeholder_muscle.png'),
+        rating: 4,
+        comment: 'Great wellness workshops and meditation sessions. The private yoga lessons are excellent.',
+        date: new Date('2024-02-28')
+      }
+    ],
     isPromo: true,
     promoText: 'First class free for new members',
+    isFeatured: true,
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  'bpc_003': {
+    id: 'bpc_003',
+    name: 'Ink Haven Tattoo Studio',
+    category: 'beauty-personal-care',
+    subcategory: 'Body Art',
+    image: require('../../assets/images/ink-haven.png'),
+    rating: 4.7,
+    reviewCount: 654,
+    description: 'Professional tattoo and piercing studio specializing in custom tattoos, body art, and piercing services. Our experienced artists create unique designs tailored to your vision.',
+    shortDescription: 'Custom Tattoos, Piercing, Body Art',
+    location: 'Upper Session Road, Baguio City',
+    address: 'Upper Session Road, Baguio City, Benguet, Philippines',
+    phone: '+63 917 789 0123',
+    email: 'info@inkhaven.com',
+    website: 'www.inkhaven-tattoo.com',
+    schedule: {
+      monday: { open: '12:00 PM', close: '9:00 PM', isOpen: false },
+      tuesday: { open: '12:00 PM', close: '9:00 PM', isOpen: false },
+      wednesday: { open: '12:00 PM', close: '9:00 PM', isOpen: true },
+      thursday: { open: '12:00 PM', close: '9:00 PM', isOpen: true },
+      friday: { open: '12:00 PM', close: '9:00 PM', isOpen: true },
+      saturday: { open: '12:00 PM', close: '9:00 PM', isOpen: true },
+      sunday: { open: '12:00 PM', close: '9:00 PM', isOpen: true }
+    },
+    priceRange: { min: 1500, max: 8000, currency: '₱' },
+    services: [
+      { name: 'Small Tattoo', price: 2500, duration: 120 },
+      { name: 'Medium Tattoo', price: 4500, duration: 180 },
+      { name: 'Large Tattoo', price: 8000, duration: 300 },
+      { name: 'Piercing', price: 1500, duration: 30 }
+    ],
+    amenities: [
+      'Sterile Equipment',
+      'Custom Designs',
+      'Aftercare Products',
+      'Consultation',
+      'Portfolio Viewing',
+      'Air Conditioning'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/ink-haven.png'),
+        caption: 'Professional tattoo studio',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/harmony.png'),
+        caption: 'Clean workspace',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/davidsalon.png'),
+        caption: 'Consultation area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u19',
+        userName: 'Marcus Thompson',
+        userAvatar: require('../../assets/images/placeholder_house.png'),
+        rating: 5,
+        comment: 'Amazing tattoo work! The artist was very professional and the studio is clean and well-maintained.',
+        date: new Date('2024-03-02')
+      },
+      {
+        id: 'r2',
+        userId: 'u20',
+        userName: 'Nina Garcia',
+        userAvatar: require('../../assets/images/placeholder_scissors.png'),
+        rating: 4,
+        comment: 'Great custom design and excellent aftercare advice. The piercing service was quick and painless.',
+        date: new Date('2024-03-01')
+      }
+    ],
+    isPromo: false,
+    isFeatured: true,
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  'bpc_001': {
+    id: 'bpc_001',
+    name: 'David Salon & Spa',
+    category: 'beauty-personal-care',
+    subcategory: 'Hair & Spa',
+    image: require('../../assets/images/davidsalon.png'),
+    rating: 4.9,
+    reviewCount: 1238,
+    description: 'Professional salon and spa services including hair styling, coloring, and relaxing spa treatments. Our experienced stylists and therapists provide quality beauty services.',
+    shortDescription: 'Hair Styling, Coloring, Spa Treatments',
+    location: 'Session Road, Baguio City',
+    address: 'Session Road, Baguio City, Benguet, Philippines',
+    phone: '+63 917 890 1234',
+    email: 'info@davidsalon.com',
+    website: 'www.davidsalon.com',
+    schedule: {
+      monday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      tuesday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      wednesday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      thursday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      friday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      saturday: { open: '9:00 AM', close: '8:00 PM', isOpen: true },
+      sunday: { open: '9:00 AM', close: '8:00 PM', isOpen: true }
+    },
+    priceRange: { min: 300, max: 2500, currency: '₱' },
+    services: [
+      { name: 'Hair Cut & Style', price: 500, duration: 60 },
+      { name: 'Hair Coloring', price: 1500, duration: 120 },
+      { name: 'Hair Treatment', price: 800, duration: 90 },
+      { name: 'Spa Package', price: 2500, duration: 150 }
+    ],
+    amenities: [
+      'Professional Stylists',
+      'Quality Products',
+      'Relaxing Environment',
+      'Hair Treatments',
+      'Spa Services',
+      'Air Conditioning'
+    ],
+    gallery: [
+      {
+        id: 'g1',
+        url: require('../../assets/images/davidsalon.png'),
+        caption: 'Modern salon interior',
+        type: 'image' as const
+      },
+      {
+        id: 'g2',
+        url: require('../../assets/images/glow-haven.png'),
+        caption: 'Hair styling station',
+        type: 'image' as const
+      },
+      {
+        id: 'g3',
+        url: require('../../assets/images/spa-wellness.png'),
+        caption: 'Spa treatment area',
+        type: 'image' as const
+      }
+    ],
+    reviews: [
+      {
+        id: 'r1',
+        userId: 'u21',
+        userName: 'Isabella Cruz',
+        userAvatar: require('../../assets/images/placeholder_scissors.png'),
+        rating: 5,
+        comment: 'Amazing hair transformation! The stylist was very skilled and the spa services were so relaxing.',
+        date: new Date('2024-03-03')
+      },
+      {
+        id: 'r2',
+        userId: 'u22',
+        userName: 'Gabriel Santos',
+        userAvatar: require('../../assets/images/placeholder_house.png'),
+        rating: 4,
+        comment: 'Great service and professional staff. The hair treatment really improved the quality of my hair.',
+        date: new Date('2024-03-02')
+      }
+    ],
+    isPromo: true,
+    promoText: '20% off first visit',
     isFeatured: true,
     isVerified: true,
     createdAt: new Date(),
@@ -449,16 +983,88 @@ export default function ServiceDetailPage() {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // In a real app, you would fetch from an API
+      // First try to get from serviceAPI (which uses searchData)
+      try {
+        const allServices = await serviceAPI.getAllServices();
+        const serviceData = allServices.find(s => s.id === serviceId);
+        
+        if (serviceData) {
+          // Convert ServiceData to Service format
+          const convertedService: Service = {
+            id: serviceData.id.toString(),
+            name: serviceData.name,
+            category: serviceData.category as any,
+            subcategory: serviceData.subcategory || '',
+            image: serviceData.image,
+            rating: serviceData.rating,
+            reviewCount: serviceData.reviews || 0,
+            description: serviceData.description,
+            shortDescription: serviceData.description.substring(0, 100),
+            location: serviceData.location || 'Location not specified',
+            address: serviceData.location || 'Address not specified',
+            phone: '+63 917 123 4567',
+            email: 'info@service.com',
+            website: 'www.service.com',
+            schedule: {
+              monday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              tuesday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              wednesday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              thursday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              friday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              saturday: { open: '09:00 AM', close: '06:00 PM', isOpen: true },
+              sunday: { open: '09:00 AM', close: '06:00 PM', isOpen: true }
+            },
+            priceRange: { min: 500, max: 2000, currency: '₱' },
+            services: [
+              { name: 'Standard Service', price: 500, duration: 60 },
+              { name: 'Premium Service', price: 1000, duration: 90 }
+            ],
+            amenities: ['WiFi', 'Air Conditioning', 'Parking'],
+            gallery: [
+              {
+                id: 'g1',
+                url: serviceData.image,
+                caption: 'Service image',
+                type: 'image' as const
+              }
+            ],
+            reviews: [
+              {
+                id: 'r1',
+                userId: 'u1',
+                userName: 'John Doe',
+                userAvatar: require('../../assets/images/placeholder_house.png'),
+                rating: 5,
+                comment: 'Great service! Highly recommended.',
+                date: new Date('2024-03-01')
+              }
+            ],
+            isPromo: serviceData.isPromo || false,
+            promoText: serviceData.isPromo ? 'Special offer available' : undefined,
+            isFeatured: false,
+            isVerified: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          setService(convertedService);
+          console.log('✅ Service loaded from API:', convertedService.name);
+          return;
+        }
+      } catch (apiError) {
+        console.log('⚠️ API failed, falling back to mockServiceData:', apiError);
+      }
+      
+      // Fallback to mockServiceData
       const serviceData = mockServiceData[serviceId as string];
       console.log('📊 Service data found:', serviceData ? serviceData.name : 'None');
       console.log('📊 ServiceData object:', serviceData);
       
       if (serviceData) {
         setService(serviceData);
-        console.log('✅ Service set successfully:', serviceData.name);
+        console.log('✅ Service set successfully from mockData:', serviceData.name);
       } else {
-        console.log('❌ Service not found in mockServiceData');
+        console.log('❌ Service not found in any data source');
         Alert.alert('Error', 'Service not found');
         router.back();
       }
@@ -608,6 +1214,68 @@ export default function ServiceDetailPage() {
               </View>
             ))}
           </View>
+
+          {/* Gallery Section */}
+          {service.gallery && service.gallery.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Gallery</Text>
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false}
+                style={styles.galleryScrollView}
+              >
+                {service.gallery.map((image, index) => (
+                  <TouchableOpacity key={image.id} style={styles.galleryImageContainer}>
+                    <Image source={image.url} style={styles.galleryImage} resizeMode="cover" />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Customer Reviews Section */}
+          {service.reviews && service.reviews.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.reviewsHeader}>
+                <Text style={styles.sectionTitle}>Customer Reviews</Text>
+                <TouchableOpacity>
+                  <Text style={styles.viewMoreText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+              {service.reviews.slice(0, 2).map((review, index) => (
+                <View key={review.id} style={styles.reviewItem}>
+                  <View style={styles.reviewHeader}>
+                    <View style={styles.reviewUserInfo}>
+                      {review.userAvatar && (
+                        <Image source={review.userAvatar} style={styles.userAvatar} />
+                      )}
+                      <View style={styles.userDetails}>
+                        <Text style={styles.userName}>{review.userName}</Text>
+                        <View style={styles.ratingStars}>
+                          {[...Array(5)].map((_, starIndex) => (
+                            <MaterialIcons
+                              key={starIndex}
+                              name="star"
+                              size={12}
+                              color={starIndex < review.rating ? "#EDAE49" : "#E0E0E0"}
+                            />
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+                    <Text style={styles.reviewDate}>
+                      {review.date.toLocaleDateString('en-US', { 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        year: '2-digit' 
+                      })}
+                    </Text>
+                  </View>
+                  <Text style={styles.reviewComment}>{review.comment}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
 
@@ -803,5 +1471,75 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  // Gallery styles
+  galleryScrollView: {
+    marginTop: 10,
+  },
+  galleryImageContainer: {
+    marginRight: 10,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  galleryImage: {
+    width: 120,
+    height: 90,
+    borderRadius: 8,
+  },
+  // Reviews styles
+  reviewsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  viewMoreText: {
+    color: '#EDAE49',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  reviewItem: {
+    backgroundColor: '#f8f9fa',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  reviewUserInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  userDetails: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+  },
+  ratingStars: {
+    flexDirection: 'row',
+  },
+  reviewDate: {
+    fontSize: 12,
+    color: '#888',
+  },
+  reviewComment: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
 });

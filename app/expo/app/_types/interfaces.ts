@@ -66,9 +66,18 @@ export interface Review {
   id: string;
   userId: string;
   userName: string;
+  userAvatar?: any;
   rating: number;
   comment: string;
   date: Date;
+}
+
+// Gallery image interface
+export interface GalleryImage {
+  id: string;
+  url: any;
+  caption?: string;
+  type: 'image' | 'video';
 }
 
 // Main Service interface
@@ -91,6 +100,8 @@ export interface Service {
   priceRange: PriceRange;
   services: ServiceItem[];
   amenities: string[];
+  gallery?: GalleryImage[];
+  reviews?: Review[];
   isPromo: boolean;
   promoText?: string;
   isFeatured: boolean;
