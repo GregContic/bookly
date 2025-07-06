@@ -1333,6 +1333,9 @@ export default function ServiceDetailPage() {
             ))}
           </View>
 
+          {/* Divider Line */}
+          <View style={styles.dividerLine} />
+
           {/* Services Section - Available Services and Pricing */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Services</Text>
@@ -1625,6 +1628,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     flex: 1,
+  },
+  
+  // ==========================================
+  // DIVIDER LINE STYLES
+  // ==========================================
+  
+  dividerLine: {
+    height: 1,
+    backgroundColor: '#EDAE49',
+    marginVertical: 20,
+    width: '100%',
   },
   
   // ==========================================
