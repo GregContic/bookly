@@ -1,0 +1,19 @@
+{
+  "name": "bookly-ph-native",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:expo": "cd apps/expo && npm run start",
+    "dev:next": "cd apps/next && npm run dev",
+    "build:expo": "cd apps/expo && npm run build",
+    "build:next": "cd apps/next && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
